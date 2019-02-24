@@ -48,6 +48,11 @@ class usersDAO:
                 result.append(user)
         return result
 
+    def getUserByEmail(self, uemail):
+        for user in self.user_list:
+            if user.getEmail() == uemail
+                return user
+
     def insert(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
         temp = User(uid, ufirstname, ulastname, uemail, uusername, upassword)
         self.user_list.append(temp)
