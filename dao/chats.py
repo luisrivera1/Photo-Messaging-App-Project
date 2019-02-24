@@ -9,15 +9,16 @@ class chatsDAO:
         Chat1 = Chat("DEFAULT", )
 
     def getAllChats(self):
-        cursor = self.conn.cursor()
-        query = "select * from chat;"
-        cursor.execute(query)
         result = []
-        for row in cursor:
-            result.append(row)
+        for chat in self.chat_list:
+            temp = []
+            for attribute, value in chat.__dict__.items():
+                temp.append(value)
+            result.append(temp)
         return result
 
-    def getChatById(self, cid):
+
+def getChatById(self, cid):
             cursor = self.conn.cursor()
             query = "select * from chat where cid = %s;"
             cursor.execute(query, (cid,))

@@ -16,8 +16,8 @@ class usersDAO:
         result = []
         for user in self.user_list:
             temp = []
-            for attribute in user.__dict__.items():
-                temp.append(attribute)
+            for attribute, value in user.__dict__.items():
+                temp.append(value)
             result.append(temp)
         return result
 
