@@ -50,7 +50,7 @@ class usersDAO:
 
     def getUserByEmail(self, uemail):
         for user in self.user_list:
-            if user.getEmail() == uemail
+            if user.getEmail() == uemail:
                 return user
 
     def insert(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
