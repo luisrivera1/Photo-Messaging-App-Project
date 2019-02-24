@@ -1,12 +1,12 @@
 from config.dbconfig import pg_config  # from FOLDER.CLASSNAME import FUNCTIONNAME
 import psycopg2
+from Objects.Chat import Chat
 
 class chatsDAO:
     def __init__(self):
-        connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
-                                                            pg_config['user'],
-                                                            pg_config['passwd'])
-        self.conn = psycopg2._connect(connection_url)
+        self.chat_list = []
+        self
+        Chat1 = Chat("DEFAULT", )
 
     def getAllChats(self):
         cursor = self.conn.cursor()
