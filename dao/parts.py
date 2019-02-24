@@ -1,5 +1,10 @@
 from config.dbconfig import pg_config
 import psycopg2
+
+from Objects.User import User
+
+Carlos = User()
+
 class PartsDAO:
     def __init__(self):
 
