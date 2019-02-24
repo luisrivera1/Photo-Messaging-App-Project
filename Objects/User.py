@@ -1,8 +1,9 @@
 class User:
 
-    def __init__(self, uid, uname, uemail, uusername, upassword):
+    def __init__(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
         self.uid = uid
-        self.uname = uname
+        self.ufirstname = ufirstname
+        self.ulastnname = ulastname
         self.uemail = uemail
         self.uusername = uusername
         self.upassword = upassword
@@ -10,8 +11,11 @@ class User:
     def getId (self):
         return self.uid
 
-    def getName (self):
+    def getFirstName (self):
         return self.uname
+
+    def getLastName(self):
+        return self.ulastname
 
     def getEmail (self):
         return self.uemail

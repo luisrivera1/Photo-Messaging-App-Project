@@ -21,12 +21,11 @@ class usersDAO:
             result.append(temp)
         return result
 
-    def geUsersById(self, uid):
-        result = []
+    def getUserById(self, uid):  # returns a USER OBJECT
         for user in self.user_list:
             if user.getId() == uid:
-                result.append(user)
-        return result
+                return user
+
 
     def getUsersByUsername(self, uusername):
         result = []
@@ -35,15 +34,22 @@ class usersDAO:
                 result.append(user)
         return result
 
-    def getUsersByName(self, uname):
+    def getUsersByFirstName(self, ufirstname):
         result = []
         for user in self.user_list:
-            if user.getName() == uname:
+            if user.getFirstName() == ufirstname:
                 result.append(user)
         return result
 
-    def insert(self, uid, uname, uemail, uusername, upassword):
-        temp = User(uid, uname, uemail, uusername, upassword)
+    def getUsersByLastName(self, ufirstname):
+        result = []
+        for user in self.user_list:
+            if user.getLastName() == ufirstname:
+                result.append(user)
+        return result
+
+    def insert(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
+        temp = User(uid, ufirstname, ulastname, uemail, uusername, upassword)
         self.user_list.append(temp)
         return uid
 
