@@ -5,9 +5,9 @@ from Objects.User import User
 class usersDAO:
     def __init__(self):
         self.user_list = []
-        Carlos = User("1, Carlos Lopez", "clopez115@gmail.com", "clopez36", "123pescaitoes")
-        Ramon = User("2, Ramon Rosado", "ramon.rosado2@upr.edu", "ramoncin", "12345678")
-        Luis = User("3, Luis Rivera", "luis.rivera99999@upr.edu", "oLaMeLlAmOlUiS", "password")
+        Carlos = User(1, "Carlos Lopez", "clopez115@gmail.com", "clopez36", "123pescaitoes")
+        Ramon = User(2, "Ramon Rosado", "ramon.rosado2@upr.edu", "ramoncin", "12345678")
+        Luis = User(3, "Luis Rivera", "luis.rivera99999@upr.edu", "oLaMeLlAmOlUiS", "password")
         self.user_list = [Carlos, Ramon, Luis]
 
 
@@ -19,6 +19,13 @@ class usersDAO:
             for attribute in user.__dict__.items():
                 temp.append(attribute)
             result.append(temp)
+        return result
+
+    def geUsersById(self, uid):
+        result = []
+        for user in self.user_list:
+            if user.getId() == uid:
+                result.append(user)
         return result
 
     def getUsersByUsername(self, uusername):
