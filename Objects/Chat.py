@@ -1,14 +1,18 @@
 class Chat:
 
-    def __init__(self, name, members):
-        self.name = name
-        self.members = members
+    def __init__(self, cname, cmembers, cadmin):
+        self.cname = cname
+        self.cmembers = cmembers
+        self.cadmin = cadmin
 
     def getName (self):
-        return self.name
+        return self.cname
 
     def getMembers (self):
-        return self.members
+        return self.cmembers
+
+    def getAdmin (self):
+        return self.cadmin
 
     
 

@@ -1,15 +1,23 @@
 class User:
 
-    def __init__(self, name, email, username):
-        self.name = name
-        self.email = email
-        self.username = username
+    def __init__(self, uid, uname, uemail, uusername, upassword):
+        self.uid = uid
+        self.uname = uname
+        self.uemail = uemail
+        self.uusername = uusername
+        self.upassword = upassword
+
+    def getId (self):
+        return self.uid
 
     def getName (self):
-        return self.name
+        return self.uname
 
     def getEmail (self):
-        return self.email
+        return self.uemail
 
     def getUsername (self):
-        return self.username
+        return self.uusername
+
+    def getPassword (self):
+        return self.upassword
