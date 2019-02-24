@@ -1,5 +1,5 @@
 from config.dbconfig import pg_config
-import psycopg2
+# import psycopg2
 
 class SupplierDAO:
     def __init__(self):
