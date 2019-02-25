@@ -8,6 +8,7 @@ class usersDAO:
         Carlos = User(1, "Carlos","Lopez", "clopez115@gmail.com", "clopez36", "123pescaitoes")
         Ramon = User(2, "Ramon",  "Rosado", "ramon.rosado2@upr.edu", "ramoncin", "12345678")
         Luis = User(3, "Luis", "Rivera", "luis.rivera99999@upr.edu", "oLaMeLlAmOlUiS", "password")
+
         self.user_list = [Carlos, Ramon, Luis]
 
 
@@ -21,37 +22,46 @@ class usersDAO:
             result.append(temp)
         return result
 
-    def getUserById(self, uid):  # returns a USER OBJECT
+    def getUserById(self, uid):
+        result = []
         for user in self.user_list:
             if user.getId() == uid:
-                return user
+                for attribute, value in vars(user).items():
+                    result.append(value)
+        return result
 
 
     def getUsersByUsername(self, uusername):
         result = []
         for user in self.user_list:
             if user.getUsername() == uusername:
-                result.append(user)
+                for attribute, value in vars(user).items():
+                    result.append(value)
         return result
 
     def getUsersByFirstName(self, ufirstname):
         result = []
         for user in self.user_list:
             if user.getFirstName() == ufirstname:
-                result.append(user)
+                for attribute, value in vars(user).items():
+                    result.append(value)
         return result
 
     def getUsersByLastName(self, ufirstname):
         result = []
         for user in self.user_list:
             if user.getLastName() == ufirstname:
-                result.append(user)
+                for attribute, value in vars(user).items():
+                    result.append(value)
         return result
 
     def getUserByEmail(self, uemail):
+        result = []
         for user in self.user_list:
             if user.getEmail() == uemail:
-                return user
+                for attribute, value in vars(user).items():
+                    result.append(value)
+        return result
 
     def insert(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
         temp = User(uid, ufirstname, ulastname, uemail, uusername, upassword)

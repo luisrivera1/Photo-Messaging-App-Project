@@ -6,13 +6,13 @@ from dao.posts import postsDAO
 class Handler:
     def build_user_dict(self, row):
         result = {}
+        print(row)
         result['uid'] = row[0]
         result['ufirstname'] = row[1]
         result['ulastname'] = row[2]
         result['uemail'] = row[3]
         result['uusername'] = row[4]
         result['upassword'] = row[5]
-        print(result)
         return result
 
     def build_post_dict(self, row):

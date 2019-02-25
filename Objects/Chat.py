@@ -1,9 +1,9 @@
 class Chat:
 
-    def __init__(self, cid, cname, cmembers, cadmin):
+    def __init__(self, cid, cname, cadmin):
         self.cid = cid
         self.cname = cname
-        self.cmembers = cmembers
+        self.cmembers = []
         self.cadmin = cadmin
 
     def getId(self):
