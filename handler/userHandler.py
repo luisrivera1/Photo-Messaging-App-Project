@@ -6,7 +6,6 @@ from dao.posts import postsDAO
 class Handler:
     def build_user_dict(self, row):
         result = {}
-        print(row)
         result['uid'] = row[0]
         result['ufirstname'] = row[1]
         result['ulastname'] = row[2]
@@ -91,23 +90,33 @@ class Handler:
             return jsonify(Post=post)
 
     def searchUsers(self, args):
-        print(args)
-        username = args.get("uusername")
-        email = args.get("uemail")
+        username = None
+        id = None
+        try:
+           username = args['uusername']
+        except:
+           pass
+        try:
+            id = args['uid']
+            id = int(id)
+        except:
+            pass
+
         dao = usersDAO()
-        users_list = []
-        if (len(args) == 2) and username and email:
-            users_list = dao.getUserByUsersnameAndEmail(username, email)
+
+        if (len(args) == 2) and username and id:
+            print(username, id)
+            users_list = dao.getUserByUsersnameAndId(username, id)
         elif (len(args) == 1) and username:
-            users_list = dao.getUsersBy(username)
-        elif (len(args) == 1) and email:
-            users_list = dao.getUsersBy(email)
+            users_list = dao.getUsersByUsername(username)
+        elif (len(args) == 1) and id:
+            users_list = dao.getUserById(id)
         else:
             return jsonify(Error = "Malformed query string"), 400
+        print(users_list)
         result_list = []
-        for row in users_list:
-            result = self.build_user_dict(row)
-            result_list.append(result)
+        result = self.build_user_dict(users_list)
+        result_list.append(result)
         return jsonify(Users=result_list)
 
     def searchPosts(self, args):

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from handler.userHandler import Handler
-from handler.supplier import SupplierHandler
+from handler.chatHandler import chatHandler
+
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
@@ -27,19 +28,24 @@ def getAllUsers():
         if not request.args:
             return Handler().getAllUsers()
         else:
-            return Handler().searchUsers(request.json)
+            return Handler().searchUsers(request.args.to_dict())
 
-@app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
-def getUserById(uid):
-    print(uid)
+@app.route('/PhotoMsgApp/chats', methods=['GET','PUT','POST','DELETE'])
+def getAllChats():
     if request.method == 'GET':
-        return Handler().getUserById(uid)
+        if not request.args:
+            return chatHandler().getAllChats()
+        else:
+            print(request.args)
+            print(request.args.to_dict())
+            return chatHandler().searchChats(request.args.to_dict())
     elif request.method == 'PUT':
-        return Handler().updateUser(uid, request.args)
+        pass
+    elif request.method == 'POST':
+        pass
     elif request.method == 'DELETE':
-        return Handler().deleteUser(uid)
-    else:
-        return jsonify(Error="Method not allowed."), 405
+        return chatHandler().deleteChat(request.args.to_dict())
+
 #
 # @app.route('/PartApp/parts/<int:pid>/suppliers')
 # def getSuppliersByPartId(pid):

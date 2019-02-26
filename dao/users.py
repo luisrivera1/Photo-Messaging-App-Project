@@ -28,6 +28,20 @@ class usersDAO:
             if user.getId() == uid:
                 for attribute, value in vars(user).items():
                     result.append(value)
+        print(result)
+        return result
+
+    def getUsersByUsernamev2(self, uusername):
+        for user in self.user_list:
+            if user.getUsername() == uusername:
+                return user
+
+    def getUserByUsersnameAndId(self, uusername, uid):
+        result = []
+        for user in self.user_list:
+            if user.getUsername() == uusername and user.getId() == uid:
+                for attribute, value in vars(user).items():
+                    result.append(value)
         return result
 
 

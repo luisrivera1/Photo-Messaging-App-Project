@@ -25,8 +25,9 @@ class chatHandler:
         chats_list = dao.getAllChats()
         result_list = []
         for row in chats_list:
-            result = self.build_c_chats(row)
+            result = self.build_chats_dict(row)
             result_list.append(result)
+        print(result_list)
         return jsonify(Chats=result_list)
 
 
@@ -40,19 +41,34 @@ class chatHandler:
             return jsonify(Chats=chats)
 
     def searchChats(self, args):
-        cname = args.get("cname")
+        chatname = None
+        cid = None
+
+        try:
+            chatname = args['cname']
+        except:
+            pass
+
+        try:
+            cid = args['cid']
+            cid = int(cid)
+        except:
+            pass
 
         dao = chatsDAO()
-        chats_list = []
-        if (len(args) == 1) and cname:
-            chats_list = dao.getChatsByName(cname)
 
+        if (len(args) == 2) and chatname and cid:
+            chats_list = dao.getChatByNameAndId(chatname, cid)
+        elif(len(args) == 1) and chatname:
+            chats_list = dao.getChatByChatName(chatname)
+        elif(len(args) == 1) and cid:
+            chats_list = dao.getChatById(cid)
         else:
             return jsonify(Error = "Malformed query string"), 400
+
         result_list = []
-        for row in chats_list:
-            result = self.build_chats_dict(row)
-            result_list.append(result)
+        result = self.build_chats_dict(chats_list)
+        result_list.append(result)
         return jsonify(Chats=result_list)
 
 
@@ -88,13 +104,29 @@ class chatHandler:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
 
-    def deleteChat(self, cid):
+    def deleteChat(self, args):
         dao = chatsDAO()
+        cid = None
+        cadmin = None
+
+        try:
+            cid = args['cid']
+            cid = int(cid)
+        except:
+            pass
+        try:
+            cadmin = args['cadmin']
+        except:
+            pass
+
+
         if not dao.getChatById(cid):
-            return jsonify(Error="Post not found."), 404
+            return jsonify(Error="No chat by that ID found. Delete operation invalid"), 404
         else:
-            dao.delete(cid)
-            return jsonify(DeleteStatus="OK"), 200
+            if dao.delete(cid, cadmin):
+                return jsonify(DeleteStatus="Chat with ID: " + str(cid) + " deleted."), 200
+
+        return jsonify(Error= "Invalid delete operation.")
 
 
     def deleteUserFromChat(self, cuser1, cuser2, cid): # cuser1  is the admin
