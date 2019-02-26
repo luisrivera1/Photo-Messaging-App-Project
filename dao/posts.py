@@ -1,13 +1,10 @@
 from Objects.Post import Post
-from dao.users import usersDAO
-from Objects.User import User
 
 class postsDAO:
     def __init__(self):
         self.posts_list = []
-        firstPost = Post(1, usersDAO.getUserById(2), "(this should be a photo)", "First POST!!", "2/24/2019", 0, 0, 0)
-        # puser es un OBJECT tipo USER? o es el ID del user?.. Actualmente lo puse como USER
-        secondPost = Post(2, usersDAO.getUserById(3), "(this should be a photo)", "Second POST!!", "2/24/2019", 1, 2, 0)
+        firstPost = Post(1, "clopez36", "photo.jpg", "First POST!!", "2/24/2019")
+        secondPost = Post(2, " ramoncin", "picture.png", "Second POST!!", "2/25/2019")
         self.posts_list = [firstPost, secondPost]
 
 
@@ -15,11 +12,21 @@ class postsDAO:
         result = []
         for post in self.posts_list:
             temp = []
-            for attribute in post.__dict__.items():
-                temp.append(attribute)
+            for attribute, value in vars(post).items():
+                temp.append(value)
             result.append(temp)
         return result
 
-    def getPostById(self):
-        result = User
+    def getPostById(self, pid):
+        result = []
+        for post in self.posts_list:
+            if post.getId() == pid:
+                for attribute, value in vars(post).items():
+                    result.append(value)
+        return result
+
+
+
+
+
 

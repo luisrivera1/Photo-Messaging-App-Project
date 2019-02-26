@@ -14,6 +14,15 @@ class Handler:
         result['upassword'] = row[5]
         return result
 
+    def build_contact_dict(self, row):
+        result = {}
+        print(row)
+        result['ufirstname'] = row[0]
+        result['ulastname'] = row[1]
+        result['uemail'] = row[2]
+        return result
+
+
     def build_post_dict(self, row):
         result = {}
         result['pid'] = row[0]
@@ -26,16 +35,19 @@ class Handler:
         result['p_replies'] = row[7]
         return result
 
-    def build_user_attributes(self, pid, uname, username, password, uemail):
+
+    def build_user_attributes(self, uid, ufirstname, ulastname, uemail, username, password):
         result = {}
-        result['uid'] = pid
-        result['uname'] = uname
+        result['uid'] = uid
+        result['ufirstname'] = ufirstname
+        result['ulastname'] = ulastname
+        result['uemail'] = uemail
         result['username'] = username
         result['password'] = password
-        result['uemail'] = uemail
         return result
 
-    def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
+
+    def build_post_attributes(self, pid, p_user, p_photo, p_date, p_likes, p_dislikes, p_replies, p_chat):
         result = {}
         result['pid'] = pid
         result['p_user'] = p_user
@@ -48,7 +60,6 @@ class Handler:
         return result
 
 
-
     def getAllUsers(self):
         dao = usersDAO()
         users_list = dao.getAllUsers()
@@ -58,7 +69,8 @@ class Handler:
             result = self.build_user_dict(row)
             result_list.append(result)
             print(result_list)
-        return jsonify(Users =result_list)
+        return jsonify(Users=result_list)
+
 
     def getAllPost(self):
         dao = usersDAO()
@@ -69,16 +81,27 @@ class Handler:
             result_list.append(result)
         return jsonify(Posts=result_list)
 
+
     def getUserById(self, uid):
         dao = usersDAO()
         row = dao.getUserById(uid)
         if not row:
-            return jsonify(Error = "User Not Found"), 404
+            return jsonify(Error="User Not Found"), 404
         else:
             user = self.build_user_dict(row)
-            return jsonify(User = user)
+            return jsonify(User=user)
 
+    def getContactsById(self, uid):
+        dao = usersDAO()
+        uid = int(uid)
+        contact_list = dao.getContactListFromUserId(uid)
 
+        if not contact_list:
+            return jsonify(Error="User Not Found"), 404
+        else:
+            for row in contact_list:
+                user = self.build_contact_dict(row)
+                return jsonify(User=user)
 
     def getPostById(self, pid):
         dao = usersDAO()
@@ -89,13 +112,14 @@ class Handler:
             post = self.build_user_dict(row)
             return jsonify(Post=post)
 
+
     def searchUsers(self, args):
         username = None
         id = None
         try:
-           username = args['uusername']
+            username = args['uusername']
         except:
-           pass
+            pass
         try:
             id = args['uid']
             id = int(id)
@@ -112,12 +136,13 @@ class Handler:
         elif (len(args) == 1) and id:
             users_list = dao.getUserById(id)
         else:
-            return jsonify(Error = "Malformed query string"), 400
+            return jsonify(Error="Malformed query string"), 400
         print(users_list)
         result_list = []
         result = self.build_user_dict(users_list)
         result_list.append(result)
         return jsonify(Users=result_list)
+
 
     def searchPosts(self, args):
         p_chat = args.get("p_chat")
@@ -131,37 +156,39 @@ class Handler:
         elif (len(args) == 1) and p_date:
             post_list = dao.getPostsByDate(p_date)
         else:
-            return jsonify(Error = "Malformed query string"), 400
+            return jsonify(Error="Malformed query string"), 400
         result_list = []
         for row in post_list:
             result = self.build_post_dict(row)
             result_list.append(result)
         return jsonify(Posts=result_list)
 
+
     def insertUser(self, form):
         print("form: ", form)
         if len(form) != 6:
-            return jsonify(Error = "Malformed post request"), 400
+            return jsonify(Error="Malformed post request"), 400
         else:
             uid = form['uid']
             ufirstname = form['ufirstname']
-            ulastname= form['ulastname']
+            ulastname = form['ulastname']
             uemail = form['uemail']
             uusername = form['uusername']
             upassword = form['upassword']
 
             if uid and ufirstname and ulastname and uemail and uusername and upassword:
                 dao = usersDAO()
-                uid = dao.insert(uid, ufirstname, ulastname, uemail,uusername,upassword)
-                result = self.build_user_attributes(uid, ufirstname, ulastname,uemail,uusername,upassword)
+                uid = dao.insert(uid, ufirstname, ulastname, uemail, uusername, upassword)
+                result = self.build_user_attributes(uid, ufirstname, ulastname, uemail, uusername, upassword)
                 return jsonify(User=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
 
+
     def insertPost(self, form):
         print("form: ", form)
         if len(form) != 8:
-            return jsonify(Error = "Malformed post request"), 400
+            return jsonify(Error="Malformed post request"), 400
         else:
             pid = form['pid']
             p_user = form['p_user']
@@ -198,23 +225,44 @@ class Handler:
     def deleteUser(self, uid):
         dao = usersDAO()
         if not dao.getUserById(uid):
-            return jsonify(Error = "User not found."), 404
+            return jsonify(Error="User not found."), 404
         else:
             dao.delete(uid)
-            return jsonify(DeleteStatus = "OK"), 200
+            return jsonify(DeleteStatus="OK"), 200
+
 
     def deletePost(self, pid):
         dao = postsDAO()
         if not dao.getUserById(pid):
-            return jsonify(Error = "Post not found."), 404
+            return jsonify(Error="Post not found."), 404
         else:
             dao.delete(pid)
-            return jsonify(DeleteStatus = "OK"), 200
+            return jsonify(DeleteStatus="OK"), 200
+
+
+    def deleteContact(self, uid, form):
+        dao = usersDAO()
+        if len(form) != 3:
+            return jsonify(Error="Malformed update request"), 400
+        else:
+            ufirstname = form['ufirstname']
+            ulastname = form['ulastname']
+            uemail = form['uemail']
+            if ufirstname and ulastname and uemail:
+                result = [ufirstname, ulastname, uemail]
+                try:
+                    dao.deleteUserFromContactList(uid, result)
+                    return jsonify(DeleteStatus="OK"), 200
+                except:
+                    return jsonify(Error="Contact not found."), 404
+            else:
+                return jsonify(Error="Malformed delete request"), 400
+
 
     def updateUser(self, uid, form):
         dao = usersDAO()
         if not dao.getUserById(uid):
-            return jsonify(Error = "User not found."), 404
+            return jsonify(Error="User not found."), 404
         else:
             if len(form) != 4:
                 return jsonify(Error="Malformed update request"), 400
@@ -229,3 +277,58 @@ class Handler:
                     return jsonify(User=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400
+
+
+    def updateContactList(self, uid, form):
+        dao = usersDAO()
+        if not dao.getUserById(uid):
+            return jsonify(Error="User not found."), 404
+        else:
+            if len(form) != 3:
+                return jsonify(Error="Malformed update request"), 400
+            else:
+                ufirstname = form['ufirstname']
+                ulastname = form['ulastname']
+                uemail = form['uemail']
+                if ufirstname and ulastname and uemail:
+                    dao.insertContact(uid, ufirstname, ulastname, uemail)
+                    result = self.build_contact_attributes(ufirstname, ulastname, uemail)
+                    return jsonify(User=result), 200
+                else:
+                    return jsonify(Error="Unexpected attributes in update request"), 400
+
+    def validate_login(self, args):
+        dao = usersDAO()
+
+        uusername = None
+        password = None
+
+        try:
+            uusername = args['uusername']
+        except:
+            pass
+
+        try:
+            password = args['upassword']
+        except:
+            pass
+
+        row = dao.validate_login(uusername, password)
+
+        if not row:
+            return jsonify(LOGIN="INVALID LOGIN. INVALID CREDENTIALS"), 401
+        else:
+            return jsonify(LOGIN="LOGIN VALIDATED. USER " + uusername + " SUCCESSFULLY LOGGED IN."), 200
+
+    def register_user(self, args):
+        print(args)
+        uid = int(args['uid'])
+
+    def build_contact_attributes(self, ufirstname, ulastname, uemail):
+        result = {}
+        result['ufirstname'] = ufirstname
+        result['ulastname'] = ulastname
+        result['uemail'] = uemail
+        return result
+
+

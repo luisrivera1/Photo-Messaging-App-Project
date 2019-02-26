@@ -1,5 +1,6 @@
 from flask import jsonify
 from dao.posts import postsDAO
+from dao.chats import chatsDAO
 
 
 class postHandler:
@@ -10,12 +11,10 @@ class postHandler:
         result['p_photo'] = row[2]
         result['p_message'] = row[3]
         result['p_date'] = row[4]
-        result['p_likes'] = row[5]
-        result['p_dislikes'] = row[6]
-        result['p_replies'] = row[7]
         return result
 
-    def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
+
+    def build_post_attributes(self, pid, p_user, p_photo, p_date, p_likes, p_dislikes, p_replies, p_chat):
         result = {}
         result['pid'] = pid
         result['p_user'] = p_user
@@ -27,7 +26,8 @@ class postHandler:
         result['p_chat'] = p_chat
         return result
 
-    def getAllPost(self):
+
+    def getAllPosts(self):
         dao = postsDAO()
         posts_list = dao.getAllPosts()
         result_list = []
@@ -35,6 +35,16 @@ class postHandler:
             result = self.build_post_dict(row)
             result_list.append(result)
         return jsonify(Posts=result_list)
+
+    def getAllPostsFromChat(self, cid):
+        dao = chatsDAO()
+        row = dao.getPostsFromChat(cid)
+
+        if not row:
+            return jsonify(Error="Chat has no posts"), 404
+        else:
+            post = self.build_post_dict(row)
+            return jsonify(ChatPosts=post)
 
 
     def getPostById(self, pid):
@@ -45,6 +55,7 @@ class postHandler:
         else:
             post = self.build_user_dict(row)
             return jsonify(Post=post)
+
 
     def searchPosts(self, args):
         p_chat = args.get("p_chat")
@@ -58,7 +69,7 @@ class postHandler:
         elif (len(args) == 1) and p_date:
             post_list = dao.getPostsByDate(p_date)
         else:
-            return jsonify(Error = "Malformed query string"), 400
+            return jsonify(Error="Malformed query string"), 400
         result_list = []
         for row in post_list:
             result = self.build_post_dict(row)
@@ -82,14 +93,11 @@ class postHandler:
 
         if pid and p_user and p_photo and p_message and p_likes and p_dislikes and p_date and p_replies:
             dao = postsDAO()
-            pid = dao.insert(pid, p_user, p_photo, p_message,p_likes,p_dislikes,p_date,p_replies)
-            result = self.build_user_attributes(pid, p_user, p_photo, p_message, p_likes,p_dislikes,p_date,p_replies)
+            pid = dao.insert(pid, p_user, p_photo, p_message, p_likes, p_dislikes, p_date, p_replies)
+            result = self.build_user_attributes(pid, p_user, p_photo, p_message, p_likes, p_dislikes, p_date, p_replies)
             return jsonify(User=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
-
-
-
 
 
     def deletePost(self, pid):

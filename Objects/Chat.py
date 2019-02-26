@@ -1,14 +1,13 @@
-from dao.users import usersDAO
-
 class Chat:
     def __init__(self, cid, cname, cadmin):
-        dao = usersDAO()
 
         self.cid = cid
         self.cname = cname
         self.cmembers = []
 
         self.cmembers.append(cadmin)
+
+        self.postlist = []
 
         self.cadmin = cadmin
 
@@ -29,3 +28,12 @@ class Chat:
 
     def getAdmin(self):
         return self.cadmin
+
+    def getPosts(self):
+        return self.postlist
+
+    def addPost(self, post):
+        temp = []
+        for attribute, value in vars(post).items():
+            temp.append(value)
+        self.postlist.append(temp)
