@@ -62,7 +62,7 @@ def getAllChats():
         if not request.args:
             return chatHandler().getAllChats()
         else:
-            return chatHandler().searchChats(request.json)
+            return chatHandler().searchChats(request.json.to_dict())
 
 
 
@@ -87,13 +87,42 @@ def getAllPostsFromChat(cid):
     if request.method == 'GET':
         return postHandler().getAllPostsFromChat(cid)
 
-@app.route('/PhotoMsgApp/stats/<date>', methods = ['GET'])
-def getAllStats(date):
+
+'''
+La ruta tiene dos opciones:
+  Si el parametro es una fecha(con el formato MM-DD-YYYY),
+  existe la posibilidad para ver todas las estadisticas
+  asociadas a dicha fecha, o el poder ver una estadistica en
+  particular.
+  
+  Ejemplo: /PhotoMsgApp/stats/02-24-2019 (Todas las estadisticas)
+           /PhotoMsgApp/stats/02-24-2019?likesperday (Estadistica especifica)
+           
+  Segunda alternativa es que el parametro sea un string representando una foto.
+  Dicho parametro sirve para devolver las estadisticas de la foto pertinente.
+  
+  Ejemplo: /PhotoMsgApp/stats/pollo.png (Todas las estadisticas)
+           /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
+'''
+
+@app.route('/PhotoMsgApp/stats/<param>', methods = ['GET'])
+def getAllStats(param):
     if request.method == 'GET':
         if not request.args:
-            return statHandler().getAllStats(date)
+            if param[0].isdigit():
+                return statHandler().getAllStats(param)
+            else:
+                return statHandler().getAllPhotoStats(param)
+
         else:
-            return statHandler().getStatByChoice(request.args.to_dict(), date)
+            if not param[0].isdigit():
+                return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
+            else:
+                return statHandler().getStatByChoice(request.args.to_dict(), param)
+
+
+
+
 
 
 

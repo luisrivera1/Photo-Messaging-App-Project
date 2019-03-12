@@ -52,10 +52,10 @@ class chatHandler:
             return jsonify(User = member)
 
     def searchChats(self, args):
-        cname = args.get("cname")
+        cname = args["cname"]
 
         dao = chatsDAO()
-        chats_list = []
+
         if (len(args) == 1) and cname:
             chats_list = dao.getChatsByName(cname)
 

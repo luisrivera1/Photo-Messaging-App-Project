@@ -7,14 +7,14 @@ from Objects.Post import Post
 class postsDAO:
     def __init__(self):
         self.posts_list = []
-        firstPost = Post(1, "clopez36", "photo.jpg", "First POST!!", "2-24-2019")
-        secondPost = Post(2, "ramoncin", "picture.png", "Second POST!!", "2-24-2019")
-        thirdPost = Post(3, "clopez36", "newphoto.jpg", "Third Post!", "2-24-2019")
-        fourthPost = Post(4, "oLaMeLlAmOlUiS", "oranges.jpg", "PRUEBAAAA!", "2-24-2019")
-        fifthPost = Post(5, "ramoncin", "potato.jpg", "Que es esto?", "2-24-2019")
-        sixthPost = Post(6, "clopez36", "cafe.jpg", "I am the danger.", "2-24-2019")
-        seventhPost = Post(7, "heisenberg", "pollo.png", "Los Pollos Hermanos", "2-24-2019")
-        eighthPost = Post(8, "oLaMeLlAmOlUiS", "whatever.jpg", "No importa!", "2-24-2019")
+        firstPost = Post(1, "clopez36", "photo.jpg", "First POST!! #pollo #manzana", "02-24-2019")
+        secondPost = Post(2, "ramoncin", "picture.png", "Second POST!! #manzana", "02-24-2019")
+        thirdPost = Post(3, "clopez36", "newphoto.jpg", "Third Post! #nachosLoaded", "02-24-2019")
+        fourthPost = Post(4, "oLaMeLlAmOlUiS", "oranges.jpg", "PRUEBAAAA! #pollo", "02-24-2019")
+        fifthPost = Post(5, "ramoncin", "potato.jpg", "Que es esto? #kfc #manzana", "02-24-2019")
+        sixthPost = Post(6, "clopez36", "cafe.jpg", "I am the danger  #losPollosHermanos", "02-24-2019")
+        seventhPost = Post(7, "heisenberg", "pollo.png", "Los Pollos Hermanos #ElPanchoNoSeCompara", "02-24-2019")
+        eighthPost = Post(8, "oLaMeLlAmOlUiS", "whatever.jpg", "No importa!", "02-24-2019")
 
 
         firstPost.addComment("Great photo!")
@@ -28,6 +28,17 @@ class postsDAO:
             secondPost.addDislike()
 
         thirdPost.addComment("First comment!!!")
+
+        seventhPost.addComment("Viva Walter!")
+        seventhPost.addComment("Damn it, Skyler")
+
+        for i in range(3):
+            seventhPost.addDislike()
+
+        seventhPost.addLike()
+
+        print(seventhPost.getPostLikes())
+
         self.posts_list = [firstPost, secondPost, thirdPost, fourthPost, fifthPost, sixthPost, seventhPost, eighthPost]
 
 
@@ -72,15 +83,30 @@ class postsDAO:
         return result
 
     #Recently Added
-    def getPostHashtags(self):
+    def getPostHashtags(self, date):
         result= []
         for post in self.posts_list:
-            message = post.getPostMessage()
-            tokens = message.split()
-            for token in tokens:
-                if token[0] == "#":
-                    result.append(message)
+            if post.getPostDate() == date:
+                message = post.getPostMessage()
+                tokens = message.split()
+                for token in tokens:
+                    if token[0] == "#":
+                        result.append(token)
+
         return result
+
+    def getPopularHashtagDict(self, date):
+        hashtag_dict = {}
+        print(self.getPostHashtags(date))
+
+        for hashtag in self.getPostHashtags(date):
+            print(hashtag)
+            if hashtag in hashtag_dict.keys():
+                hashtag_dict[hashtag] = hashtag_dict[hashtag] + 1
+            else:
+                hashtag_dict[hashtag] = 1
+
+        return hashtag_dict
 
     def getPostPerDayDict(self):
         day_dict = {}
@@ -140,3 +166,47 @@ class postsDAO:
 
         print(users_dict)
         return users_dict
+
+    def getUserPostsByDateDict(self, user, date):
+        user_post_dict = {}
+
+        for post in self.posts_list:
+            if post.getPostDate() == date and post.getPostUser() == user:
+                if post.getPostUser() in user_post_dict.keys():
+                    user_post_dict[post.getPostUser()] = user_post_dict[post.getPostUser()] + 1
+                else:
+                    user_post_dict[post.getPostUser()] = 1
+
+        print(user_post_dict)
+        return user_post_dict
+
+    def getPhotoRepliesDict(self, photo):
+        photo_reply_dict = {}
+
+        for post in self.posts_list:
+            if post.getPostPhoto() == photo:
+                photo_reply_dict[post.getPostPhoto()] = len(post.getPostReplies())
+
+        print(photo_reply_dict)
+        return photo_reply_dict
+
+    def getPhotoLikesDict(self, photo):
+        photo_likes_dict = {}
+
+        for post in self.posts_list:
+            if post.getPostPhoto() == photo:
+                photo_likes_dict[post.getPostPhoto()] = post.getPostLikes()
+
+        print(photo_likes_dict)
+        return photo_likes_dict
+
+    def getPhotoDislikesDict(self, photo):
+        photo_dislikes_dict = {}
+
+        for post in self.posts_list:
+            if post.getPostPhoto() == photo:
+                photo_dislikes_dict[post.getPostPhoto()] = post.getPostDislikes()
+
+        print(photo_dislikes_dict)
+        return photo_dislikes_dict
+
