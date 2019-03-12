@@ -1,7 +1,8 @@
 from flask import jsonify
-from dao.post import postDao
+from dao.posts import postsDAO
+from dao.chats import chatsDAO
 
-
+class postHandler:
     def build_post_dict(self, row):
         result = {}
         result['pid'] = row[0]
@@ -9,9 +10,8 @@ from dao.post import postDao
         result['p_photo'] = row[2]
         result['p_message'] = row[3]
         result['p_date'] = row[4]
-        result['p_likes'] = row[5]
-        result['p_dislikes'] = row[6]
-        result['p_replies'] = row[7]
+
+
         return result
 
     def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
@@ -24,9 +24,11 @@ from dao.post import postDao
         result['p_dislikes'] = p_dislikes
         result['p_replies'] = p_replies
         result['p_chat'] = p_chat
+
+
         return result
 
-    def getAllPost(self):
+    def getAllPosts(self):
         dao = postsDAO()
         posts_list = dao.getAllPosts()
         result_list = []
@@ -44,6 +46,16 @@ from dao.post import postDao
         else:
             post = self.build_user_dict(row)
             return jsonify(Post=post)
+
+    def getAllPostsFromChat(self, cid):
+        dao = chatsDAO()
+        row = dao.getPostsFromChat(cid)
+
+        if not row:
+            return jsonify(Error = "Chat has no posts"), 404
+        else:
+            post = self.build_post_dict(row)
+            return jsonify(ChatPosts = post)
 
     def searchPosts(self, args):
         p_chat = args.get("p_chat")
@@ -80,26 +92,15 @@ from dao.post import postDao
             p_replies = form['p_replies']
 
         if pid and p_user and p_photo and p_message and p_likes and p_dislikes and p_date and p_replies:
-            dao = usersDAO()
-            pid = dao.insert(uname, username, password, uemail)
-            result = self.build_user_attributes(pid, uname, username, password, uemail)
+            dao = postsDAO()
+            pid = dao.insert(pid, p_user, p_photo, p_message,p_likes,p_dislikes,p_date,p_replies)
+            result = self.build_user_attributes(pid, p_user, p_photo, p_message, p_likes,p_dislikes,p_date,p_replies)
             return jsonify(User=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
 
-     def insertUserJson(self, json):
-        uname = json['uname']
-        username = json['username']
-        password = json['password']
-        uemail = json['uemail']
-        if uname and username and password and uemail:
-            dao = userDAO()
-            uid = dao.insert(uname, username, password, uemail)
-            result = self.build_user_attributes(uid, uname, username, password, uemail)
-            return jsonify(User=result), 201
-        else:
-            return jsonify(Error="Unexpected attributes in post request"), 400
+
 
 
     def deletePost(self, pid):
@@ -109,3 +110,4 @@ from dao.post import postDao
         else:
             dao.delete(pid)
             return jsonify(DeleteStatus="OK"), 200
+

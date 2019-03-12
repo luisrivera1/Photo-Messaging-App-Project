@@ -1,23 +1,45 @@
-class Chat:
+from dao.users import usersDAO
 
-    def __init__(self,cid, cname, cmembers,cadmin):
+class Chat:
+    def __init__(self, cid, cname, cadmin):
+        dao = usersDAO()
+
         self.cid = cid
         self.cname = cname
-        self.cmembers = cmembers
+        self.cmembers = []
+
+        self.cmembers.append(dao.getUsersByUsernamev2(cadmin))
+
+        self.postlist = []
+
         self.cadmin = cadmin
 
-    def getcId(self):
+    def getId(self):
         return self.cid
 
-    def getcName (self):
-        return self.name
+    def getName(self):
+        return self.cname
 
-    def getcMembers (self):
-        return self.members
+    def getMembers(self):
+        return self.cmembers
 
-    def getcAdmin(self):
+    def addToChatMembers(self, member):
+        self.cmembers.append(member)
+
+    def removeChatMember(self, member):
+        self.cmembers.remove(member)
+
+    def getAdmin(self):
         return self.cadmin
 
+    def getPosts(self):
+        return self.postlist
+
+    def addPost(self, post):
+        temp = []
+        for attribute, value in vars(post).items():
+            temp.append(value)
+        self.postlist.append(temp)
     
 
 
