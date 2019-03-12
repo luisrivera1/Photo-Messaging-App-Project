@@ -120,52 +120,5 @@ def getAllStats(param):
             else:
                 return statHandler().getStatByChoice(request.args.to_dict(), param)
 
-
-
-
-
-
-
-
-
-
-
-
-#
-# @app.route('/PartApp/parts/<int:pid>/suppliers')
-# def getSuppliersByPartId(pid):
-#     return PartHandler().getSuppliersByPartId(pid)
-#
-# @app.route('/PartApp/suppliers', methods=['GET', 'POST'])
-# def getAllSuppliers():
-#     if request.method == 'POST':
-#         return SupplierHandler().insertSupplier(request.form)
-#     else :
-#         if not request.args:
-#             return SupplierHandler().getAllSuppliers()
-#         else:
-#             return SupplierHandler().searchSuppliers(request.args)
-#
-# @app.route('/PartApp/suppliers/<int:sid>',
-#            methods=['GET', 'PUT', 'DELETE'])
-# def getSupplierById(sid):
-#     if request.method == 'GET':
-#         return SupplierHandler().getSupplierById(sid)
-#     elif request.method == 'PUT':
-#         pass
-#     elif request.method == 'DELETE':
-#         pass
-#     else:
-#         return jsonify(Error = "Method not allowed"), 405
-#
-#
-# @app.route('/PartApp/suppliers/<int:sid>/parts')
-# def getPartsBySuplierId(sid):
-#     return SupplierHandler().getPartsBySupplierId(sid)
-#
-# @app.route('/PartApp/parts/countbypartid')
-# def getCountByPartId():
-#     return PartHandler().getCountByPartId()
-
 if __name__ == '__main__':
     app.run()
