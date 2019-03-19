@@ -20,9 +20,11 @@ app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
 
+
 @app.route('/')
 def greeting():
-    return 'Hello, this is the parts DB App!'
+    return 'Hello, this is the InstaWHAT DB App!'
+
 
 @app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
 def getAllUsers():
@@ -38,6 +40,7 @@ def getAllUsers():
         else:
             return Handler().searchUsers(request.json)
 
+
 @app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
 def getUserById(uid):
     print(uid)
@@ -49,6 +52,7 @@ def getUserById(uid):
         return Handler().deleteUser(uid)
     else:
         return jsonify(Error="Method not allowed."), 405
+
 
 @app.route('/PhotoMsgApp/chats', methods=['GET', 'POST'])
 def getAllChats():
@@ -65,29 +69,42 @@ def getAllChats():
             return chatHandler().searchChats(request.json.to_dict())
 
 
-
-@app.route('/PhotoMsgApp/login', methods = ['GET'])
+@app.route('/PhotoMsgApp/login', methods=['GET'])
 def validate_login():
     if request.method == 'GET':
         return Handler().validate_login(request.args.to_dict())
 
 
-@app.route('/PhotoMsgApp/register', methods = ['PUT'])
+@app.route('/PhotoMsgApp/register', methods=['PUT'])
 def register_user():
     if request.method == 'PUT':
         return Handler().register_user(request.args.to_dict())
 
-@app.route('/PhotoMsgApp/posts', methods = ['GET'])
+
+@app.route('/PhotoMsgApp/posts', methods=['GET'])
 def getAllPosts():
     if request.method == 'GET':
         return postHandler().getAllPosts()
 
-@app.route('/PhotoMsgApp/chats/<int:cid>/posts', methods = ['GET'])
-def getAllPostsFromChat(cid):
+#  http://127.0.0.1:5000/PhotoMsgApp/postsFromChat?cid=1
+@app.route('/PhotoMsgApp/postsFromChat', methods=['GET'])
+def getAllPostsFromChat():
     if request.method == 'GET':
-        return postHandler().getAllPostsFromChat(cid)
+        if not request.args:
+            return "You need to specify the CHAT ID for which to GET posts."
+        return postHandler().getAllPostsFromChat(request.args.to_dict())
 
-
+@app.route('/PhotoMsgApp/users/contacts/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
+def getContactById(uid):
+    print(uid)
+    if request.method == 'GET':
+        return Handler().getContactsById(uid)
+    elif request.method == 'PUT':
+        return Handler().updateContactList(uid, request.json)
+    elif request.method == 'DELETE':  # NOT YET!!!
+        return Handler().deleteContact(uid, request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 '''
 La ruta tiene dos opciones:
   Si el parametro es una fecha(con el formato MM-DD-YYYY),
@@ -105,7 +122,8 @@ La ruta tiene dos opciones:
            /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
 '''
 
-@app.route('/PhotoMsgApp/stats/<param>', methods = ['GET'])
+
+@app.route('/PhotoMsgApp/stats/<param>', methods=['GET'])
 def getAllStats(param):
     if request.method == 'GET':
         if not request.args:
@@ -119,6 +137,7 @@ def getAllStats(param):
                 return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
             else:
                 return statHandler().getStatByChoice(request.args.to_dict(), param)
+
 
 if __name__ == '__main__':
     app.run()

@@ -106,12 +106,25 @@ class chatsDAO:
                         chat.removeChatMember(member)
         return result
 
-    def getPostsFromChat(self, cid):
+    def getPostsFromChat(self, cid):  # returns an array of posts
         result = []
         for chat in self.chat_list:
             if chat.getId() == cid:
                 for post in chat.getPosts():
-                    for attribute, value in vars(post).items():
-                        result.append(value)
+                    # for attribute, value in vars(post).items(): # THIS GIVES AN ARRAY NOT A DICT
+                    result.append(post)
                 print(result)
         return result
+
+    def getChatMemberById(self, cid, mem_id):
+        result = []
+        for chat in self.chat_list:
+            if chat.getId() == cid:
+                for member in chat.getMembers():
+                    if member.getId() == mem_id:
+                        for attribute, value in vars(member).items():
+                            result.append(value)
+        return result
+
+    def insertPostIntoChat(self, cid, post):
+        self.getChatById2(cid).addPost(post)

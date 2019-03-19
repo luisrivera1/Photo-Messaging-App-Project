@@ -10,8 +10,6 @@ class postHandler:
         result['p_photo'] = row[2]
         result['p_message'] = row[3]
         result['p_date'] = row[4]
-
-
         return result
 
     def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
@@ -47,15 +45,19 @@ class postHandler:
             post = self.build_user_dict(row)
             return jsonify(Post=post)
 
-    def getAllPostsFromChat(self, cid):
+    def getAllPostsFromChat(self, args):
+        cid = int(args['cid'])
+        print(cid)
         dao = chatsDAO()
-        row = dao.getPostsFromChat(cid)
-
-        if not row:
-            return jsonify(Error = "Chat has no posts"), 404
+        posts_list = dao.getPostsFromChat(cid)
+        result_list = []
+        if not posts_list:
+            return jsonify(Error="Chat has no posts"), 404
         else:
-            post = self.build_post_dict(row)
-            return jsonify(ChatPosts = post)
+            for row in posts_list:
+                post = self.build_post_dict(row)
+                result_list.append(post)
+        return jsonify(ChatPosts=result_list)
 
     def searchPosts(self, args):
         p_chat = args.get("p_chat")
