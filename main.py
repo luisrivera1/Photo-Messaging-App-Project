@@ -91,7 +91,7 @@ def getAllPosts():
 def getAllPostsFromChat():
     if request.method == 'GET':
         if not request.args:
-            return "You need to specify the CHAT ID for which to GET posts."
+            return "You need to specify the CHAT ID from which to GET posts."
         return postHandler().getAllPostsFromChat(request.args.to_dict())
 
 @app.route('/PhotoMsgApp/users/contacts/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
