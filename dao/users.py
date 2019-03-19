@@ -13,6 +13,10 @@ class usersDAO:
         Walter = User(4, "Walter", "White", "walter.white1@upr.edu", "heisenberg", "crystalmeth")
 
         self.user_list = [Carlos, Ramon, Luis, Walter]
+        self.insertContact(2, "Juan", "delPueblo", "juan.delpueblo@gmail.com")
+        self.insertContact(2, "Juan", "delOTROPueblo", "juan.deOTROpueblo@gmail.com")
+        self.insertContact(1, "Yo", "Tu", "yoSoloSoyTu@gmail.com")
+
 
     def getAllUsers(self):
         result = []
@@ -108,3 +112,20 @@ class usersDAO:
             if chat.getId() == cid:
                 chat.addPost(postToAdd)
 
+    def addToContactList(self, uid, user):
+        self.getUserById2(uid).appendToContactList(user)
+
+    def getContactListFromUserId(self, uid):  # returns a contact_list (array of contacts)
+        return self.getUserById2(uid).getContactList()
+
+    def deleteUserFromContactList(self, uid, user):  # removes user from contact list of user with uid
+        self.getUserById2(uid).deleteFromContactList(user)
+
+    def insertContact(self, uid, ufirstname, ulastname, uemail):  # *****
+        temp = [ufirstname, ulastname, uemail]
+        self.getUserById2(uid).appendToContactList(temp)
+
+    def getUserById2(self, uid):  # receives uid and returns a user
+        for user in self.user_list:
+            if user.getId() == uid:
+                return user

@@ -259,3 +259,75 @@ class Handler:
                 return jsonify(REGISTER = "UNSUCCESSFUL REGISTER"),401
         else:
             return jsonify(REGISTER = "USER " + uusername + " REGISTERED"),200
+
+    def build_contact_dict(self, row):
+        result = {}
+        result['ufirstname'] = row[0]
+        result['ulastname'] = row[1]
+        result['uemail'] = row[2]
+        return result
+
+    def getContactsById(self, args):
+        uid = int(args['uid'])
+        print(uid)
+        dao = usersDAO()
+        contact_list = dao.getContactListFromUserId(uid)
+        print("THIS IS CONTACT LIST")
+        print(contact_list)
+        result_list = []
+        if not contact_list:
+            return jsonify(Error="User Not Found"), 404
+        else:
+            for row in contact_list:
+                user = self.build_contact_dict(row)
+                result_list.append(user)
+            return jsonify(ContactList=result_list)
+
+    def updateContactList(self, args, form):
+        uid = int(args['uid'])
+        print(uid)
+        dao = usersDAO()
+        if not dao.getUserById2(uid):
+            return jsonify(Error="User not found."), 404
+        else:
+            if len(form) != 3:
+                return jsonify(Error="Malformed update request"), 400
+            else:
+                ufirstname = form['ufirstname']
+                ulastname = form['ulastname']
+                uemail = form['uemail']
+                if ufirstname and ulastname and uemail:
+                    dao.insertContact(uid, ufirstname, ulastname, uemail)
+                    result = self.build_contact_attributes(ufirstname, ulastname, uemail)
+                    return jsonify(User=result), 200
+                else:
+                    return jsonify(Error="Unexpected attributes in update request"), 400
+
+    def deleteContact(self, args, form):
+        uid = int(args['uid'])
+        print(uid)
+        dao = usersDAO()
+        if not dao.getUserById2(uid):  # Checks if user is valid.
+            return jsonify(Error="User not found"), 404
+        if len(form) != 3:
+            return jsonify(Error="Malformed update request"), 400
+        else:
+            ufirstname = form['ufirstname']
+            ulastname = form['ulastname']
+            uemail = form['uemail']
+            if ufirstname and ulastname and uemail:
+                result = [ufirstname, ulastname, uemail]
+                try:
+                    dao.deleteUserFromContactList(uid, result)
+                    return jsonify(DeleteStatus="OK"), 200
+                except:
+                    return jsonify(Error="Contact not found."), 404
+            else:
+                return jsonify(Error="Malformed delete request"), 400
+
+    def build_contact_attributes(self, ufirstname, ulastname, uemail):
+        result = {}
+        result['ufirstname'] = ufirstname
+        result['ulastname'] = ulastname
+        result['uemail'] = uemail
+        return result

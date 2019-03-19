@@ -86,6 +86,7 @@ def getAllPosts():
     if request.method == 'GET':
         return postHandler().getAllPosts()
 
+
 #  http://127.0.0.1:5000/PhotoMsgApp/postsFromChat?cid=1
 @app.route('/PhotoMsgApp/postsFromChat', methods=['GET'])
 def getAllPostsFromChat():
@@ -94,17 +95,20 @@ def getAllPostsFromChat():
             return "You need to specify the CHAT ID from which to GET posts."
         return postHandler().getAllPostsFromChat(request.args.to_dict())
 
-@app.route('/PhotoMsgApp/users/contacts/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
-def getContactById(uid):
-    print(uid)
+
+#  http://127.0.0.1:5000/PhotoMsgApp/contacts?uid=2
+@app.route('/PhotoMsgApp/contacts', methods=['GET', 'PUT', 'DELETE'])
+def getContactById():
     if request.method == 'GET':
-        return Handler().getContactsById(uid)
+        return Handler().getContactsById(request.args.to_dict())
     elif request.method == 'PUT':
-        return Handler().updateContactList(uid, request.json)
+        return Handler().updateContactList(request.args.to_dict(), request.json)
     elif request.method == 'DELETE':  # NOT YET!!!
-        return Handler().deleteContact(uid, request.json)
+        return Handler().deleteContact(request.args.to_dict(), request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
+
+
 '''
 La ruta tiene dos opciones:
   Si el parametro es una fecha(con el formato MM-DD-YYYY),
