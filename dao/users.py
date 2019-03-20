@@ -111,14 +111,14 @@ class usersDAO:
         self.user_list.append(self.createUser(uid,ufirstname, ulastname, uemail, uusername, upassword))
         return True
 
-    def postPhotoAndMsgToChat(self, cid, photo, msg):
-        dao = chatsDAO()
-
-        postToAdd = Post(4, "clopez36", photo, "new post added", msg)
-
-        for chat in dao.getChatList():
-            if chat.getId() == cid:
-                chat.addPost(postToAdd)
+    # def postPhotoAndMsgToChat(self, cid, photo, msg):
+    #     dao = chatsDAO()
+    #
+    #     postToAdd = Post(4, "clopez36", photo, "new post added", msg)
+    #
+    #     for chat in dao.getChatList():
+    #         if chat.getId() == cid:
+    #             chat.addPost(postToAdd)
 
     def addToContactList(self, uid, user):
         self.getUserById2(uid).appendToContactList(user)

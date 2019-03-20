@@ -53,7 +53,7 @@ def getUserById(uid):
     else:
         return jsonify(Error="Method not allowed."), 405
 
-
+#3 , 8 y 9
 @app.route('/PhotoMsgApp/chats', methods=['GET', 'POST', 'DELETE'])
 def getAllChats():
     if request.method == 'POST':
@@ -69,12 +69,12 @@ def getAllChats():
         if not request.args:
             return chatHandler().getAllChats()
         else:
-            return chatHandler().searchChats(request.json.to_dict())
+            return chatHandler().searchChats(request.args.to_dict())
 
     elif request.method == "DELETE":
         return chatHandler().deleteChat(request.args.to_dict())
 
-
+#6
 @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
 def modifyContacts(cid):
     print(cid)
@@ -86,19 +86,19 @@ def modifyContacts(cid):
         else:
             return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
 
-
+#1
 @app.route('/PhotoMsgApp/login', methods=['GET'])
 def validate_login():
     if request.method == 'GET':
         return Handler().validate_login(request.json)
 
-
+#2
 @app.route('/PhotoMsgApp/register', methods=['POST'])
 def register_user():
     if request.method == 'POST':
         return Handler().register_user(request.json)
 
-
+#10, 11 y 12
 @app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
 def getAllPosts():
     if request.method == 'GET':
@@ -110,7 +110,7 @@ def getAllPosts():
     if request.method == 'PUT':
         return postHandler().updateLikeDislike(request.args.to_dict())
 
-
+#13
 @app.route('/PhotoMsgApp/posts/reply', methods=['PUT'])
 def updatePostReplies():
     if request.method == 'PUT':

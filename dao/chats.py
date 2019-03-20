@@ -14,12 +14,10 @@ class chatsDAO:
 
         # add chat members
         chat1 = Chat(1, "DBChat1", "clopez36")
-        chat1.addToChatMembers(Carlos.getUsername())
         chat1.addToChatMembers(Luis.getUsername())
         chat2 = Chat(2, "DBChat2", "ramoncin")
         chat2.addToChatMembers(Carlos.getUsername())
         chat2.addToChatMembers(Luis.getUsername())
-        chat2.addToChatMembers(Ramon.getUsername())
 
         # add posts
 
@@ -63,7 +61,8 @@ class chatsDAO:
         result = []
         for chat in self.chat_list:
             if chat.getName() == cname:
-                result.append(chat)
+                for attribute, value in vars(chat).items():
+                    result.append(value)
         return result
 
     def getChatMemberById(self, cid, mem_id):

@@ -8,16 +8,18 @@ class chatHandler:
         result = {}
         result['cid'] = row[0]
         result['cname'] = row[1]
-        result['cadmin'] = row[2]
-
-      #  dict = {'cid': row[0], 'cname': row[1], 'cmembers': row[2], 'cadmin':row[3]}
+        result['cmembers'] = row[2]
+        result['postlist'] = row[3]
+        result['cadmin'] = row[4]
 
         return result
 
-    def build_chats_attributes(self, cid, cname, cadmin):
+    def build_chats_attributes(self, cid, cname, cmembers, postlist, cadmin):
         result = {}
         result['cid'] = cid
         result['cname'] = cname
+        result['cmembers'] = cmembers
+        result['postlist'] = postlist
         result['cadmin'] = cadmin
 
         return result
@@ -26,7 +28,10 @@ class chatHandler:
         dao = chatsDAO()
         chats_list = dao.getAllChats()
         result_list = []
+
+        print(chats_list)
         for row in chats_list:
+            print(row)
             result = self.build_chats_dict(row)
             result_list.append(result)
         return jsonify(Chats=result_list)
@@ -56,14 +61,13 @@ class chatHandler:
         dao = chatsDAO()
 
         if (len(args) == 1) and cname:
-            chats_list = dao.getChatsByName(cname)
+            chats_list = dao.getChatByChatName(cname)
 
         else:
             return jsonify(Error = "Malformed query string"), 400
-        result_list = []
-        for row in chats_list:
-            result = self.build_chats_dict(row)
-            result_list.append(result)
+
+        print(chats_list)
+        result_list = self.build_chats_dict(chats_list)
         return jsonify(Chats=result_list)
 
     def insertChat(self, form):

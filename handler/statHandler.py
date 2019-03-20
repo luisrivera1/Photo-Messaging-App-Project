@@ -8,8 +8,11 @@ class statHandler:
 
     def getMostActiveUsers(self, date):
         user_dict = self.post_dao.getUsersDictByDay(date)
+        print(user_dict)
 
         sorted_dict = sorted(user_dict.items(), key = itemgetter(1), reverse = True)
+
+        print(sorted_dict)
 
         mostActiveUsers = [sorted_dict[0][0], sorted_dict[1][0], sorted_dict[2][0]]
 
