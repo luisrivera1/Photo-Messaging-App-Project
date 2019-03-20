@@ -27,13 +27,15 @@ class Handler:
         result['p_replies'] = row[7]
         return result
 
-    def build_user_attributes(self, pid, uname, username, password, uemail):
+    def build_user_attributes(self, uid, ufirstname,ulastname, uemail, uusername, upassword):
         result = {}
-        result['uid'] = pid
-        result['uname'] = uname
-        result['username'] = username
-        result['password'] = password
+        result['uid'] = uid
+        result['ufirstname'] = ufirstname
+        result['ulastname'] = ulastname
         result['uemail'] = uemail
+        result['uusername'] = uusername
+        result['upassword'] = upassword
+
         return result
 
     def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
