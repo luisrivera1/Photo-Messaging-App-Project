@@ -102,7 +102,10 @@ def register_user():
 @app.route('/PhotoMsgApp/posts', methods=['GET'])
 def getAllPosts():
     if request.method == 'GET':
-        return postHandler().getAllPosts()
+        if not request.args:
+            return postHandler().getAllPosts()
+        else:
+            return postHandler().getPostById(request.args.to_dict())
 
 
 #  http://127.0.0.1:5000/PhotoMsgApp/postsFromChat?cid=1
@@ -112,7 +115,6 @@ def getAllPostsFromChat():
         if not request.args:
             return "You need to specify the CHAT ID from which to GET posts."
         return postHandler().getAllPostsFromChat(request.args.to_dict())
-
 
 
 #  http://127.0.0.1:5000/PhotoMsgApp/contacts?uid=2

@@ -35,14 +35,14 @@ class postHandler:
             result_list.append(result)
         return jsonify(Posts=result_list)
 
-
-    def getPostById(self, pid):
+    def getPostById(self, args):
+        pid = int(args['pid'])
         dao = postsDAO()
         row = dao.getPostById(pid)
         if not row:
             return jsonify(Error="Post Not Found"), 404
         else:
-            post = self.build_user_dict(row)
+            post = self.build_post_dict(row)
             return jsonify(Post=post)
 
     def getAllPostsFromChat(self, args):
