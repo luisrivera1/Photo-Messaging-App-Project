@@ -219,21 +219,21 @@ class Handler:
                     result = self.build_part_attributes(uid, uname, username, password, uemail)
                     return jsonify(User=result), 200
                 else:
-                    return jsonify(Error="Unexpected attributes in updat e request"), 400
+                    return jsonify(Error="Unexpected attributes in update request"), 400
 
-    def validate_login(self, args):
+    def validate_login(self, form):
         dao = usersDAO()
 
         uusername = None
         password = None
 
         try:
-            uusername = args['uusername']
+            uusername = form['uusername']
         except:
             pass
 
         try:
-            password = args['upassword']
+            password = form['upassword']
         except:
             pass
 
@@ -242,23 +242,27 @@ class Handler:
         if not row:
             return jsonify(LOGIN = "INVALID LOGIN. INVALID CREDENTIALS"),401
         else:
-             return jsonify(LOGIN = "LOGIN VALIDATED. USER " +  uusername + " SUCCESSFULLY LOGGED IN."),200
+            return jsonify(LOGIN = "LOGIN VALIDATED. USER " + uusername + " SUCCESSFULLY LOGGED IN."),200
 
-    def register_user(self, args):
-        print(args)
-        uid = int(args['uid'])
-        ufirstname = args['ufirstname']
-        ulastname = args['ulastname']
-        uemail = args['uemail']
-        uusername = args['uusername']
-        upassword = args['upassword']
-
+    def register_user(self, form):
         dao = usersDAO()
-        row = dao.register_user(uid,ufirstname, ulastname, uemail, uusername, upassword)
-        if not row:
-                return jsonify(REGISTER = "UNSUCCESSFUL REGISTER"),401
+        uid = form['uid']
+        if dao.getUserById2(uid):
+            return jsonify(Error="User not found."), 404
+        ufirstname = form['ufirstname']
+        ulastname = form['ulastname']
+        uemail = form['uemail']
+        uusername = form['uusername']
+        upassword = form['upassword']
+        if uid and ufirstname and ulastname and uemail and uusername and upassword:
+            row = dao.register_user(uid, ufirstname, ulastname, uemail, uusername, upassword)
+            if not row:
+                return jsonify(REGISTER="UNSUCCESSFUL REGISTER"), 401
+            else:
+                return jsonify(REGISTER="USER " + uusername + " REGISTERED"), 200
         else:
-            return jsonify(REGISTER = "USER " + uusername + " REGISTERED"),200
+            return jsonify(Error="Unexpected attributes in update request"), 400
+
 
     def build_contact_dict(self, row):
         result = {}
@@ -283,7 +287,7 @@ class Handler:
                 result_list.append(user)
             return jsonify(ContactList=result_list)
 
-    def updateContactList(self, args, form):
+    def addToContactList(self, args, form):
         uid = int(args['uid'])
         print(uid)
         dao = usersDAO()

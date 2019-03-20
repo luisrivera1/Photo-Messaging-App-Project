@@ -54,31 +54,49 @@ def getUserById(uid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/chats', methods=['GET', 'POST'])
+@app.route('/PhotoMsgApp/chats', methods=['GET', 'POST', 'DELETE'])
 def getAllChats():
     if request.method == 'POST':
-        # cambie a request.json pq el form no estaba bregando
-        # parece q estaba poseido por satanas ...
-        # DEBUG a ver q trae el json q manda el cliente con la nueva pieza
-        print("REQUEST: ", request.json)
-        return chatHandler().insertChat(request.json)
-    else:
+        if not request.args:
+            # cambie a request.json pq el form no estaba bregando
+            # parece q estaba poseido por satanas ...
+            # DEBUG a ver q trae el json q manda el cliente con la nueva pieza
+            print("REQUEST: ", request.json)
+            return chatHandler().insertChat(request.json)
+        else:
+            return chatHandler().addPostToChat(request.args.to_dict(), request.json)
+    elif request.method == "GET":
         if not request.args:
             return chatHandler().getAllChats()
         else:
             return chatHandler().searchChats(request.json.to_dict())
 
+    elif request.method == "DELETE":
+        return chatHandler().deleteChat(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
+def modifyContacts(cid):
+    print(cid)
+    if request.method == "POST":
+        return chatHandler().addContactToChat(cid, request.json)
+    elif request.method == "DELETE":
+        if not request.args:
+            return "Invalid operation!"
+        else:
+            return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
+
 
 @app.route('/PhotoMsgApp/login', methods=['GET'])
 def validate_login():
     if request.method == 'GET':
-        return Handler().validate_login(request.args.to_dict())
+        return Handler().validate_login(request.json)
 
 
-@app.route('/PhotoMsgApp/register', methods=['PUT'])
+@app.route('/PhotoMsgApp/register', methods=['POST'])
 def register_user():
-    if request.method == 'PUT':
-        return Handler().register_user(request.args.to_dict())
+    if request.method == 'POST':
+        return Handler().register_user(request.json)
 
 
 @app.route('/PhotoMsgApp/posts', methods=['GET'])
@@ -88,7 +106,7 @@ def getAllPosts():
 
 
 #  http://127.0.0.1:5000/PhotoMsgApp/postsFromChat?cid=1
-@app.route('/PhotoMsgApp/postsFromChat', methods=['GET'])
+@app.route('/PhotoMsgApp/postsFromChat', methods=['GET', 'POST'])
 def getAllPostsFromChat():
     if request.method == 'GET':
         if not request.args:
@@ -96,13 +114,14 @@ def getAllPostsFromChat():
         return postHandler().getAllPostsFromChat(request.args.to_dict())
 
 
+
 #  http://127.0.0.1:5000/PhotoMsgApp/contacts?uid=2
-@app.route('/PhotoMsgApp/contacts', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/PhotoMsgApp/contacts', methods=['GET', 'POST', 'DELETE'])
 def getContactById():
     if request.method == 'GET':
         return Handler().getContactsById(request.args.to_dict())
-    elif request.method == 'PUT':
-        return Handler().updateContactList(request.args.to_dict(), request.json)
+    elif request.method == 'POST':
+        return Handler().addToContactList(request.args.to_dict(), request.json)
     elif request.method == 'DELETE':  # NOT YET!!!
         return Handler().deleteContact(request.args.to_dict(), request.json)
     else:

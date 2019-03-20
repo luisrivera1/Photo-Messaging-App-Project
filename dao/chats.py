@@ -14,12 +14,12 @@ class chatsDAO:
 
         # add chat members
         chat1 = Chat(1, "DBChat1", "clopez36")
-        chat1.addToChatMembers(Carlos)
-        chat1.addToChatMembers(Luis)
+        chat1.addToChatMembers(Carlos.getUsername())
+        chat1.addToChatMembers(Luis.getUsername())
         chat2 = Chat(2, "DBChat2", "ramoncin")
-        chat2.addToChatMembers(Carlos)
-        chat2.addToChatMembers(Luis)
-        chat2.addToChatMembers(Ramon)
+        chat2.addToChatMembers(Carlos.getUsername())
+        chat2.addToChatMembers(Luis.getUsername())
+        chat2.addToChatMembers(Ramon.getUsername())
 
         # add posts
 
@@ -48,7 +48,7 @@ class chatsDAO:
     def getChatById(self, cid):
         result = []
         for chat in self.chat_list:
-            if chat.getID() == cid:
+            if chat.getId() == cid:
                 result.append(chat)
             return result
 
@@ -77,17 +77,17 @@ class chatsDAO:
         return result
 
 
-    def insert(self, cid, cname, cmembers, cadmin):
-        temp = Chat(cid, cname, cmembers, cadmin)
+    def insert(self, cid, cname, cadmin):
+        temp = Chat(cid, cname, cadmin)
 
         self.chat_list.append(temp)
         return cid
 
-    def delete(self, cid):
+    def delete(self, cid, cadmin):
         for chat in self.chat_list:
-            if chat.getId() == cid:
-                self.chat_list.remove(chat)
-        return cid
+            if chat.getId() == cid and chat.getAdmin() == cadmin:
+                return True
+        return False
 
     def addMemberToChat(self, cid, user):
         for chat in self.chat_list:
@@ -95,16 +95,16 @@ class chatsDAO:
                 chat.getMembers().append(user)
 
 
-    def deleteUserFromChat(self, cid, mem_id):
-        result = []
+
+
+    def deleteUserFromChat(self, cid, username):
         for chat in self.chat_list:
             if chat.getId() == cid:
                 for member in chat.getMembers():
-                    if member.getId() == mem_id:
-                        for attribute, value in vars(member).items():
-                            result.append(value)
-                        chat.removeChatMember(member)
-        return result
+                    print(chat.getMembers())
+                    if member == username:
+                       return member
+        return None
 
     def getPostsFromChat(self, cid):  # returns an array of posts
         result = []

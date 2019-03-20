@@ -6,9 +6,7 @@ class Chat:
 
         self.cid = cid
         self.cname = cname
-        self.cmembers = []
-
-        self.cmembers.append(dao.getUsersByUsernamev2(cadmin))
+        self.cmembers = [cadmin]
 
         self.postlist = []
 

@@ -1,5 +1,6 @@
 from flask import jsonify
 from dao.chats import chatsDAO
+from dao.users import usersDAO
 
 
 class chatHandler:
@@ -7,18 +8,16 @@ class chatHandler:
         result = {}
         result['cid'] = row[0]
         result['cname'] = row[1]
-        result['cmembers'] = row[2]
-        result['cadmin'] = row[3]
+        result['cadmin'] = row[2]
 
       #  dict = {'cid': row[0], 'cname': row[1], 'cmembers': row[2], 'cadmin':row[3]}
 
         return result
 
-    def build_chats_attributes(self, cid, cname, cmembers, cadmin):
+    def build_chats_attributes(self, cid, cname, cadmin):
         result = {}
         result['cid'] = cid
         result['cname'] = cname
-        result['cmembers'] = cmembers
         result['cadmin'] = cadmin
 
         return result
@@ -67,21 +66,19 @@ class chatHandler:
             result_list.append(result)
         return jsonify(Chats=result_list)
 
-
     def insertChat(self, form):
             print("form: ", form)
-            if len(form) != 4:
+            if len(form) != 3:
                 return jsonify(Error="Malformed post request"), 400
             else:
                 cid = form['cid']
                 cname = form['cname']
-                cmembers = form['cmembers']
                 cadmin = form['cadmin']
 
-                if cid and cname and cmembers and cadmin :
+                if cid and cname and cadmin:
                     dao = chatsDAO()
-                    cid = dao.insert(cid, cname, cmembers, cadmin)
-                    result = self.build_user_attributes(cid, cname, cmembers, cadmin)
+                    cid = dao.insert(cid, cname, cadmin)
+                    result = self.build_chats_attributes(cid, cname, cadmin)
                     return jsonify(Chat=result), 201
                 else:
                     return jsonify(Error="Unexpected attributes in post request"), 400
@@ -89,36 +86,39 @@ class chatHandler:
     def insertChatJson(self, json):
         cid= json['cid']
         cname = json['cname']
-        cmembers = json['cmembers']
         cadmin = json['cadmin']
-        if cid and cname and cmembers and cadmin:
+        if cid and cname and cadmin:
             dao = chatsDAO()
-            cid = dao.insert(cid, cname, cmembers, cadmin)
-            result = self.build_user_attributes(cid, cname, cmembers, cadmin)
+            cid = dao.insert(cid, cname, cadmin)
+            result = self.build_chats_attributes(cid, cname, cadmin)
             return jsonify(Chat=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
 
-    def deleteChat(self, cid):
+    def deleteChat(self, args):
+        cid = int(args['cid'])
+        cadmin = args['cadmin']
         dao = chatsDAO()
         if not dao.getChatById(cid):
-            return jsonify(Error="Post not found."), 404
+            return jsonify(Error="Chat not found."), 404
         else:
-            dao.delete(cid)
-            return jsonify(DeleteStatus="OK"), 200
+            if not dao.delete(cid, cadmin):
+                return jsonify(Error = "User is not admin.")
+            else:
+                return jsonify(DeleteStatus = "Chat " + str(cid) + " deleted."), 200
 
 
-    def deleteUserFromChat(self, cid, user_id): # cuser1  is the admin
+    def deleteUserFromChat(self, cid, args): # cuser1  is the admin
         dao = chatsDAO()
-        row = dao.deleteUserFromChat(cid, user_id)
+        username = args['uusername']
+        row = dao.deleteUserFromChat(cid, username)
         print(row)
         if not row:
             return jsonify(Error="Member Not Found"), 404
 
         else:
-            member = self.build_chats_dict(row)
-            return jsonify(User = member)
+            return jsonify(User = "Deleted user " + row)
 
         print("Invalid operation. Removal not allowed.")
 
@@ -137,9 +137,50 @@ class chatHandler:
     #                 return jsonify(Error="User Not Found"), 404
     #     print("Invalid operation. Removal not allowed.")
 
+    def addContactToChat(self, cid, form):
+        print(cid)
+        dao = chatsDAO()
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat not found."), 404
+        else:
+            if len(form) != 3:
+                return jsonify(Error="Malformed update request"), 400
+            else:
+                ufirstname = form['ufirstname']
+                ulastname = form['ulastname']
+                uemail = form['uemail']
+                if ufirstname and ulastname and uemail:
+                    # dao.insertContactToChat(cid, ufirstname, ulastname, uemail)
+                    return jsonify(AddStatus="OK"), 200
+                else:
+                    return jsonify(Error="Unexpected attributes in update request"), 400
 
+    def addPostToChat(self, args, form):
+        cid = int(args['cid'])
+        dao = chatsDAO()
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat not found."), 404
+        else:
+            pid = form['pid']
+            puser = form['puser']
+            pphoto = form['pphoto']
+            pmessage = form['pmessage']
+            pdate = form['pdate']
+            plike = form['plike']
+            pdislikes = form['pdislikes']
+            if pid and puser and pphoto and pmessage and pdate and plike and pdislikes:
+                return jsonify(AddStatus="OK"), 200
+            else:
+                return jsonify(Error="Unexpected attributes in update request"), 400
 
-    def deleteUserFromChatJson(self,json):
-        cid = json['cid']
-        cuser1 = json['cuser1']
-        cuser2 = json['cuser2']
+    # def removeUserFromChat(self, cid, args):
+    #     dao = chatsDAO()
+    #     udao = userDAO()
+    #
+    #     uid = args['uid']
+    #
+    #     if not dao.getChatById(cid) or dao.get:
+    #         return jsonify(Error = "Chat not found"), 404
+    #
+    #     else:
+    #
