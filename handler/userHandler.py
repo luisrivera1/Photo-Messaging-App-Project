@@ -91,23 +91,33 @@ class Handler:
             return jsonify(Post=post)
 
     def searchUsers(self, args):
+        print("entro?")
         print(args)
-        username = args.get("uusername")
-        email = args.get("uemail")
+
+        username = None
+        email = None
+
+        try:
+            username = args["uusername"]
+        except:
+            pass
+        try:
+            email = args["uemail"]
+        except:
+            pass
         dao = usersDAO()
         users_list = []
         if (len(args) == 2) and username and email:
-            users_list = dao.getUserByUsersnameAndEmail(username, email)
+            users_list = dao.getUserByUsernameAndEmail(username, email)
         elif (len(args) == 1) and username:
-            users_list = dao.getUsersBy(username)
+            users_list = dao.getUsersByUsername(username)
+            print(users_list)
         elif (len(args) == 1) and email:
-            users_list = dao.getUsersBy(email)
+            users_list = dao.getUserByEmail(email)
         else:
             return jsonify(Error = "Malformed query string"), 400
-        result_list = []
-        for row in users_list:
-            result = self.build_user_dict(row)
-            result_list.append(result)
+
+        result_list = self.build_user_dict(users_list)
         return jsonify(Users=result_list)
 
     def searchPosts(self, args):

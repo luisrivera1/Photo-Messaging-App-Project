@@ -72,6 +72,14 @@ class usersDAO:
                     result.append(value)
         return result
 
+    def getUserByUsernameAndEmail(self, uusername, uemail):
+        result = []
+        for user in self.user_list:
+            if user.getEmail() == uemail and user.getUsername() == uusername:
+                for attribute, value in vars(user).items():
+                    result.append(value)
+        return result
+
     def insert(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
         temp = User(uid, ufirstname, ulastname, uemail, uusername, upassword)
         self.user_list.append(temp)

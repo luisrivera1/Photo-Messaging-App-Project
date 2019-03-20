@@ -38,7 +38,7 @@ def getAllUsers():
         if not request.args:
             return Handler().getAllUsers()
         else:
-            return Handler().searchUsers(request.json)
+            return Handler().searchUsers(request.args.to_dict())
 
 
 @app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
