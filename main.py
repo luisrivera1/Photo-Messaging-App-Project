@@ -99,21 +99,29 @@ def register_user():
         return Handler().register_user(request.json)
 
 
-@app.route('/PhotoMsgApp/posts', methods=['GET'])
+@app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
 def getAllPosts():
     if request.method == 'GET':
         if not request.args:
             return postHandler().getAllPosts()
         else:
             return postHandler().getPostById(request.args.to_dict())
+    # http://127.0.0.1:5000/PhotoMsgApp/posts?pid=1&operation=dislike
+    if request.method == 'PUT':
+        return postHandler().updateLikeDislike(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/posts/reply', methods=['PUT'])
+def updatePostReplies():
+    if request.method == 'PUT':
+        return postHandler().updatePostReplies(request.json)
 
 
 #  http://127.0.0.1:5000/PhotoMsgApp/postsFromChat?cid=1
-@app.route('/PhotoMsgApp/postsFromChat', methods=['GET', 'POST'])
+@app.route('/PhotoMsgApp/postsFromChat', methods=['GET'])
 def getAllPostsFromChat():
     if request.method == 'GET':
-        if not request.args:
-            return "You need to specify the CHAT ID from which to GET posts."
+        # "You need to specify the CHAT ID from which to GET posts."
         return postHandler().getAllPostsFromChat(request.args.to_dict())
 
 

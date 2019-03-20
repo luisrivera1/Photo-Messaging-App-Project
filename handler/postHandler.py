@@ -101,10 +101,6 @@ class postHandler:
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
-
-
-
-
     def deletePost(self, pid):
         dao = postsDAO()
         if not dao.getUserById(pid):
@@ -113,3 +109,30 @@ class postHandler:
             dao.delete(pid)
             return jsonify(DeleteStatus="OK"), 200
 
+    def updateLikeDislike(self, args):
+        pid = int(args['pid'])
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            operation = args['operation']
+            if operation == "like":
+                return jsonify(PostLikeStatus="Added Like to Post"), 200
+            elif operation == "dislike":
+                return jsonify(PostDislikeStatus="Added Dislike to Post"), 200
+        return jsonify(Error="Unexpected attributes in post request"), 400
+
+    def updatePostReplies(self, form):
+        if len(form) != 2:
+            return jsonify(Error="Malformed post request"), 400
+        else:
+            pid = form['pid']
+            preply = form['preply']
+
+            if pid and preply:
+                dao = postsDAO()
+                if not dao.getPostById(pid):
+                    return jsonify(Error="Post Not Found"), 404
+                else:
+                    return jsonify(PostReplyStatus="Added Reply: " + preply), 200
+        return jsonify(Error="Unexpected attributes in post reply request"), 400
