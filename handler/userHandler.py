@@ -214,21 +214,23 @@ class Handler:
             dao.delete(pid)
             return jsonify(DeleteStatus = "OK"), 200
 
-    def updateUser(self, uid, form):
+    def updateUser(self, uid, args):
         dao = usersDAO()
         if not dao.getUserById(uid):
             return jsonify(Error = "User not found."), 404
         else:
-            if len(form) != 4:
+            if len(args) != 5:
                 return jsonify(Error="Malformed update request"), 400
             else:
-                uname = form['uname']
-                username = form['username']
-                password = form['password']
-                uemail = form['uemail']
-                if uname and username and password and uemail:
-                    dao.update(uid, uname, username, password, uemail)
-                    result = self.build_part_attributes(uid, uname, username, password, uemail)
+                ufirstname = args['ufirstname']
+                ulastname = args['ulastname']
+                uuemail = args['uemail']
+                uusername = args['uusername']
+                upassword = args['upassword']
+
+                if ufirstname and ulastname and uuemail and uusername and upassword:
+                    dao.updateUser(uid, ufirstname, ulastname, uuemail, uusername, upassword)  # NEEDS TO BE IMPLEMENTED
+                    result = self.build_user_attributes(uid, ufirstname, ulastname, uuemail, uusername, upassword)
                     return jsonify(User=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400

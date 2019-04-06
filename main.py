@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from handler.userHandler import Handler
-from handler.chatHandler import chatHandler
 from handler.postHandler import postHandler
 from handler.statHandler import statHandler
 
@@ -29,16 +28,13 @@ def greeting():
 @app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
 def getAllUsers():
     if request.method == 'POST':
-        # cambie a request.json pq el form no estaba bregando
-        # parece q estaba poseido por satanas ...
-        # DEBUG a ver q trae el json q manda el cliente con la nueva pieza
         print("REQUEST: ", request.json)
         return Handler().insertUser(request.json)
     else:
         if not request.args:
             return Handler().getAllUsers()
         else:
-            return Handler().searchUsers(request.args.to_dict())
+            return Handler().searchUsers(request.args.to_dict())  # Is this even necessary?
 
 
 @app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
@@ -47,13 +43,13 @@ def getUserById(uid):
     if request.method == 'GET':
         return Handler().getUserById(uid)
     elif request.method == 'PUT':
-        return Handler().updateUser(uid, request.args)
+        return Handler().updateUser(uid, request.json)  # update needs to be implemented
     elif request.method == 'DELETE':
         return Handler().deleteUser(uid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
-#3 , 8 y 9
+
 @app.route('/PhotoMsgApp/chats', methods=['GET', 'POST', 'DELETE'])
 def getAllChats():
     if request.method == 'POST':
@@ -74,7 +70,7 @@ def getAllChats():
     elif request.method == "DELETE":
         return chatHandler().deleteChat(request.args.to_dict())
 
-#6
+
 @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
 def modifyContacts(cid):
     print(cid)
@@ -86,19 +82,19 @@ def modifyContacts(cid):
         else:
             return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
 
-#1
+
 @app.route('/PhotoMsgApp/login', methods=['GET'])
 def validate_login():
     if request.method == 'GET':
         return Handler().validate_login(request.json)
 
-#2
+
 @app.route('/PhotoMsgApp/register', methods=['POST'])
 def register_user():
     if request.method == 'POST':
         return Handler().register_user(request.json)
 
-#10, 11 y 12
+
 @app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
 def getAllPosts():
     if request.method == 'GET':
@@ -110,7 +106,7 @@ def getAllPosts():
     if request.method == 'PUT':
         return postHandler().updateLikeDislike(request.args.to_dict())
 
-#13
+
 @app.route('/PhotoMsgApp/posts/reply', methods=['PUT'])
 def updatePostReplies():
     if request.method == 'PUT':
