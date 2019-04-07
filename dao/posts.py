@@ -3,52 +3,25 @@ from dao.users import usersDAO
 from dao.chats import chatsDAO
 from Objects.User import User
 from Objects.Post import Post
+from config.dbconfig import pg_config
+import psycopg2
+
 
 class postsDAO:
     def __init__(self):
-        self.posts_list = []
-        firstPost = Post(1, "clopez36", "photo.jpg", "First POST!! #pollo #manzana", "02-24-2019")
-        secondPost = Post(2, "ramoncin", "picture.png", "Second POST!! #manzana", "02-24-2019")
-        thirdPost = Post(3, "clopez36", "newphoto.jpg", "Third Post! #nachosLoaded", "02-24-2019")
-        fourthPost = Post(4, "oLaMeLlAmOlUiS", "oranges.jpg", "PRUEBAAAA! #pollo", "02-24-2019")
-        fifthPost = Post(5, "ramoncin", "potato.jpg", "Que es esto? #kfc #manzana", "02-24-2019")
-        sixthPost = Post(6, "clopez36", "cafe.jpg", "I am the danger  #losPollosHermanos", "02-24-2019")
-        seventhPost = Post(7, "heisenberg", "pollo.png", "Los Pollos Hermanos #ElPanchoNoSeCompara", "02-24-2019")
-        eighthPost = Post(8, "oLaMeLlAmOlUiS", "whatever.jpg", "No importa!", "02-24-2019")
-
-
-        firstPost.addComment("Great photo!")
-        firstPost.addComment("Hey!")
-        for i in range(4):
-            firstPost.addLike()
-
-        firstPost.addDislike()
-
-        for i in range(4):
-            secondPost.addDislike()
-
-        thirdPost.addComment("First comment!!!")
-
-        seventhPost.addComment("Viva Walter!")
-        seventhPost.addComment("Damn it, Skyler")
-
-        for i in range(3):
-            seventhPost.addDislike()
-
-        seventhPost.addLike()
-
-        print(seventhPost.getPostLikes())
-
-        self.posts_list = [firstPost, secondPost, thirdPost, fourthPost, fifthPost, sixthPost, seventhPost, eighthPost]
-
+        connection_url = "dbname=%s user=%s host=%s password=%s" % (pg_config['dbname'],
+                                                                    pg_config['user'],
+                                                                    pg_config['host'],
+                                                                    pg_config['passwd'])
+        self.conn = psycopg2._connect(connection_url)
 
     def getAllPosts(self):
         result = []
-        for post in self.posts_list:
-            temp = []
-            for attribute, value in vars(post).items():
-                temp.append(value)
-            result.append(temp)
+        cursor = self.conn.cursor()
+        query = "select * from Post;"
+        cursor.execute(query)
+        for row in cursor:
+            result.append(row)
         return result
 
     def getPostById(self, pid):
@@ -59,7 +32,6 @@ class postsDAO:
                     result.append(value)
         return result
 
-
     def postPhotoAndMsgToChat(self, cid, photo, msg):
         dao = chatsDAO()
 
@@ -68,7 +40,6 @@ class postsDAO:
         for chat in dao.getChatList():
             if chat.getId() == cid:
                 chat.addPost(postToAdd)
-
 
     #Recently Added
     def getPostsFromUser(self, puser):

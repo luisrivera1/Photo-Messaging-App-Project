@@ -3,52 +3,36 @@ from config.dbconfig import pg_config  # from FOLDER.CLASSNAME import FUNCTIONNA
 from Objects.Chat import Chat
 from Objects.User import User
 from Objects.Post import Post
+from config.dbconfig import pg_config
+import psycopg2
 
 class chatsDAO:
     def __init__(self):
-        self.chat_list = []
-
-        Carlos = User(1, "Carlos", "Lopez", "clopez115@gmail.com", "clopez36", "123pescaitoes")
-        Ramon = User(2, "Ramon", "Rosado", "ramon.rosado2@upr.edu", "ramoncin", "12345678")
-        Luis = User(3, "Luis", "Rivera", "luis.rivera99999@upr.edu", "oLaMeLlAmOlUiS", "password")
-
-        # add chat members
-        chat1 = Chat(1, "DBChat1", "clopez36")
-        chat1.addToChatMembers(Luis.getUsername())
-        chat2 = Chat(2, "DBChat2", "ramoncin")
-        chat2.addToChatMembers(Carlos.getUsername())
-        chat2.addToChatMembers(Luis.getUsername())
-
-        # add posts
-
-        firstPost = Post(1, "clopez36", "photo.jpg", "First POST!!", "2/24/2019")
-        secondPost = Post(2, " ramoncin", "picture.png", "Second POST!!", "2/25/2019")
-
-        chat1.addPost(firstPost)
-        chat1.addPost(secondPost)
-        chat2.addPost(secondPost)
-
-        self.chat_list.append(chat1)
-        self.chat_list.append(chat2)
+        connection_url = "dbname=%s user=%s host=%s password=%s" % (pg_config['dbname'],
+                                                            pg_config['user'],
+                                                            pg_config['host'],
+                                                            pg_config['passwd'])
+        self.conn = psycopg2._connect(connection_url)
 
     def getChatList(self):
         return self.chat_list
 
     def getAllChats(self):
         result = []
-        for chat in self.chat_list:
-            temp = []
-            for attribute, value in vars(chat).items():
-                temp.append(value)
-            result.append(temp)
+        cursor = self.conn.cursor()
+        query = "Select * from Chat;"
+        cursor.execute(query)
+        for row in cursor:
+            result.append(row)
         return result
 
     def getChatById(self, cid):
-        result = []
-        for chat in self.chat_list:
-            if chat.getId() == cid:
-                result.append(chat)
-            return result
+        cursor = self.conn.cursor()
+        query = "Select * from Chat where cid=%s;"
+        cursor.execute(query, (cid,))
+        result = cursor.fetchone()
+        print(result)
+        return result
 
     def getChatByChatAdmin(self, cadmin):
         result = []
@@ -93,9 +77,6 @@ class chatsDAO:
             if chat.getId() == cid:
                 chat.getMembers().append(user)
 
-
-
-
     def deleteUserFromChat(self, cid, username):
         for chat in self.chat_list:
             if chat.getId() == cid:
@@ -127,3 +108,21 @@ class chatsDAO:
 
     def insertPostIntoChat(self, cid, post):
         self.getChatById2(cid).addPost(post)
+
+    def getAllUsersFromChat(self, cid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select uid, ufirstname, ulastname from (select * from Chat natural inner join isMember natural inner join Users where cid = chat_id and uid = user_id) as R where R.chat_id = %s;"
+        cursor.execute(query, (cid,))
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getAdminOfChat(self, cid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select uid, ufirstname, ulastname from (select * from Users natural inner join Chat) as R where R.cadmin = R.uid and R.cid = %s;"
+        cursor.execute(query, (cid,))
+        for row in cursor:
+            result.append(row)
+        return result

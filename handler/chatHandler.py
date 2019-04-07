@@ -8,9 +8,7 @@ class chatHandler:
         result = {}
         result['cid'] = row[0]
         result['cname'] = row[1]
-        result['cmembers'] = row[2]
-        result['postlist'] = row[3]
-        result['cadmin'] = row[4]
+        result['cadmin'] = row[2]
 
         return result
 
@@ -21,6 +19,14 @@ class chatHandler:
         result['cmembers'] = cmembers
         result['postlist'] = postlist
         result['cadmin'] = cadmin
+
+        return result
+
+    def build_users_from_chat_dict(self, row):
+        result = {}
+        result['uid'] = row[0]
+        result['ufirstname'] = row[1]
+        result['ulastname'] = row[2]
 
         return result
 
@@ -99,7 +105,6 @@ class chatHandler:
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
-
     def deleteChat(self, args):
         cid = int(args['cid'])
         cadmin = args['cadmin']
@@ -111,7 +116,6 @@ class chatHandler:
                 return jsonify(Error = "User is not admin.")
             else:
                 return jsonify(DeleteStatus = "Chat " + str(cid) + " deleted."), 200
-
 
     def deleteUserFromChat(self, cid, args): # cuser1  is the admin
         dao = chatsDAO()
@@ -188,3 +192,24 @@ class chatHandler:
     #
     #     else:
     #
+
+    def getAllUsersFromChat(self, cid):
+        dao = chatsDAO()
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat not found."), 404
+        else:
+            users_list = dao.getAllUsersFromChat(cid)
+            result_list = []
+            for row in users_list:
+                result = self.build_users_from_chat_dict(row)
+                result_list.append(result)
+            return jsonify(UsersInChat=result_list)
+
+    def getAdminOfChat(self, cid):
+        dao = chatsDAO()
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat not found."), 404
+        else:
+            row = dao.getAdminOfChat(cid)
+            result = self.build_users_from_chat_dict(row)
+            return jsonify(AdminFromChat=result)

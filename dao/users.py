@@ -3,28 +3,25 @@ from config.dbconfig import pg_config  # from FOLDER.CLASSNAME import FUNCTIONNA
 from Objects.User import User
 
 from Objects.Post import Post
+from config.dbconfig import pg_config
+import psycopg2
 
 class usersDAO:
     def __init__(self):
-        self.user_list = []
-        Carlos = User(1, "Carlos","Lopez", "clopez115@gmail.com", "clopez36", "123pescaitoes")
-        Ramon = User(2, "Ramon",  "Rosado", "ramon.rosado2@upr.edu", "ramoncin", "12345678")
-        Luis = User(3, "Luis", "Rivera", "luis.rivera99999@upr.edu", "oLaMeLlAmOlUiS", "password")
-        Walter = User(4, "Walter", "White", "walter.white1@upr.edu", "heisenberg", "crystalmeth")
-
-        self.user_list = [Carlos, Ramon, Luis, Walter]
-        self.insertContact(2, "Juan", "delPueblo", "juan.delpueblo@gmail.com")
-        self.insertContact(2, "Juan", "delOTROPueblo", "juan.deOTROpueblo@gmail.com")
-        self.insertContact(1, "Yo", "Tu", "yoSoloSoyTu@gmail.com")
+        connection_url = "dbname=%s user=%s host=%s password=%s" % (pg_config['dbname'],
+                                                                    pg_config['user'],
+                                                                    pg_config['host'],
+                                                                    pg_config['passwd'])
+        self.conn = psycopg2._connect(connection_url)
 
 
     def getAllUsers(self):
         result = []
-        for user in self.user_list:
-            temp = []
-            for attribute, value in vars(user).items():
-                temp.append(value)
-            result.append(temp)
+        cursor = self.conn.cursor()
+        query = "select * from Users"
+        cursor.execute(query)
+        for row in cursor:
+            result.append(row)
         return result
 
     def getUserById(self, uid):

@@ -1,7 +1,8 @@
-#Databse configuration information
+# Database configuration information
 
 pg_config = {
-    'user' : 'root',
-    'passwd' : 'root',
-    'dbname' : 'myapp'
+    'user' : 'ramon2',
+    'passwd' : '12345678',
+    'host' : 'localhost',
+    'dbname' : 'photomsgapp'
 }

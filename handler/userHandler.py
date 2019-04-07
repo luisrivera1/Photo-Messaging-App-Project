@@ -50,8 +50,6 @@ class Handler:
         result['p_chat'] = p_chat
         return result
 
-
-
     def getAllUsers(self):
         dao = usersDAO()
         users_list = dao.getAllUsers()
@@ -97,25 +95,24 @@ class Handler:
         print(args)
 
         username = None
-        email = None
+        id = None
 
         try:
             username = args["uusername"]
         except:
             pass
         try:
-            email = args["uemail"]
+            id = args["uid"]
         except:
             pass
         dao = usersDAO()
         users_list = []
-        if (len(args) == 2) and username and email:
-            users_list = dao.getUserByUsernameAndEmail(username, email)
-        elif (len(args) == 1) and username:
+
+        if (len(args) == 1) and username:
             users_list = dao.getUsersByUsername(username)
             print(users_list)
-        elif (len(args) == 1) and email:
-            users_list = dao.getUserByEmail(email)
+        elif (len(args) == 1) and id:
+            users_list = dao.getUserById2(id)
         else:
             return jsonify(Error = "Malformed query string"), 400
 

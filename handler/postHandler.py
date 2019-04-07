@@ -22,8 +22,6 @@ class postHandler:
         result['p_dislikes'] = p_dislikes
         result['p_replies'] = p_replies
         result['p_chat'] = p_chat
-
-
         return result
 
     def getAllPosts(self):

@@ -20,11 +20,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/')
-def greeting():
-    return 'Hello, this is the InstaWHAT DB App!'
-
-
 @app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
 def getAllUsers():
     if request.method == 'POST':
@@ -37,15 +32,22 @@ def getAllUsers():
             return Handler().searchUsers(request.args.to_dict())  # Is this even necessary?
 
 
-@app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
-def getUserById(uid):
-    print(uid)
+# @app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
+# def getUserById(uid):
+#     print(uid)
+#     if request.method == 'GET':
+#         return Handler().getUserById(uid)
+#     elif request.method == 'PUT':
+#         return Handler().updateUser(uid, request.json)  # update needs to be implemented
+#     elif request.method == 'DELETE':
+#         return Handler().deleteUser(uid)
+#     else:
+#         return jsonify(Error="Method not allowed."), 405
+
+@app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET'])
+def getAllContactsFromUser(uid):
     if request.method == 'GET':
-        return Handler().getUserById(uid)
-    elif request.method == 'PUT':
-        return Handler().updateUser(uid, request.json)  # update needs to be implemented
-    elif request.method == 'DELETE':
-        return Handler().deleteUser(uid)
+        return Handler().getContactsById(uid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -71,29 +73,43 @@ def getAllChats():
         return chatHandler().deleteChat(request.args.to_dict())
 
 
-@app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
-def modifyContacts(cid):
+@app.route('/PhotoMsgApp/chats/<int:cid>/users', methods=['GET'])
+def usersOfChat(cid):
     print(cid)
-    if request.method == "POST":
-        return chatHandler().addContactToChat(cid, request.json)
-    elif request.method == "DELETE":
-        if not request.args:
-            return "Invalid operation!"
-        else:
-            return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
+    if request.method == "GET":
+        return chatHandler().getAllUsersFromChat(cid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/login', methods=['GET'])
-def validate_login():
-    if request.method == 'GET':
-        return Handler().validate_login(request.json)
+@app.route('/PhotoMsgApp/chats/<int:cid>/admin', methods=['GET'])
+def adminOfChat(cid):
+    print(cid)
+    if request.method == "GET":
+        chatHandler().getAdminOfChat(cid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/register', methods=['POST'])
-def register_user():
-    if request.method == 'POST':
-        return Handler().register_user(request.json)
+@app.route('/PhotoMsgApp/chats/<int:cid>/posts', methods=['GET'])
+def PostsOfChat(cid):
+    print(cid)
+    if request.method == "GET":
+        chatHandler().getAllPostsFromChat(cid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
+
+# @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
+# def modifyContacts(cid):
+#     print(cid)
+#     if request.method == "POST":
+#         return chatHandler().addContactToChat(cid, request.json)
+#     elif request.method == "DELETE":
+#         if not request.args:
+#             return "Invalid operation!"
+#         else:
+#             return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
 
 @app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
 def getAllPosts():
@@ -105,6 +121,22 @@ def getAllPosts():
     # http://127.0.0.1:5000/PhotoMsgApp/posts?pid=1&operation=dislike
     if request.method == 'PUT':
         return postHandler().updateLikeDislike(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/likes', methods=['GET'])
+def getLikesOfAPost(pid):
+    if request.method == 'GET':
+        postHandler().getLikesOfAPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/dislikes', methods=['GET'])
+def getDislikesOfAPost(pid):
+    if request.method == 'GET':
+        postHandler().getDisikesOfAPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
 @app.route('/PhotoMsgApp/posts/reply', methods=['PUT'])
@@ -119,6 +151,18 @@ def getAllPostsFromChat():
     if request.method == 'GET':
         # "You need to specify the CHAT ID from which to GET posts."
         return postHandler().getAllPostsFromChat(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/login', methods=['GET'])
+def validate_login():
+    if request.method == 'GET':
+        return Handler().validate_login(request.json)
+
+
+@app.route('/PhotoMsgApp/register', methods=['POST'])
+def register_user():
+    if request.method == 'POST':
+        return Handler().register_user(request.json)
 
 
 #  http://127.0.0.1:5000/PhotoMsgApp/contacts?uid=2
