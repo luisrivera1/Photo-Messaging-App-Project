@@ -112,16 +112,23 @@ class chatsDAO:
     def getAllUsersFromChat(self, cid):
         result = []
         cursor = self.conn.cursor()
-        query = "select uid, ufirstname, ulastname from (select * from Chat natural inner join isMember natural inner join Users where cid = chat_id and uid = user_id) as R where R.chat_id = %s;"
+        query = "select uid, ufirstname, ulastname from Chat natural inner join isMember natural inner join Users where cid = chat_id and uid = user_id and chat_id = %s;"
         cursor.execute(query, (cid,))
         for row in cursor:
             result.append(row)
         return result
 
     def getAdminOfChat(self, cid):
+        cursor = self.conn.cursor()
+        query = "select uid, ufirstname, ulastname from Users natural inner join Chat where cadmin = uid and cid = %s;"
+        cursor.execute(query, (cid,))
+        result = cursor.fetchone()
+        return result
+
+    def getAllPostsFromChat(self, cid):
         result = []
         cursor = self.conn.cursor()
-        query = "select uid, ufirstname, ulastname from (select * from Users natural inner join Chat) as R where R.cadmin = R.uid and R.cid = %s;"
+        query = "select pid, pmessage, puser from has natural inner join post where post_id = pid and chat_id = 1;"
         cursor.execute(query, (cid,))
         for row in cursor:
             result.append(row)

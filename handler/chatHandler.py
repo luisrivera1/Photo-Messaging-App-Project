@@ -30,6 +30,14 @@ class chatHandler:
 
         return result
 
+    def build_posts_from_chat_dict(self, row):
+        result = {}
+        result['pid'] = row[0]
+        result['pmessage'] = row[1]
+        result['puser'] = row[2]
+
+        return result
+
     def getAllChats(self):
         dao = chatsDAO()
         chats_list = dao.getAllChats()
@@ -213,3 +221,16 @@ class chatHandler:
             row = dao.getAdminOfChat(cid)
             result = self.build_users_from_chat_dict(row)
             return jsonify(AdminFromChat=result)
+
+    def getAllPostsFromChat(self, cid):
+        dao = chatsDAO()
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat not found."), 404
+        else:
+            posts_list = dao.getAllPostsFromChat(cid)
+            result_list = []
+            for row in posts_list:
+                print(posts_list)
+                result = self.build_posts_from_chat_dict(row)
+                result_list.append(result)
+            return jsonify(UsersInChat=result_list)

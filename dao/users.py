@@ -6,6 +6,7 @@ from Objects.Post import Post
 from config.dbconfig import pg_config
 import psycopg2
 
+
 class usersDAO:
     def __init__(self):
         connection_url = "dbname=%s user=%s host=%s password=%s" % (pg_config['dbname'],
@@ -25,11 +26,10 @@ class usersDAO:
         return result
 
     def getUserById(self, uid):
-        result = []
-        for user in self.user_list:
-            if user.getId() == uid:
-                for attribute, value in vars(user).items():
-                    result.append(value)
+        cursor = self.conn.cursor()
+        query = "select * from Users where uid = %s;"
+        cursor.execute(query, (uid,))
+        result = cursor.fetchone()
         return result
 
     def getUsersByUsernamev2(self, uusername):
@@ -121,7 +121,13 @@ class usersDAO:
         self.getUserById2(uid).appendToContactList(user)
 
     def getContactListFromUserId(self, uid):  # returns a contact_list (array of contacts)
-        return self.getUserById2(uid).getContactList()
+        result = []
+        cursor = self.conn.cursor()
+        query = "select uid, ufirstname, ulastname from users natural inner join contacts where owner_id = %s and contact_id = uid;"
+        cursor.execute(query, (uid,))
+        for row in cursor:
+            result.append(row)
+        return result
 
     def deleteUserFromContactList(self, uid, user):  # removes user from contact list of user with uid
         self.getUserById2(uid).deleteFromContactList(user)

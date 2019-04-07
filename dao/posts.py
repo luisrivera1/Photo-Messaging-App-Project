@@ -25,11 +25,10 @@ class postsDAO:
         return result
 
     def getPostById(self, pid):
-        result = []
-        for post in self.posts_list:
-            if post.getId() == pid:
-                for attribute, value in vars(post).items():
-                    result.append(value)
+        cursor = self.conn.cursor()
+        query = "select * from Post where pid = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.fetchone()
         return result
 
     def postPhotoAndMsgToChat(self, cid, photo, msg):
@@ -181,4 +180,34 @@ class postsDAO:
         print(photo_dislikes_dict)
         return photo_dislikes_dict
 
+    def getPostLikes(self, pid):
+        cursor = self.conn.cursor()
+        query = "select post, count(*) from Post natural inner join Reaction where post = pid and type = 'like' and pid = %s group by post;"
+        cursor.execute(query, (pid,))
+        result = cursor.fetchone()
+        return result
 
+    def getPostDislikes(self, pid):
+        cursor = self.conn.cursor()
+        query = "select post, count(*) from Post natural inner join Reaction where post = pid and type = 'dislike' and pid = %s group by post;"
+        cursor.execute(query, (pid,))
+        result = cursor.fetchone()
+        return result
+
+    def getUsersWhoDislikedPost(self, pid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select uid, ufirstname, ulastname, rdate from Users natural inner join Reaction where usr = uid and post = %s and type = 'dislike';"
+        cursor.execute(query, (pid,))
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getUsersWhoLikedPost(self, pid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select uid, ufirstname, ulastname, rdate from Users natural inner join Reaction where usr = uid and post = %s and type = 'like';"
+        cursor.execute(query, (pid,))
+        for row in cursor:
+            result.append(row)
+        return result

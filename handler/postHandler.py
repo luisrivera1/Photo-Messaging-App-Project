@@ -12,6 +12,38 @@ class postHandler:
         result['p_date'] = row[4]
         return result
 
+    def build_post_likes_dict(self, row):
+        result = {}
+        result['pid'] = row[0]
+        result['plikes'] = row[1]
+        return result
+
+    def build_post_likes_dict2(self, pid):
+        result = {}
+        result['pid'] = pid
+        result['plikes'] = 0
+        return result
+
+    def build_post_dislikes_dict(self, row):
+        result = {}
+        result['pid'] = row[0]
+        result['pdislikes'] = row[1]
+        return result
+
+    def build_post_dislikes_dict2(self, pid):
+        result = {}
+        result['pid'] = pid
+        result['pdislikes'] = 0
+        return result
+
+    def build_user_post_dislikes_dict(self, row):
+        result = {}
+        result['uid'] = row[0]
+        result['ufirstname'] = row[1]
+        result['ulastname'] = row[2]
+        result['rdate'] = row[3]
+        return result
+
     def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
         result = {}
         result['pid'] = pid
@@ -134,3 +166,59 @@ class postHandler:
                 else:
                     return jsonify(PostReplyStatus="Added Reply: " + preply), 200
         return jsonify(Error="Unexpected attributes in post reply request"), 400
+
+    def getLikesOfAPost(self, pid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            result = dao.getPostLikes(pid)
+            if not result:
+                result = self.build_post_likes_dict2(pid)
+                return jsonify(LikesOfPost=result)
+            result = self.build_post_likes_dict(result)
+            return jsonify(LikesOfPost=result)
+
+    def getDisikesOfAPost(self, pid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            result = dao.getPostDislikes(pid)
+            if not result:
+                result = self.build_post_dislikes_dict2(pid)
+                return jsonify(DislikesOfPost=result)
+            result = self.build_post_dislikes_dict(result)
+            return jsonify(DislikesOfPost=result)
+
+    def getUsersWhoDislikedPost(self, pid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            result = dao.getUsersWhoDislikedPost(pid)
+            if not result:
+                return jsonify(Error="No Dislikes for post found")
+            print(result)
+            result_list = []
+            for column in result:
+                print(column)
+                result_list.append(self.build_user_post_dislikes_dict(column))
+            print(result_list)
+            return jsonify(UsersWhoDislikedPost=result_list)
+
+    def getUsersWhoLikedPost(self, pid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            result = dao.getUsersWhoLikedPost(pid)
+            if not result:
+                return jsonify(Error="No Likes for post found")
+            print(result)
+            result_list = []
+            for column in result:
+                print(column)
+                result_list.append(self.build_user_post_likes_dict(column))
+            print(result_list)
+            return jsonify(UsersWhoLikedPost=result_list)

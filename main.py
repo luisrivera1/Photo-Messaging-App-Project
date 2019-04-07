@@ -16,6 +16,7 @@ from flask_cors import CORS, cross_origin
 
 # Activate
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False  # This makes jsonify NOT sort automatically.
 # Apply CORS to this app
 CORS(app)
 
@@ -32,17 +33,18 @@ def getAllUsers():
             return Handler().searchUsers(request.args.to_dict())  # Is this even necessary?
 
 
-# @app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
-# def getUserById(uid):
-#     print(uid)
-#     if request.method == 'GET':
-#         return Handler().getUserById(uid)
-#     elif request.method == 'PUT':
-#         return Handler().updateUser(uid, request.json)  # update needs to be implemented
-#     elif request.method == 'DELETE':
-#         return Handler().deleteUser(uid)
-#     else:
-#         return jsonify(Error="Method not allowed."), 405
+@app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
+def getUserById(uid):
+    print(uid)
+    if request.method == 'GET':
+        return Handler().getUserById(uid)
+    elif request.method == 'PUT':
+        return Handler().updateUser(uid, request.json)  # update needs to be implemented
+    elif request.method == 'DELETE':
+        return Handler().deleteUser(uid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
 
 @app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET'])
 def getAllContactsFromUser(uid):
@@ -86,7 +88,7 @@ def usersOfChat(cid):
 def adminOfChat(cid):
     print(cid)
     if request.method == "GET":
-        chatHandler().getAdminOfChat(cid)
+        return chatHandler().getAdminOfChat(cid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -95,10 +97,27 @@ def adminOfChat(cid):
 def PostsOfChat(cid):
     print(cid)
     if request.method == "GET":
-        chatHandler().getAllPostsFromChat(cid)
+        return chatHandler().getAllPostsFromChat(cid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/users/dislikes', methods=['GET'])
+def usersWhodislikedPost(pid):
+    print(pid)
+    if request.method == "GET":
+        return postHandler().getUsersWhoDislikedPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/users/likes', methods=['GET'])
+def usersWholikedPost(pid):
+    print(pid)
+    if request.method == "GET":
+        return postHandler().getUsersWhoLikedPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 # @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
 # def modifyContacts(cid):
@@ -126,7 +145,7 @@ def getAllPosts():
 @app.route('/PhotoMsgApp/posts/<int:pid>/likes', methods=['GET'])
 def getLikesOfAPost(pid):
     if request.method == 'GET':
-        postHandler().getLikesOfAPost(pid)
+        return postHandler().getLikesOfAPost(pid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -134,7 +153,7 @@ def getLikesOfAPost(pid):
 @app.route('/PhotoMsgApp/posts/<int:pid>/dislikes', methods=['GET'])
 def getDislikesOfAPost(pid):
     if request.method == 'GET':
-        postHandler().getDisikesOfAPost(pid)
+        return postHandler().getDisikesOfAPost(pid)
     else:
         return jsonify(Error="Method not allowed."), 405
 

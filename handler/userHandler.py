@@ -274,17 +274,14 @@ class Handler:
         else:
             return jsonify(Error="Unexpected attributes in update request"), 400
 
-
     def build_contact_dict(self, row):
         result = {}
-        result['ufirstname'] = row[0]
-        result['ulastname'] = row[1]
-        result['uemail'] = row[2]
+        result['uid'] = row[0]
+        result['ufirstname'] = row[1]
+        result['ulastname'] = row[2]
         return result
 
-    def getContactsById(self, args):
-        uid = int(args['uid'])
-        print(uid)
+    def getContactsById(self, uid):
         dao = usersDAO()
         contact_list = dao.getContactListFromUserId(uid)
         print("THIS IS CONTACT LIST")
