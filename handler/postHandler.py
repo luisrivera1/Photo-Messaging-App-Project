@@ -44,6 +44,14 @@ class postHandler:
         result['rdate'] = row[3]
         return result
 
+    def build_user_post_likes_dict(self, row):
+        result = {}
+        result['uid'] = row[0]
+        result['ufirstname'] = row[1]
+        result['ulastname'] = row[2]
+        result['rdate'] = row[3]
+        return result
+
     def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
         result = {}
         result['pid'] = pid
