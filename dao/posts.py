@@ -211,3 +211,12 @@ class postsDAO:
         for row in cursor:
             result.append(row)
         return result
+
+    def getPostReplies(self, pid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select * from Post natural inner join isReply where reply_id = pid and original_id = %s;"
+        cursor.execute(query, (pid,))
+        for row in cursor:
+            result.append(row)
+        return result

@@ -32,17 +32,16 @@ class usersDAO:
         result = cursor.fetchone()
         return result
 
-    def getUsersByUsernamev2(self, uusername):
-        for user in self.user_list:
-            if user.getUsername() == uusername:
-                return user
+    # def getUsersByUsernamev2(self, uusername):
+    #     for user in self.user_list:
+    #         if user.getUsername() == uusername:
+    #             return user
 
     def getUsersByUsername(self, uusername):
-        result = []
-        for user in self.user_list:
-            if user.getUsername() == uusername:
-                for attribute, value in vars(user).items():
-                    result.append(value)
+        cursor = self.conn.cursor()
+        query = "select * from Users where uusername = %s;"
+        cursor.execute(query, (uusername,))
+        result = cursor.fetchone()
         return result
 
     def getUsersByFirstName(self, ufirstname):

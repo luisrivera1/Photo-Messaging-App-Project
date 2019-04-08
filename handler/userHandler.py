@@ -343,3 +343,27 @@ class Handler:
         result['ulastname'] = ulastname
         result['uemail'] = uemail
         return result
+
+    def getUserByIdORUsername(self, form):
+        uusername = None
+        uid = None
+        dao = usersDAO()
+
+        try:
+            uusername = form["uusername"]
+            result = dao.getUsersByUsername(uusername)
+            if not result:
+                return jsonify(Error="User not found"), 404
+            result = self.build_user_dict(result)
+            return jsonify(User=result)
+        except:
+            pass
+        try:
+            uid = form["uid"]
+            result = dao.getUserById(uid)
+            if not result:
+                return jsonify(Error="User not found"), 404
+            result = self.build_user_dict(result)
+            return jsonify(User=result)
+        except:
+            return jsonify(Error="Malformed query string"), 400

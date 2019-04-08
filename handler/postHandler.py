@@ -52,6 +52,15 @@ class postHandler:
         result['rdate'] = row[3]
         return result
 
+    def build_post_replies_dict(self, row):
+        result = {}
+        result['pid'] = row[0]
+        result['puser'] = row[1]
+        result['pphoto'] = row[2]
+        result['pmessage'] = row[3]
+        result['pdate'] = row[4]
+        return result
+
     def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
         result = {}
         result['pid'] = pid
@@ -230,3 +239,17 @@ class postHandler:
                 result_list.append(self.build_user_post_likes_dict(column))
             print(result_list)
             return jsonify(UsersWhoLikedPost=result_list)
+
+    def getRepliesOfAPost(self, pid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            result = dao.getPostReplies(pid)
+            print(result)
+            if not result:
+                return jsonify(Error="Post has no replies.")
+            result_list = []
+            for column in result:
+                result_list.append(self.build_post_replies_dict(column))
+            return jsonify(RepliesOfPost=result_list)

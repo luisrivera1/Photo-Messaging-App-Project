@@ -30,7 +30,8 @@ def getAllUsers():
         if not request.args:
             return Handler().getAllUsers()
         else:
-            return Handler().searchUsers(request.args.to_dict())  # Is this even necessary?
+            return Handler().getUserByIdORUsername(request.args)
+            # return Handler().searchUsers(request.args.to_dict())  # Is this even necessary?
 
 
 @app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
@@ -130,6 +131,7 @@ def usersWholikedPost(pid):
 #         else:
 #             return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
 
+
 @app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
 def getAllPosts():
     if request.method == 'GET':
@@ -154,6 +156,14 @@ def getLikesOfAPost(pid):
 def getDislikesOfAPost(pid):
     if request.method == 'GET':
         return postHandler().getDisikesOfAPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/replies', methods=['GET'])
+def getRepliesOfAPost(pid):
+    if request.method == 'GET':
+        return postHandler().getRepliesOfAPost(pid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
