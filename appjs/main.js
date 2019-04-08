@@ -28,7 +28,8 @@
             controller: 'ContactsController',
             controllerAs : 'contactCtrl'
         }).otherwise({
-            redirectTo: '/login'
+            //redirectTo: '/login'
+            redirectTo: '/chatmenu'
         });
     }]);
     //

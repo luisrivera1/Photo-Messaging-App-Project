@@ -1,214 +1,245 @@
-from flask import Flask, render_template, redirect, url_for, request, jsonify
-from handler.UserHandler import UserHandler
-from handler.ChatHandler import ChatHandler
-from handler.ContactListHandler import ContactListHandler
-from handler.HashtagHandler import HashtagHandler
-from handler.MessageHandler import MessageHandler
-from handler.DashboardHandler import DashboardHandler
+from flask import Flask, jsonify, request
+from handler.userHandler import Handler
+from handler.postHandler import postHandler
+from handler.statHandler import statHandler
+
+from handler.supplier import SupplierHandler
+from handler.chatHandler import chatHandler
+from Objects.Chat import Chat
+from Objects.User import User
+
+
+# Import Cross-Origin Resource Sharing to enable
+# services on other ports on this machine or on other
+# machines to access this app
 from flask_cors import CORS, cross_origin
 
+# Activate
 app = Flask(__name__)
-
+app.config['JSON_SORT_KEYS'] = False  # This makes jsonify NOT sort automatically.
+# Apply CORS to this app
 CORS(app)
-app.config["JSON_SORT_KEYS"] = False
 
 
-@app.route('/') #OK
-def home():
-    return "Welcome Intruder!"
-
-@app.route('/SocialMessagingApp/login', methods=['POST'])
-def login():
+@app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
+def getAllUsers():
     if request.method == 'POST':
-        return UserHandler().getCredentials(request.get_json('data'))
+        print("REQUEST: ", request.json)
+        return Handler().insertUser(request.json)
+    else:
+        if not request.args:
+            return Handler().getAllUsers()
+        else:
+            return Handler().getUserByIdORUsername(request.args)
+            # return Handler().searchUsers(request.args.to_dict())  # Is this even necessary?
 
-@app.route('/SocialMessagingApp/register', methods=['POST'])
-def register():
-    if request.method =='POST':
-        return UserHandler().insertUser(request.get_json('data'))
 
-@app.route('/SocialMessagingApp/') #OK
-def homeforApp():
-    return "Here goes a nice logo of our app and a very short descripion of what this does\n Basically we are doing WhatsApp from scratch. Thanks Professor! Very interesting..."
-
-@app.route('/SocialMessagingApp/dashboard') #OK
-def dashboardsiplay():
-    handler = DashboardHandler()
-    return handler.dashboard()
-
-@app.route('/SocialMessagingApp/user/chat/<int:uid>') #wrong outputs, 2 es el 3, 3 es el 4, pero sale bien el Error: not found
-def getAllChatsByUserId(uid):
-    return UserHandler().getAllChatsByUserId(uid)
-
-@app.route('/SocialMessagingApp/user/message/num/<int:uid>')#wrong outputs, 2 es el 3, 3 es el 4, pero sale bien el Error: not found
-def getNumberMessagesByUserId(uid):
-    return UserHandler().getNumberMessagesByUserId(uid)
-
-@app.route('/SocialMessagingApp/user/message/<int:uid>') #wrong outputs, 2 es el 3, 3 es el 4, pero sale bien el Error: not found
-def getMessagesByUserId(uid):
-    return MessageHandler().getMessagesFromUser(uid)
-
-@app.route('/SocialMessagingApp/user') #OK
-def users():
-    handler = UserHandler()
-    return handler.getAllUsers()
-
-@app.route('/SocialMessagingApp/user/<int:uid>') #OK
-def getInformationOfUserById(uid):
-    return UserHandler().getInformationOfUserById(uid)
-
-@app.route('/SocialMessagingApp/user/<string:username>') #ISE
-def getInformationOfUserByUsername(username):
-    return UserHandler().getInformationOfUserByUsername(username)
-
-@app.route('/SocialMessagingApp/chat') #OK
-def chats():
-    handler = ChatHandler()
-    return handler.getAllChats()
-
-@app.route('/SocialMessagingApp/chat/owner/<int:cid>') #ISE, index error, arrgelar 404
-def chatOwner(cid):
-    handler = ChatHandler()
-    return handler.getOwner(cid)
-
-@app.route('/SocialMessagingApp/chat/user/<int:cid>') #mismo output to-do el tiempo, arrglar 404
-def chatUsers(cid):
-    handler = ChatHandler()
-    return handler.getAllUsersInChat(cid)
-
-@app.route('/SocialMessagingApp/chat/message/<int:cid>') #OK, vacio si no hay nada
-def messagesInchat(cid):
-    handler = MessageHandler()
-    return handler.getMessagesFromChat(cid)
-
-@app.route('/SocialMessagingApp/message') #OK
-def allmessages():
-    handler = MessageHandler()
-    return handler.getAllMessages()
-
-@app.route('/SocialMessagingApp/message/<int:mid>') #ISE
-def messagebyid(mid):
-    handler = MessageHandler()
-    return handler.getMessageById(mid)
-
-@app.route('/SocialMessagingApp/hashtag') #OK
-def hashtags():
-    handler = HashtagHandler()
-    return handler.getAllhashtags()
-
-@app.route('/SocialMessagingApp/message/hashtag/<int:mid>') #empty result
-def messagehashtags(mid):
-    handler = HashtagHandler()
-    return handler.gethashsInMessage(mid)
-
-@app.route('/SocialMessagingApp/hashtag/<string:hname>') #OK, except name y los que no existan
-def givenHash(hname):
-    handler = HashtagHandler()
-    return handler.getmessagewithhas(hname)
-
-@app.route('/SocialMessagingApp/dislike') #OK, pero no dice que usuario
-def getalldislikes():
-    handler = MessageHandler()
-    return handler.getalldislikes()
-
-@app.route('/SocialMessagingApp/like')   #OK, pero no dice que usuario
-def getalllikes():
-    handler = MessageHandler()
-    return handler.getalllikes()
-
-@app.route('/SocialMessagingApp/message/like/<int:mid>') #OK
-def getlikesinmessage(mid):
-    handler = MessageHandler()
-    return handler.getmessagelikes(mid)
-
-@app.route('/SocialMessagingApp/message/reply/<int:mid>') #OK
-def getreplyinmessage(mid):
-    handler = MessageHandler()
-    return handler.getMessageReplies(mid)
-
-@app.route('/SocialMessagingApp/message/dislike/<int:mid>') #OK
-def getdislikesinmessage(mid):
-    handler = MessageHandler()
-    return handler.getmessagedislikes(mid)
-
-@app.route('/SocialMessagingApp/message/like/num/<int:mid>') #OK
-def getlikesinmessagenum(mid):
-    handler = MessageHandler()
-    return handler.getmessagelikesCount(mid)
-
-@app.route('/SocialMessagingApp/message/reply/num/<int:mid>')  #OK
-def getreplyinmessagenum(mid):
-    handler = MessageHandler()
-    return handler.getMessageRepliesCount(mid)
-
-@app.route('/SocialMessagingApp/message/dislike/num/<int:mid>') #OK
-def getdislikesinmessagenum(mid):
-    handler = MessageHandler()
-    return handler.getmessagedislikesCount(mid)
-
-@app.route('/SocialMessagingApp/user/contactlist/<int:uid>') #OK
-def contactsOfUsers(uid):
-    handler = ContactListHandler()
-    return handler.getAllContactsFromUser(uid)
-
-@app.route('/SocialMessagingApp/contactlist') #ok
-def allContactList():
-    handler = ContactListHandler()
-    return handler.getAllContactLists()
-
-@app.route('/SocialMessagingApp/chat/hashtag/message/<int:cid>/<string:hashname>')
-def getChatHash(cid, hashname):
-    handler = MessageHandler()
-    return handler.searchmsgwithhashinchat(cid, hashname)
-
-@app.route('/SocialMessagingApp/chat/<int:cid>')
-def getChat(cid):
-    handler = ChatHandler()
-    return handler.getChat(cid)
-
-@app.route('/SocialMessagingApp/chat/adduser/<int:cid>/<int:uid>') #PUTMETHOD
-def addUsertochat(cid, uid):
-    handler = ChatHandler()
-    return handler.addusertochat(cid, uid)
-
-@app.route('/SocialMessagingApp/contactlist/adduser/<int:owner>/<int:uid>') #PUTMETHOD
-def addUsertoContactList(owner, uid):
-    handler = ContactListHandler()
-    return handler.contactaddition(owner, uid)
-
-@app.route('/SocialMessagingApp/chat/addchat/<int:owner>/<string:chatname>') #PUTMETHOD
-def createNewChat(owner, chatname):
-    handler = ChatHandler()
-    return handler.createchat(owner,chatname)
-
-@app.route('/SocialMessagingApp/message/post', methods=['PUT']) #withForm
-def postmessage():
-    handler = MessageHandler()
-    if request.method == 'PUT':
-        m = handler.postmessageh(request.json)
-        return m[0]
+@app.route('/PhotoMsgApp/users/<int:uid>', methods=['GET', 'PUT', 'DELETE'])
+def getUserById(uid):
+    print(uid)
+    if request.method == 'GET':
+        return Handler().getUserById(uid)
+    elif request.method == 'PUT':
+        return Handler().updateUser(uid, request.json)  # update needs to be implemented
+    elif request.method == 'DELETE':
+        return Handler().deleteUser(uid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
-@app.route('/SocialMessagingApp/message/like/insert', methods=['PUT']) #withForm
-def putlike():
-    handler = MessageHandler()
-    if request.method == 'PUT':
-        m = handler.liked(request.json)
-        print(m)
-        return m[0]
+
+@app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET'])
+def getAllContactsFromUser(uid):
+    if request.method == 'GET':
+        return Handler().getContactsById(uid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
-@app.route('/SocialMessagingApp/message/dislike/insert', methods=['PUT']) #withForm
-def putdislike():
-    handler = MessageHandler()
-    if request.method == 'PUT':
-        m = handler.disliked(request.json)
-        print(m)
-        return m[0]
+
+@app.route('/PhotoMsgApp/chats', methods=['GET', 'POST', 'DELETE'])
+def getAllChats():
+    if request.method == 'POST':
+        if not request.args:
+            # cambie a request.json pq el form no estaba bregando
+            # parece q estaba poseido por satanas ...
+            # DEBUG a ver q trae el json q manda el cliente con la nueva pieza
+            print("REQUEST: ", request.json)
+            return chatHandler().insertChat(request.json)
+        else:
+            return chatHandler().addPostToChat(request.args.to_dict(), request.json)
+    elif request.method == "GET":
+        if not request.args:
+            return chatHandler().getAllChats()
+        else:
+            return chatHandler().searchChats(request.args.to_dict())
+
+    elif request.method == "DELETE":
+        return chatHandler().deleteChat(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/chats/<int:cid>/users', methods=['GET'])
+def usersOfChat(cid):
+    print(cid)
+    if request.method == "GET":
+        return chatHandler().getAllUsersFromChat(cid)
     else:
         return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/chats/<int:cid>/admin', methods=['GET'])
+def adminOfChat(cid):
+    print(cid)
+    if request.method == "GET":
+        return chatHandler().getAdminOfChat(cid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/chats/<int:cid>/posts', methods=['GET'])
+def PostsOfChat(cid):
+    print(cid)
+    if request.method == "GET":
+        return chatHandler().getAllPostsFromChat(cid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/users/dislikes', methods=['GET'])
+def usersWhodislikedPost(pid):
+    print(pid)
+    if request.method == "GET":
+        return postHandler().getUsersWhoDislikedPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/users/likes', methods=['GET'])
+def usersWholikedPost(pid):
+    print(pid)
+    if request.method == "GET":
+        return postHandler().getUsersWhoLikedPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+# @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
+# def modifyContacts(cid):
+#     print(cid)
+#     if request.method == "POST":
+#         return chatHandler().addContactToChat(cid, request.json)
+#     elif request.method == "DELETE":
+#         if not request.args:
+#             return "Invalid operation!"
+#         else:
+#             return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
+def getAllPosts():
+    if request.method == 'GET':
+        if not request.args:
+            return postHandler().getAllPosts()
+        else:
+            return postHandler().getPostById(request.args.to_dict())
+    # http://127.0.0.1:5000/PhotoMsgApp/posts?pid=1&operation=dislike
+    if request.method == 'PUT':
+        return postHandler().updateLikeDislike(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/likes', methods=['GET'])
+def getLikesOfAPost(pid):
+    if request.method == 'GET':
+        return postHandler().getLikesOfAPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/dislikes', methods=['GET'])
+def getDislikesOfAPost(pid):
+    if request.method == 'GET':
+        return postHandler().getDisikesOfAPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/replies', methods=['GET'])
+def getRepliesOfAPost(pid):
+    if request.method == 'GET':
+        return postHandler().getRepliesOfAPost(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/reply', methods=['PUT'])
+def updatePostReplies():
+    if request.method == 'PUT':
+        return postHandler().updatePostReplies(request.json)
+
+
+#  http://127.0.0.1:5000/PhotoMsgApp/postsFromChat?cid=1
+@app.route('/PhotoMsgApp/postsFromChat', methods=['GET'])
+def getAllPostsFromChat():
+    if request.method == 'GET':
+        # "You need to specify the CHAT ID from which to GET posts."
+        return postHandler().getAllPostsFromChat(request.args.to_dict())
+
+
+@app.route('/PhotoMsgApp/login', methods=['GET'])
+def validate_login():
+    if request.method == 'GET':
+        return Handler().validate_login(request.json)
+
+
+@app.route('/PhotoMsgApp/register', methods=['POST'])
+def register_user():
+    if request.method == 'POST':
+        return Handler().register_user(request.json)
+
+
+#  http://127.0.0.1:5000/PhotoMsgApp/contacts?uid=2
+@app.route('/PhotoMsgApp/contacts', methods=['GET', 'POST', 'DELETE'])
+def getContactById():
+    if request.method == 'GET':
+        return Handler().getContactsById(request.args.to_dict())
+    elif request.method == 'POST':
+        return Handler().addToContactList(request.args.to_dict(), request.json)
+    elif request.method == 'DELETE':  # NOT YET!!!
+        return Handler().deleteContact(request.args.to_dict(), request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+'''
+La ruta tiene dos opciones:
+  Si el parametro es una fecha(con el formato MM-DD-YYYY),
+  existe la posibilidad para ver todas las estadisticas
+  asociadas a dicha fecha, o el poder ver una estadistica en
+  particular.
+  
+  Ejemplo: /PhotoMsgApp/stats/02-24-2019 (Todas las estadisticas)
+           /PhotoMsgApp/stats/02-24-2019?likesperday (Estadistica especifica)
+           
+  Segunda alternativa es que el parametro sea un string representando una foto.
+  Dicho parametro sirve para devolver las estadisticas de la foto pertinente.
+  
+  Ejemplo: /PhotoMsgApp/stats/pollo.png (Todas las estadisticas)
+           /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
+'''
+
+
+@app.route('/PhotoMsgApp/stats/<param>', methods=['GET'])
+def getAllStats(param):
+    if request.method == 'GET':
+        if not request.args:
+            if param[0].isdigit():
+                return statHandler().getAllStats(param)
+            else:
+                return statHandler().getAllPhotoStats(param)
+
+        else:
+            if not param[0].isdigit():
+                return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
+            else:
+                return statHandler().getStatByChoice(request.args.to_dict(), param)
+
 
 if __name__ == '__main__':
     app.run()

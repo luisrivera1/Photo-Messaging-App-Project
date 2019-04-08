@@ -6,7 +6,7 @@ angular.module('AppChat').controller('ChatMenuController', ['$http', '$log', '$s
         this.chatList = [];
         this.chatHW = [];
         this.uid = mem.getItem('uid');
-        this.username = mem.getItem('username');
+        this.username = mem.getItem('uusername');
         this.nchatname= "";
 
         this.loadChats = function(){
@@ -19,7 +19,7 @@ angular.module('AppChat').controller('ChatMenuController', ['$http', '$log', '$s
                 for(var i=n; i>=0; i--){
                     var c = thisCtrl.chatHW[i];
                     if (c!=null)
-                        thisCtrl.chatList.push({"id": c.cid, "name": c.chatname});
+                        thisCtrl.chatList.push({"cid": c.cid, "cname": c.cname});
                 }
 
             }, function(error){
@@ -49,7 +49,8 @@ angular.module('AppChat').controller('ChatMenuController', ['$http', '$log', '$s
 
             // First set up the url for the route
             //EEHW
-            var url = "http://localhost:5000/SocialMessagingApp/user/chat/"+ thisCtrl.uid;
+            //var url = "http://localhost:5000/PhotoMsg/chats"+ thisCtrl.uid; // LO original
+            var url = "http://127.0.0.1:5000/PhotoMsgApp/chats";
             // Now set up the $http object
             // It has two function call backs, one for success and one for error
             return $http.get(url)
@@ -64,13 +65,13 @@ angular.module('AppChat').controller('ChatMenuController', ['$http', '$log', '$s
         };
 
         this.loadchat = function(m){
-            mem.setItem('chatname', m.name);
-            mem.setItem('cid', m.id);
+            mem.setItem('cname', m.cname);
+            mem.setItem('cid', m.cid);
             $location.path('/chat');
         };
 
         this.newchat = function(){
-            var url = "http://localhost:5000/SocialMessagingApp/chat/addchat/"+ thisCtrl.uid + "/"+ thisCtrl.nchatname;
+            var url = "http://127.0.0.1:5000/SocialMessagingApp/chat/addchat/"+ thisCtrl.uid + "/"+ thisCtrl.nchatname;
             $http.get(url).then(function(response){
                 //success
 

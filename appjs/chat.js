@@ -67,7 +67,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
             // First set up the url for the route
             //EEHW
-            var url = "http://localhost:5000/SocialMessagingApp/chat/message/" + thisCtrl.cid;
+            var url = "http://localhost:5000/PhotoMsgApp/chats/1/posts" + thisCtrl.cid;
             // Now set up the $http object
             // It has two function call backs, one for success and one for error
             return $http.get(url)
