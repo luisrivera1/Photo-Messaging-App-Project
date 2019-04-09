@@ -10,7 +10,7 @@ create table Chat(cid serial primary key, cname varchar(20), cadmin integer refe
 
 create table isMember(user_id integer references Users(uid), chat_id integer references Chat(cid), primary key(user_id, chat_id)); 
 
-create table Post(pid serial primary key, puser integer references Users(uid), pphoto varchar(30), pmessage varchar(100), pdate DATE);
+create table Post(pid serial primary key, puser integer references Users(uid), pphoto varchar(100), pmessage varchar(100), pdate DATE);
 
 create table isReply(reply_id integer references Post(pid), original_id integer references Post(pid), primary key(reply_id, original_id));  
 
