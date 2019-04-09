@@ -18,11 +18,21 @@ class postsDAO:
     def getAllPosts(self):
         result = []
         cursor = self.conn.cursor()
-        query = "select * from Post;"
+        query = "select pid, puser, pphoto, pmessage, sum(case when type ='like' then 1 else 0 end) as plikes, sum(case when type='dislike' then 1 else 0 end) as pdislike from Post as P, Reaction as R, Users as U where P.pid = R.post and U.uid = P.pid group by pid order by pid;"
         cursor.execute(query)
         for row in cursor:
             result.append(row)
         return result
+
+    def getHashtags(self, pid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select htext from Hashtag natural inner join Tagged where hashtag_id = hid and post_id = %s;"
+        cursor.execute(query, (pid,))
+        for row in cursor:
+            result.append(row)
+        return result
+
 
     def getPostById(self, pid):
         cursor = self.conn.cursor()

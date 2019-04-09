@@ -12,6 +12,29 @@ class postHandler:
         result['p_date'] = row[4]
         return result
 
+    def build_post_dict_UI(self, row):
+        result = {}
+
+        dao = postsDAO()
+        result['pid'] = row[0]
+        result['p_user'] = row[1]
+        result['p_photo'] = row[2]
+
+        pid = str(row[0])
+
+        hashtags = dao.getHashtags(pid)
+        print(hashtags)
+
+        added = " "
+
+        for hashtag in hashtags:
+            added += hashtag[0] + " "
+
+        result['p_message'] = row[3] + added
+        result['plikes'] = row[4]
+        result['pdislike'] = row[5]
+        return result
+
     def build_post_likes_dict(self, row):
         result = {}
         result['pid'] = row[0]
@@ -73,13 +96,26 @@ class postHandler:
         result['p_chat'] = p_chat
         return result
 
+    # def getAllPosts(self):
+    #     dao = postsDAO()
+    #     posts_list = dao.getAllPosts()
+    #     result_list = []
+    #     for row in posts_list:
+    #         result = self.build_post_dict(row)
+    #         result_list.append(result)
+    #     return jsonify(Posts=result_list)
+
     def getAllPosts(self):
         dao = postsDAO()
         posts_list = dao.getAllPosts()
+        if not posts_list:
+            return jsonify(Error="No post Found")
         result_list = []
+        print(posts_list)
         for row in posts_list:
-            result = self.build_post_dict(row)
+            result = self.build_post_dict_UI(row)
             result_list.append(result)
+        print(result_list)
         return jsonify(Posts=result_list)
 
     def getPostById(self, args):
