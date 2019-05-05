@@ -132,8 +132,14 @@ class usersDAO:
             result.append(row)
         return result
 
-    def deleteUserFromContactList(self, uid, user):  # removes user from contact list of user with uid
-        self.getUserById2(uid).deleteFromContactList(user)
+    def deleteUserFromContactList(self, uid, cid):  # removes user with uid from contact list with cid
+        cursor = self.conn.cursor()
+        query = "delete from Contacts where owner_id = %s and contact_id = %s;"
+        cursor.execute(query, (uid, cid))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for deletion was: " + str(result))
+        return result
 
     def insertContact(self, uid, cid):  # *****
         cursor =self.conn.cursor()
@@ -153,5 +159,12 @@ class usersDAO:
         cursor = self.conn.cursor()
         query = "select ufirstname, ulastname, uemail from users natural inner join contacts where owner_id = %s and contact_id = %s and uid = %s;"
         cursor.execute(query, (uid, cid, cid))
+        result = cursor.fetchone()
+        return result
+
+    def getContactFromUsername(self, uid, uusername):
+        cursor = self.conn.cursor()
+        query = "select ufirstname, ulastname, uemail, contact_id from users natural inner join contacts where owner_id = %s and uusername = %s and uid = contact_id;"
+        cursor.execute(query, (uid, uusername))
         result = cursor.fetchone()
         return result

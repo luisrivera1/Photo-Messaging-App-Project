@@ -335,25 +335,44 @@ class Handler:
             else:
                 return jsonify(Error="Malformed add to contacts request"), 400
 
-    def deleteContact(self, args, form):
-        uid = int(args['uid'])
-        print(uid)
+    def deleteContact(self, uid, form):  # by contact id OR by uusername
         dao = usersDAO()
-        if not dao.getUserById2(uid):  # Checks if user is valid.
-            return jsonify(Error="User not found"), 404
-        if len(form) != 3:
-            return jsonify(Error="Malformed update request"), 400
+        if not dao.getUserById(uid):  # Checks if user is valid.
+            return jsonify(Error="User " + str(uid) + " not found"), 404
+        if len(form) != 1:
+            return jsonify(Error="Malformed delete contact request"), 400
         else:
-            ufirstname = form['ufirstname']
-            ulastname = form['ulastname']
-            uemail = form['uemail']
-            if ufirstname and ulastname and uemail:
-                result = [ufirstname, ulastname, uemail]
-                try:
-                    dao.deleteUserFromContactList(uid, result)
-                    return jsonify(DeleteStatus="OK"), 200
-                except:
-                    return jsonify(Error="Contact not found."), 404
+            cid = None
+            uusername = None
+            try:
+                uusername = form['uusername']
+            except:
+                pass
+            try:
+                cid = form['cid']
+            except:
+                pass
+            if cid:
+                row = dao.getContactFromUserId(uid, cid)
+                if not row:
+                    return jsonify(Error="User with id " + str(uid) + " does NOT have contact with id " + str(cid)), 404
+                if dao.deleteUserFromContactList(uid, cid) == 1:
+                    result = self.build_contact_attributes(row)
+                    return jsonify(DeleteContact=result), 200
+                else:
+                    return jsonify(Error="Delete contact failed."), 400
+            elif uusername:
+                row = dao.getContactFromUsername(uid, uusername)
+                if not row:
+                    return jsonify(Error="There is no user with username: " + str(uusername)), 404
+                cid = row[3]
+                if not dao.getContactFromUserId(uid, cid):
+                    return jsonify(Error="User with id " + str(uid) + " does NOT have contact with username " + str(uusername)), 404
+                if dao.deleteUserFromContactList(uid, cid) == 1:
+                    result = self.build_contact_attributes(row)
+                    return jsonify(DeletedContact=result), 200
+                else:
+                    return jsonify(Error="Delete contact failed."), 400
             else:
                 return jsonify(Error="Malformed delete request"), 400
 

@@ -21,7 +21,7 @@ app.config['JSON_SORT_KEYS'] = False  # This makes jsonify NOT sort automaticall
 CORS(app)
 
 
-@app.route('/PhotoMsgApp/users', methods=['GET', 'POST', 'DELETE'])
+@app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
 def getAllUsers():
     if request.method == 'POST':
         print("REQUEST: ", request.json)
@@ -47,12 +47,17 @@ def getUserById(uid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET', 'POST'])
+@app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET', 'POST', 'DELETE'])
 def getAllContactsFromUser(uid):
     if request.method == 'GET':
         return Handler().getContactsById(uid)
     elif request.method == 'POST':
         return Handler().addToContactList(uid, request.json)
+    elif request.method == 'DELETE':
+        if not request.json:
+            return jsonify(Error="Need to specify parameters for deletion"), 405
+        else:
+            return Handler().deleteContact(uid, request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
 
