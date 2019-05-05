@@ -27,7 +27,7 @@ class Handler:
         result['p_replies'] = row[7]
         return result
 
-    def build_user_attributes(self, uid, ufirstname,ulastname, uemail, uusername, upassword):
+    def build_user_attributes(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
         result = {}
         result['uid'] = uid
         result['ufirstname'] = ufirstname
@@ -139,24 +139,26 @@ class Handler:
         return jsonify(Posts=result_list)
 
     def insertUser(self, form):
-        print("form: ", form)
-        if len(form) != 6:
-            return jsonify(Error = "Malformed post request"), 400
+        if len(form) != 5:
+            return jsonify(Error = "Malformed insert user request"), 400
         else:
-            uid = form['uid']
             ufirstname = form['ufirstname']
             ulastname= form['ulastname']
             uemail = form['uemail']
             uusername = form['uusername']
             upassword = form['upassword']
 
-            if uid and ufirstname and ulastname and uemail and uusername and upassword:
+            if ufirstname and ulastname and uemail and uusername and upassword:
                 dao = usersDAO()
-                uid = dao.insert(uid, ufirstname, ulastname, uemail,uusername,upassword)
-                result = self.build_user_attributes(uid, ufirstname, ulastname,uemail,uusername,upassword)
+                if dao.getUserByEmail(uemail):
+                    return jsonify(Error="User with that email already exists. Please try a different one."), 400
+                elif dao.getUsersByUsername(uusername):
+                    return jsonify(Error="User with that username already exists. Please try a different one."), 400
+                uid = dao.insertUser(ufirstname, ulastname, uemail, uusername, upassword)
+                result = self.build_user_attributes(uid, ufirstname, ulastname, uemail, uusername, upassword)
                 return jsonify(User=result), 201
             else:
-                return jsonify(Error="Unexpected attributes in post request"), 400
+                return jsonify(Error="Unexpected attributes in insert user request"), 400
 
     def insertPost(self, form):
         print("form: ", form)
@@ -180,7 +182,6 @@ class Handler:
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
 
-
     def insertUserJson(self, json):
         uname = json['uname']
         username = json['username']
@@ -193,7 +194,6 @@ class Handler:
             return jsonify(User=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
-
 
     def deleteUser(self, uid):
         dao = usersDAO()
@@ -295,25 +295,42 @@ class Handler:
                 result_list.append(user)
             return jsonify(ContactList=result_list)
 
-    def addToContactList(self, args, form):
-        uid = int(args['uid'])
-        print(uid)
+    def addToContactList(self, uid, form):
         dao = usersDAO()
-        if not dao.getUserById2(uid):
-            return jsonify(Error="User not found."), 404
+        if not dao.getUserById(uid):
+            return jsonify(Error="User with id " + str(uid) + " not found."), 404
         else:
-            if len(form) != 3:
-                return jsonify(Error="Malformed update request"), 400
-            else:
+            if len(form) == 1:
+                cid = form['cid']
+                if cid:
+                    if not dao.getUserById(cid):
+                        return jsonify(Error="Contact User with id " + str(cid) + " not found."), 404
+                    elif dao.getContactFromUserId(uid, cid):
+                        return jsonify(Error="User with id " + str(uid) + " already has contact with id " + str(cid)), 404
+                    result = self.build_contact_attributes(dao.insertContact(uid, cid))
+                    print(result)
+                    return jsonify(Contact=result), 201
+                else:
+                    return jsonify(Error="Unexpected attributes in insert contact request"), 400
+            elif len(form) == 5:
                 ufirstname = form['ufirstname']
                 ulastname = form['ulastname']
                 uemail = form['uemail']
-                if ufirstname and ulastname and uemail:
-                    dao.insertContact(uid, ufirstname, ulastname, uemail)
-                    result = self.build_contact_attributes(ufirstname, ulastname, uemail)
-                    return jsonify(User=result), 200
+                uusername = form['uusername']
+                upassword = form['upassword']
+                if ufirstname and ulastname and uemail and uusername and upassword:
+                    if dao.getUserByEmail(uemail):
+                        return jsonify(Error="User with that email already exists. Please try a different one."), 400
+                    elif dao.getUsersByUsername(uusername):
+                        return jsonify(Error="User with that username already exists. Please try a different one."), 400
+                    cid = dao.insertUser(ufirstname, ulastname, uemail, uusername, upassword)
+                    result = self.build_contact_attributes(dao.insertContact(uid, cid))
+                    print(result)
+                    return jsonify(Contact=result), 201
                 else:
-                    return jsonify(Error="Unexpected attributes in update request"), 400
+                    return jsonify(Error="Unexpected attributes in insert contact request"), 400
+            else:
+                return jsonify(Error="Malformed add to contacts request"), 400
 
     def deleteContact(self, args, form):
         uid = int(args['uid'])
@@ -337,11 +354,11 @@ class Handler:
             else:
                 return jsonify(Error="Malformed delete request"), 400
 
-    def build_contact_attributes(self, ufirstname, ulastname, uemail):
+    def build_contact_attributes(self, row):
         result = {}
-        result['ufirstname'] = ufirstname
-        result['ulastname'] = ulastname
-        result['uemail'] = uemail
+        result['ufirstname'] = row[0]
+        result['ulastname'] = row[1]
+        result['uemail'] = row[2]
         return result
 
     def getUserByIdORUsername(self, form):

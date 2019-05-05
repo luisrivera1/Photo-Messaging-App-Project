@@ -47,10 +47,12 @@ def getUserById(uid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET'])
+@app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET', 'POST'])
 def getAllContactsFromUser(uid):
     if request.method == 'GET':
         return Handler().getContactsById(uid)
+    elif request.method == 'POST':
+        return Handler().addToContactList(uid, request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
 

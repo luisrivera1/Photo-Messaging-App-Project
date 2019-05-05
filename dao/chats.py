@@ -128,7 +128,7 @@ class chatsDAO:
     def getAllPostsFromChat(self, cid):
         result = []
         cursor = self.conn.cursor()
-        query = "select pid, pmessage, puser from has natural inner join post where post_id = pid and chat_id = 1;"
+        query = "select pid, pmessage, puser from has natural inner join post where post_id = pid and chat_id = %s;"
         cursor.execute(query, (cid,))
         for row in cursor:
             result.append(row)

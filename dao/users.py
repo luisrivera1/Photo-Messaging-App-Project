@@ -61,11 +61,10 @@ class usersDAO:
         return result
 
     def getUserByEmail(self, uemail):
-        result = []
-        for user in self.user_list:
-            if user.getEmail() == uemail:
-                for attribute, value in vars(user).items():
-                    result.append(value)
+        cursor = self.conn.cursor()
+        query = "select * from Users where uemail = %s;"
+        cursor.execute(query, (uemail,))
+        result = cursor.fetchone()
         return result
 
     def getUserByUsernameAndEmail(self, uusername, uemail):
@@ -76,9 +75,12 @@ class usersDAO:
                     result.append(value)
         return result
 
-    def insert(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
-        temp = User(uid, ufirstname, ulastname, uemail, uusername, upassword)
-        self.user_list.append(temp)
+    def insertUser(self, ufirstname, ulastname, uemail, uusername, upassword):
+        cursor = self.conn.cursor()
+        query = "insert into Users(ufirstname, ulastname, uemail, uusername, upassword) values (%s, %s, %s, %s, %s) returning uid;"
+        cursor.execute(query, (ufirstname, ulastname, uemail, uusername, upassword))
+        uid = cursor.fetchone()[0]
+        self.conn.commit()
         return uid
 
     def delete(self, uid):
@@ -119,7 +121,7 @@ class usersDAO:
     def addToContactList(self, uid, user):
         self.getUserById2(uid).appendToContactList(user)
 
-    def getContactListFromUserId(self, uid):  # returns a contact_list (array of contacts)
+    def getContactListFromUserId(self, uid):
         result = []
         cursor = self.conn.cursor()
         query = "select uid, ufirstname, ulastname from users natural inner join contacts where owner_id = %s and contact_id = uid;"
@@ -131,11 +133,23 @@ class usersDAO:
     def deleteUserFromContactList(self, uid, user):  # removes user from contact list of user with uid
         self.getUserById2(uid).deleteFromContactList(user)
 
-    def insertContact(self, uid, ufirstname, ulastname, uemail):  # *****
-        temp = [ufirstname, ulastname, uemail]
-        self.getUserById2(uid).appendToContactList(temp)
+    def insertContact(self, uid, cid):  # *****
+        cursor =self.conn.cursor()
+        query = "insert into Contacts(owner_id, contact_id) values (%s, %s);"
+        cursor.execute(query, (uid, cid))
+        #  result = cursor.fetchone()
+        self.conn.commit()
+        result = self.getContactFromUserId(uid, cid)
+        return result
 
     def getUserById2(self, uid):  # receives uid and returns a user
         for user in self.user_list:
             if user.getId() == uid:
                 return user
+
+    def getContactFromUserId(self, uid, cid):
+        cursor = self.conn.cursor()
+        query = "select ufirstname, ulastname, uemail from users natural inner join contacts where owner_id = %s and contact_id = %s and uid = %s;"
+        cursor.execute(query, (uid, cid, cid))
+        result = cursor.fetchone()
+        return result
