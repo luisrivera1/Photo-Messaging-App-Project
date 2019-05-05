@@ -197,11 +197,14 @@ class Handler:
 
     def deleteUser(self, uid):
         dao = usersDAO()
-        if not dao.getUserById(uid):
-            return jsonify(Error = "User not found."), 404
+        row = dao.getUserById(uid)
+        if not row:
+            return jsonify(Error="User " + str(uid) + " not found."), 404
         else:
-            dao.delete(uid)
-            return jsonify(DeleteStatus = "OK"), 200
+            if dao.deleteUser(uid) == 1:
+                return jsonify(DeletedUser=self.build_user_dict(row)), 200
+            else:
+                return jsonify(Error="Delete failed"), 404
 
     def deletePost(self, pid):
         dao = postsDAO()

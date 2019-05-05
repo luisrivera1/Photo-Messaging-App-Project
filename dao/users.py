@@ -15,7 +15,6 @@ class usersDAO:
                                                                     pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
-
     def getAllUsers(self):
         result = []
         cursor = self.conn.cursor()
@@ -83,11 +82,14 @@ class usersDAO:
         self.conn.commit()
         return uid
 
-    def delete(self, uid):
-        for user in self.user_list:
-            if user.getId() == uid:
-                self.user_list.remove(user)
-        return uid
+    def deleteUser(self, uid):
+        cursor = self.conn.cursor()
+        query = "delete from Users where uid = %s;"
+        cursor.execute(query, (uid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print(result)
+        return result
 
     def validate_login(self, uusername, password):
         user = self.getUsersByUsernamev2(uusername)

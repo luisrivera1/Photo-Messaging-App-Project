@@ -21,7 +21,7 @@ app.config['JSON_SORT_KEYS'] = False  # This makes jsonify NOT sort automaticall
 CORS(app)
 
 
-@app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
+@app.route('/PhotoMsgApp/users', methods=['GET', 'POST', 'DELETE'])
 def getAllUsers():
     if request.method == 'POST':
         print("REQUEST: ", request.json)
