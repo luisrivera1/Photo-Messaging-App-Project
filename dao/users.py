@@ -82,6 +82,22 @@ class usersDAO:
         self.conn.commit()
         return uid
 
+    def insertToValidates(self, login_id, user_id):
+        cursor = self.conn.cursor()
+        query = "insert into validates(login_id, user_id) values (%s, %s);"
+        cursor.execute(query, (login_id, user_id))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
+    def insertToLogin(self, uusername, upassword):
+        cursor = self.conn.cursor()
+        query = "insert into login(uusername, upassword) values ( %s, %s) returning lid;"
+        cursor.execute(query, (uusername, upassword))
+        login_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return login_id
+
     def deleteUser(self, uid):
         cursor = self.conn.cursor()
         query = "delete from Users where uid = %s;"
