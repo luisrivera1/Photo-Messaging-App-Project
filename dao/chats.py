@@ -158,6 +158,13 @@ class chatsDAO:
     def insertPostIntoChat(self, cid, post):
         self.getChatById2(cid).addPost(post)
 
+    def insertPostintoChat(self,cid,post):
+         cursor = self.conn.cursor()
+         query = "insert into post where chat_id = %s;"
+         cursor.execute(query, (cid, post))
+         self.conn.commit()
+
+
     def getAllUsersFromChat(self, cid):
         result = []
         cursor = self.conn.cursor()
