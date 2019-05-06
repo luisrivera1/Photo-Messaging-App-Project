@@ -155,7 +155,7 @@ class usersDAO:
             if user.getId() == uid:
                 return user
 
-    def getContactFromUserId(self, uid, cid):
+    def getContactFromUserId(self, uid, cid): # getContactOfUser
         cursor = self.conn.cursor()
         query = "select ufirstname, ulastname, uemail from users natural inner join contacts where owner_id = %s and contact_id = %s and uid = %s;"
         cursor.execute(query, (uid, cid, cid))

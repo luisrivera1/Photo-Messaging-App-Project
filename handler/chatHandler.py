@@ -36,6 +36,13 @@ class chatHandler:
 
         return result
 
+    def build_contact_attributes(self, ufirstname, ulastname, uemail):
+        result = {}
+        result['ufirstname'] = ufirstname
+        result['ulastname'] = ulastname
+        result['uemail'] = uemail
+        return result
+
     def getAllChats(self):
         dao = chatsDAO()
         chats_list = dao.getAllChats()
@@ -136,7 +143,7 @@ class chatHandler:
 
     def deleteUserFromChat(self, cid, uid):
         dao = chatsDAO()
-        dao2 = usersDAO
+        dao2 = usersDAO()
         if not dao.getChatById(cid):
             return jsonify(Error="Chat with id: " + str(cid) + " not found."), 404
         if not dao2.getUserById(uid):
@@ -163,23 +170,43 @@ class chatHandler:
     #                 return jsonify(Error="User Not Found"), 404
     #     print("Invalid operation. Removal not allowed.")
 
-    def addContactToChat(self, cid, form):
+    def addContactToChat(self, cid, contact_id):
+        dao = chatsDAO()
+        dao2 = usersDAO()
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat with id: " + str(cid) + " not found."), 404
+        if not dao2.getUserById(contact_id):
+            return jsonify(Error="User with contact id: " + str(contact_id) + " not found."), 404
+        if dao.isMember(cid, contact_id):
+            return jsonify(Error="User with contact id: " + str(contact_id) + " is already a member of chat with id: " + str(cid))
+        if dao.addMemberToChat(cid, contact_id) == 1:
+            return jsonify(AddedChatMember="User with contact id: " + str(contact_id) + " was added to Chat: " + str(cid)), 200
+        else:
+            return jsonify(Error="Adding contact with id: " + str(contact_id) + " to chat: " + str(cid) + " was unsuccessful"), 400
+
+    def addContactToChatJson(self, cid, form):
         print(cid)
         dao = chatsDAO()
+        dao2 = usersDAO()
         if not dao.getChatById(cid):
-            return jsonify(Error="Chat not found."), 404
+            return jsonify(Error="Chat with id:" + str(cid) + " not found."), 404
+        if len(form) != 3:
+            return jsonify(Error="Malformed add contact to chat request"), 400
+        ufirstname = form['ufirstname']
+        ulastname = form['ulastname']
+        uemail = form['uemail']
+        if ufirstname and ulastname and uemail:
+            row = dao2.getUserByEmail(uemail)
+            if not row:
+                return jsonify(Error="User with email: " + str(uemail) + " not found."), 404
+            uid = row[0]
+            if dao.isMember(cid, uid):
+                return jsonify(Error="User with email: " + str(uemail) + " is already a member of chat with id: " + str(cid))
+            if dao.addMemberToChat(cid, uid) == 1:
+                result = self.build_contact_attributes(ufirstname, ulastname, uemail)
+                return jsonify(AddedContactToChat=result), 200
         else:
-            if len(form) != 3:
-                return jsonify(Error="Malformed update request"), 400
-            else:
-                ufirstname = form['ufirstname']
-                ulastname = form['ulastname']
-                uemail = form['uemail']
-                if ufirstname and ulastname and uemail:
-                    # dao.insertContactToChat(cid, ufirstname, ulastname, uemail)
-                    return jsonify(AddStatus="OK"), 200
-                else:
-                    return jsonify(Error="Unexpected attributes in update request"), 400
+            return jsonify(Error="Unexpected attributes in add contact to chat request"), 400
 
     def addPostToChat(self, args, form):
         cid = int(args['cid'])

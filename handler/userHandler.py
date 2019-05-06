@@ -79,8 +79,6 @@ class Handler:
             user = self.build_user_dict(row)
             return jsonify(User = user)
 
-
-
     def getPostById(self, pid):
         dao = usersDAO()
         row = dao.getPostById(pid)

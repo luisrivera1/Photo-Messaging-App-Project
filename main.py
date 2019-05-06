@@ -113,6 +113,22 @@ def userOfChat(cid, uid):
         return jsonify(Error="Method not allowed."), 405
 
 
+@app.route('/PhotoMsgApp/chats/<int:cid>/contacts/<int:contact_id>', methods=['POST'])
+def contactsOfChat(cid, contact_id):
+    if request.method == "POST":
+        return chatHandler().addContactToChat(cid, contact_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/chats/<int:cid>/contacts', methods=['POST'])
+def contactsOfChatJson(cid):
+    if request.method == "POST":
+        return chatHandler().addContactToChatJson(cid, request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/PhotoMsgApp/chats/<int:cid>/admin', methods=['GET'])
 def adminOfChat(cid):
     print(cid)
