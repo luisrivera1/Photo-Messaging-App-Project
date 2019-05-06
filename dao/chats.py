@@ -59,18 +59,57 @@ class chatsDAO:
                             result.append(value)
         return result
 
-
-    def insert(self, cid, cname, cadmin):
-        temp = Chat(cid, cname, cadmin)
-
-        self.chat_list.append(temp)
+    def createChat(self, cname, cadmin):
+        cursor = self.conn.cursor()
+        query = "insert into chat(cname, cadmin) values (%s, %s) returning cid;"
+        cursor.execute(query, (cname, cadmin))
+        cid = cursor.fetchone()[0]
+        self.conn.commit()
+        # Now we match the admin to the recently created chat
+        query = "insert into ismember(user_id, chat_id) values (%s, %s);"
+        cursor.execute(query, (cadmin, cid))
+        self.conn.commit()
         return cid
 
-    def delete(self, cid, cadmin):
-        for chat in self.chat_list:
-            if chat.getId() == cid and chat.getAdmin() == cadmin:
+    def deleteChat(self, cid):
+        cursor = self.conn.cursor()
+        query = "delete from chat where cid = %s;"
+        cursor.execute(query, (cid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print(result)
+        return result
+
+    def isAdmin(self, cid, uid):
+        try:
+            cursor = self.conn.cursor()
+            query = "select * from chat where cid = %s and cadmin = %s;"
+            cursor.execute(query, (cid, uid))
+            if cursor.rowcount == 1:
                 return True
-        return False
+            return False
+        except:
+            return False
+
+    def deleteMembersOfChat(self, cid, cmembers):
+        try:
+            for row in cmembers:
+                cursor = self.conn.cursor()
+                query = "delete from ismember where chat_id = %s and user_id = %s;"
+                cursor.execute(query, (cid, row))
+                self.conn.commit()
+            return True
+        except:
+            return False
+
+    def getChatMembers(self, cid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select user_id from ismember where chat_id = %s;"
+        cursor.execute(query, (cid,))
+        for row in cursor:
+            result.append(row)
+        return result
 
     def addMemberToChat(self, cid, user):
         for chat in self.chat_list:

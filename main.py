@@ -64,23 +64,26 @@ def getAllContactsFromUser(uid):
 
 @app.route('/PhotoMsgApp/chats', methods=['GET', 'POST', 'DELETE'])
 def getAllChats():
-    if request.method == 'POST':
-        if not request.args:
-            # cambie a request.json pq el form no estaba bregando
-            # parece q estaba poseido por satanas ...
-            # DEBUG a ver q trae el json q manda el cliente con la nueva pieza
-            print("REQUEST: ", request.json)
-            return chatHandler().insertChat(request.json)
-        else:
-            return chatHandler().addPostToChat(request.args.to_dict(), request.json)
-    elif request.method == "GET":
+    # if request.method == 'POST':
+    #     if not request.args:
+    #         # cambie a request.json pq el form no estaba bregando
+    #         # parece q estaba poseido por satanas ...
+    #         # DEBUG a ver q trae el json q manda el cliente con la nueva pieza
+    #         print("REQUEST: ", request.json)
+    #         return chatHandler().insertChat(request.json)
+    #     else:
+    #         return chatHandler().addPostToChat(request.args.to_dict(), request.json)
+    if request.method == "GET":
         if not request.args:
             return chatHandler().getAllChats()
         else:
             return chatHandler().searchChats(request.args.to_dict())
-
+    elif request.method == "POST":
+        if not request.json:
+            return jsonify(Error="Need to specify parameters for chat creation"), 405
+        return chatHandler().createChat(request.json)
     elif request.method == "DELETE":
-        return chatHandler().deleteChat(request.args.to_dict())
+        return chatHandler().deleteChat(request.json)
 
 
 @app.route('/PhotoMsgApp/chats/<int:cid>/users', methods=['GET'])
