@@ -181,11 +181,21 @@ def getAllPosts():
     if request.method == 'GET':
         if not request.args:
             return postHandler().getAllPosts()
-        else:
-            return postHandler().getPostById(request.args.to_dict())
+        # else:
+        #     return postHandler().getPostById(request.args.to_dict())
     # http://127.0.0.1:5000/PhotoMsgApp/posts?pid=1&operation=dislike
     if request.method == 'PUT':
         return postHandler().updateLikeDislike(request.args.to_dict())
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>', methods=['GET'])
+def getASinglePost(pid):
+    if request.method == 'GET':
+        return postHandler().getPostById(pid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
 @app.route('/PhotoMsgApp/posts/<int:pid>/likes', methods=['GET'])
