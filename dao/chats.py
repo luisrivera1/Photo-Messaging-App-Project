@@ -91,6 +91,17 @@ class chatsDAO:
         except:
             return False
 
+    def isMember(self, cid, uid):
+        try:
+            cursor = self.conn.cursor()
+            query = "select * from ismember where chat_id = %s and user_id = %s;"
+            cursor.execute(query, (cid, uid))
+            if cursor.rowcount == 1:
+                return True
+            return False
+        except:
+            return False
+
     def deleteMembersOfChat(self, cid, cmembers):
         try:
             for row in cmembers:
@@ -116,14 +127,13 @@ class chatsDAO:
             if chat.getId() == cid:
                 chat.getMembers().append(user)
 
-    def deleteUserFromChat(self, cid, username):
-        for chat in self.chat_list:
-            if chat.getId() == cid:
-                for member in chat.getMembers():
-                    print(chat.getMembers())
-                    if member == username:
-                       return member
-        return None
+    def deleteUserFromChat(self, cid, uid):
+        cursor = self.conn.cursor()
+        query = "delete from ismember where chat_id = %s and user_id = %s;"
+        cursor.execute(query, (cid, uid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
 
     def getPostsFromChat(self, cid):  # returns an array of posts
         result = []

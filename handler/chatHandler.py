@@ -134,18 +134,19 @@ class chatHandler:
                 else:
                     return jsonify(Error="Delete chat was unsuccessful"), 400
 
-    def deleteUserFromChat(self, cid, args): # cuser1  is the admin
+    def deleteUserFromChat(self, cid, uid):
         dao = chatsDAO()
-        username = args['uusername']
-        row = dao.deleteUserFromChat(cid, username)
-        print(row)
-        if not row:
-            return jsonify(Error="Member Not Found"), 404
-
+        dao2 = usersDAO
+        if not dao.getChatById(cid):
+            return jsonify(Error="Chat with id: " + str(cid) + " not found."), 404
+        if not dao2.getUserById(uid):
+            return jsonify(Error="User with id: " + str(uid) + " not found."), 404
+        if not dao.isMember(cid, uid):
+            return jsonify(Error="User with id: " + str(uid) + " is not a member of chat with id: " + str(cid))
+        if dao.deleteUserFromChat(cid, uid) == 1:
+            return jsonify(DeletedChatMember="User: " + str(uid) + " from Chat " + str(cid) + " was deleted."), 200
         else:
-            return jsonify(User = "Deleted user " + row)
-
-        print("Invalid operation. Removal not allowed.")
+            return jsonify(Error="Delete user: " + str(uid) + " from chat: " + str(cid) + " was unsuccessful"), 400
 
     # def deleteUserFromChat(self, cuser1, cuser2, cid): # cuser1  is the admin
     #     dao = chatsDAO()
