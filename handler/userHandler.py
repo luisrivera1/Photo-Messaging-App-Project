@@ -236,25 +236,19 @@ class Handler:
     def validate_login(self, form):
         dao = usersDAO()
 
-        uusername = None
-        password = None
+        if len(form) != 2:
+            return jsonify(ERROR = "Invalid login.")
 
-        try:
-            uusername = form['uusername']
-        except:
-            pass
-
-        try:
-            password = form['upassword']
-        except:
-            pass
-
-        row = dao.validate_login(uusername, password)
-
-        if not row:
-            return jsonify(LOGIN = "INVALID LOGIN. INVALID CREDENTIALS"),401
         else:
-            return jsonify(LOGIN = "LOGIN VALIDATED. USER " + uusername + " SUCCESSFULLY LOGGED IN."),200
+            uusername = form['uusername']
+            upassword = form['upassword']
+
+            row = dao.validate_login(uusername, upassword)
+
+            if not row:
+                return jsonify(LOGIN = "INVALID LOGIN. INVALID CREDENTIALS"),401
+            else:
+                return jsonify(LOGIN = "LOGIN VALIDATED. USER " + uusername + " SUCCESSFULLY LOGGED IN."),200
 
     def register_user(self, form):
         dao = usersDAO()

@@ -91,11 +91,16 @@ class usersDAO:
         print(result)
         return result
 
-    def validate_login(self, uusername, password):
-        user = self.getUsersByUsernamev2(uusername)
+    def validate_login(self, uusername, upassword):
+        cursor = self.conn.cursor()
+        query = "select uusername, upassword from Login natural inner join Validates where lid = login_id;"
+        cursor.execute(query)
+        table = cursor.fetchall()
+        self.conn.commit()
 
-        if user is not None:
-            return user.getPassword() == password
+        for row in table:
+            if row[0] == uusername and row[1] == upassword:
+                return True
 
         return False
 
