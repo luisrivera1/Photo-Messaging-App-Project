@@ -203,7 +203,8 @@ class Handler:
         if not row:
             return jsonify(Error="User " + str(uid) + " not found."), 404
         else:
-            if dao.deleteUser(uid) == 1:
+            dao.deleteUserFromAllContacts(uid)
+            if dao.deleteUserFromValidates(uid) == 1 and dao.deleteUser(uid) == 1 and dao.deleteUserFromLogin(row[4], row[5]) == 1:
                 return jsonify(DeletedUser=self.build_user_dict(row)), 200
             else:
                 return jsonify(Error="Delete failed"), 404
