@@ -269,3 +269,4 @@ class postsDAO:
                 hashtags.append(word)
 
         return hashtags
+

@@ -84,16 +84,13 @@ class postHandler:
         result['pdate'] = row[4]
         return result
 
-    def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
+    def build_post_attributes(self, pid, p_user, p_photo, p_message, p_date):
         result = {}
         result['pid'] = pid
         result['p_user'] = p_user
         result['p_photo'] = p_photo
+        result['p_message'] = p_message
         result['p_date'] = p_date
-        result['p_likes'] = p_likes
-        result['p_dislikes'] = p_dislikes
-        result['p_replies'] = p_replies
-        result['p_chat'] = p_chat
         return result
 
     # def getAllPosts(self):
@@ -164,23 +161,33 @@ class postHandler:
 
     def insertPost(self, form):
         print("form: ", form)
-        if len(form) != 8:
+        if len(form) != 4:
             return jsonify(Error="Malformed post request"), 400
         else:
-            pid = form['pid']
+
             p_user = form['p_user']
             p_photo = form['p_photo']
-            p_message = form['p_ message']
-            p_likes = form['p_likes']
-            p_dislikes = form['p_dislikes']
+            p_message = form['p_message']
             p_date = form['p_date']
-            p_replies = form['p_replies']
 
-        if pid and p_user and p_photo and p_message and p_likes and p_dislikes and p_date and p_replies:
+
+        if  p_user and p_photo and p_message and p_date:
             dao = postsDAO()
-            pid = dao.insert(pid, p_user, p_photo, p_message,p_likes,p_dislikes,p_date,p_replies)
-            result = self.build_user_attributes(pid, p_user, p_photo, p_message, p_likes,p_dislikes,p_date,p_replies)
-            return jsonify(User=result), 201
+            pid = dao.insertPost(p_user, p_photo, p_message,p_date)
+            result = self. build_post_attributes(pid,p_user, p_photo, p_message,p_date)
+
+            hashtags = dao.getHashtagList(p_message)
+            print(hashtags)
+
+            if len(hashtags) > 0:
+                for hashtag in hashtags:
+                    print(hashtag)
+                    hid = dao.insertIntoHashtag(hashtag)
+                    dao.insertIntoTagged(pid, hid)
+
+            return jsonify(Posts=result), 201
+
+
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 

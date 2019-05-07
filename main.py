@@ -176,7 +176,7 @@ def usersWholikedPost(pid):
 #             return chatHandler().deleteUserFromChat(cid, request.args.to_dict())
 
 
-@app.route('/PhotoMsgApp/posts', methods=['GET', 'PUT'])
+@app.route('/PhotoMsgApp/posts', methods=['GET', 'POST'])
 def getAllPosts():
     if request.method == 'GET':
         if not request.args:
@@ -184,8 +184,8 @@ def getAllPosts():
         else:
             return postHandler().getPostById(request.args.to_dict())
     # http://127.0.0.1:5000/PhotoMsgApp/posts?pid=1&operation=dislike
-    if request.method == 'PUT':
-        return postHandler().updateLikeDislike(request.args.to_dict())
+    if request.method == 'POST':
+        return postHandler().insertPost(request.json)
 
 
 @app.route('/PhotoMsgApp/posts/<int:pid>/likes', methods=['GET'])
