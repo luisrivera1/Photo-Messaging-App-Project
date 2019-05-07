@@ -113,6 +113,22 @@ def userOfChat(cid, uid):
         return jsonify(Error="Method not allowed."), 405
 
 
+@app.route('/PhotoMsgApp/chats/<int:cid>/contacts/<int:contact_id>', methods=['POST'])
+def contactsOfChat(cid, contact_id):
+    if request.method == "POST":
+        return chatHandler().addContactToChat(cid, contact_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/chats/<int:cid>/contacts', methods=['POST'])
+def contactsOfChatJson(cid):
+    if request.method == "POST":
+        return chatHandler().addContactToChatJson(cid, request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/PhotoMsgApp/chats/<int:cid>/admin', methods=['GET'])
 def adminOfChat(cid):
     print(cid)
@@ -268,6 +284,13 @@ def getAllStats(param):
             else:
                 return statHandler().getStatByChoice(request.args.to_dict(), param)
 
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/reply', methods=['POST'])
+def replyToPost(pid):
+    print(pid)
+    print(request.json)
+    if request.method == 'POST':
+        return postHandler().addReplyToPost(pid, request.json)
 
 if __name__ == '__main__':
     app.run()

@@ -123,9 +123,11 @@ class chatsDAO:
         return result
 
     def addMemberToChat(self, cid, user):
-        for chat in self.chat_list:
-            if chat.getId() == cid:
-                chat.getMembers().append(user)
+        cursor = self.conn.cursor()
+        query = "insert into ismember(user_id, chat_id) values (%s, %s);"
+        cursor.execute(query, (user, cid))
+        self.conn.commit()
+        return cursor.rowcount
 
     def deleteUserFromChat(self, cid, uid):
         cursor = self.conn.cursor()
