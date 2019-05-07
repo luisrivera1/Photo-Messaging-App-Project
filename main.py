@@ -285,5 +285,12 @@ def getAllStats(param):
                 return statHandler().getStatByChoice(request.args.to_dict(), param)
 
 
+@app.route('/PhotoMsgApp/posts/<int:pid>/reply', methods=['POST'])
+def replyToPost(pid):
+    print(pid)
+    print(request.json)
+    if request.method == 'POST':
+        return postHandler().addReplyToPost(pid, request.json)
+
 if __name__ == '__main__':
     app.run()

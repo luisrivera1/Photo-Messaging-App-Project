@@ -289,3 +289,47 @@ class postHandler:
             for column in result:
                 result_list.append(self.build_post_replies_dict(column))
             return jsonify(RepliesOfPost=result_list)
+
+    def addReplyToPost(self, pid, form):
+            dao = postsDAO()
+
+            # validate that post exists
+            if not dao.getPostById(pid):
+                return jsonify(Error = "Post to reply to does not exist,"), 404
+
+            # validate json
+            if len(form) != 4:
+                return jsonify(Error = "Invalid post arguments.")
+
+            else:
+                puser = form['puser']
+                pphoto = form['pphoto']
+                pmessage = form['pmessage']
+                pdate = form['pdate']
+
+
+                if puser and pphoto and pmessage and pdate:
+                    reply_id = dao.insertPost(puser, pphoto, pmessage, pdate)
+
+                    dao.insertIntoIsReply(reply_id, pid)
+
+                    hashtags = dao.getHashtagList(pmessage)
+                    print(hashtags)
+
+                    if len(hashtags) > 0:
+                        for hashtag in hashtags:
+                            print(hashtag)
+                            hid = dao.insertIntoHashtag(hashtag)
+                            dao.insertIntoTagged(pid, hid)
+
+                    return jsonify(Reply = "Reply successfully added.")
+
+                else:
+                    return jsonify(Error = "Reply could not be added.")
+
+
+
+
+
+
+

@@ -230,3 +230,42 @@ class postsDAO:
         for row in cursor:
             result.append(row)
         return result
+
+    def insertPost(self, puser, pphoto, pmessage, pdate):
+        cursor = self.conn.cursor()
+        query = "insert into Post(puser, pphoto, pmessage, pdate) values (%s, %s, %s, %s) returning pid;"
+        cursor.execute(query, (puser, pphoto, pmessage, pdate))
+        result = cursor.fetchone()[0]
+        self.conn.commit()
+        return result
+
+    def insertIntoIsReply(self, rid, pid):
+        cursor = self.conn.cursor()
+        query = "insert into isReply(reply_id, original_id) values (%s, %s);"
+        cursor.execute(query, (rid, pid))
+        self.conn.commit()
+
+    def insertIntoHashtag(self, hashtag):
+        cursor = self.conn.cursor()
+        query = "insert into Hashtag(htext) values (%s) returning hid;"
+        cursor.execute(query, (hashtag,))
+        result = cursor.fetchone()[0]
+        self.conn.commit()
+        return result
+
+    def insertIntoTagged(self, pid, hid):
+        cursor = self.conn.cursor()
+        query = "insert into Tagged(post_id, hashtag_id) values (%s, %s);"
+        cursor.execute(query, (pid, hid))
+        self.conn.commit()
+
+    def getHashtagList(self, pmessage):
+        message = pmessage.split()
+
+        hashtags = []
+
+        for word in message:
+            if word[0] == "#":
+                hashtags.append(word)
+
+        return hashtags
