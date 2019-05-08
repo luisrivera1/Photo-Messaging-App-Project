@@ -153,8 +153,12 @@ class Handler:
                 elif dao.getUsersByUsername(uusername):
                     return jsonify(Error="User with that username already exists. Please try a different one."), 400
                 uid = dao.insertUser(ufirstname, ulastname, uemail, uusername, upassword)
-                result = self.build_user_attributes(uid, ufirstname, ulastname, uemail, uusername, upassword)
-                return jsonify(User=result), 201
+                login_id = dao.insertToLogin(uusername, upassword)
+                if dao.insertToValidates(login_id, uid) == 1:
+                    result = self.build_user_attributes(uid, ufirstname, ulastname, uemail, uusername, upassword)
+                    return jsonify(User=result), 201
+                else:
+                    return jsonify(Error="User insertion failed horribly."), 400
             else:
                 return jsonify(Error="Unexpected attributes in insert user request"), 400
 
@@ -199,7 +203,8 @@ class Handler:
         if not row:
             return jsonify(Error="User " + str(uid) + " not found."), 404
         else:
-            if dao.deleteUser(uid) == 1:
+            dao.deleteUserFromAllContacts(uid)
+            if dao.deleteUserFromValidates(uid) == 1 and dao.deleteUser(uid) == 1 and dao.deleteUserFromLogin(row[4], row[5]) == 1:
                 return jsonify(DeletedUser=self.build_user_dict(row)), 200
             else:
                 return jsonify(Error="Delete failed"), 404

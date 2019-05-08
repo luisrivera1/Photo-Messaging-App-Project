@@ -33,7 +33,6 @@ class postsDAO:
             result.append(row)
         return result
 
-
     def getPostById(self, pid):
         cursor = self.conn.cursor()
         query = "select * from Post where pid = %s;"

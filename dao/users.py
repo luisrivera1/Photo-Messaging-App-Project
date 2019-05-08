@@ -82,13 +82,29 @@ class usersDAO:
         self.conn.commit()
         return uid
 
+    def insertToValidates(self, login_id, user_id):
+        cursor = self.conn.cursor()
+        query = "insert into validates(login_id, user_id) values (%s, %s);"
+        cursor.execute(query, (login_id, user_id))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
+    def insertToLogin(self, uusername, upassword):
+        cursor = self.conn.cursor()
+        query = "insert into login(uusername, upassword) values ( %s, %s) returning lid;"
+        cursor.execute(query, (uusername, upassword))
+        login_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return login_id
+
     def deleteUser(self, uid):
         cursor = self.conn.cursor()
         query = "delete from Users where uid = %s;"
         cursor.execute(query, (uid,))
         result = cursor.rowcount
         self.conn.commit()
-        print(result)
+        print("Result for User deletion was: " + str(result))
         return result
 
     def validate_login(self, uusername, upassword):
@@ -137,13 +153,40 @@ class usersDAO:
             result.append(row)
         return result
 
-    def deleteUserFromContactList(self, uid, cid):  # removes user with uid from contact list with cid
+    def deleteUserFromContactList(self, uid, cid):  # removes contact with cid from user with uid
         cursor = self.conn.cursor()
         query = "delete from Contacts where owner_id = %s and contact_id = %s;"
         cursor.execute(query, (uid, cid))
         result = cursor.rowcount
         self.conn.commit()
         print("Result for deletion was: " + str(result))
+        return result
+
+    def deleteUserFromAllContacts(self, contact_id):  # removes ALL contacts with contact_id
+        cursor = self.conn.cursor()
+        query = "delete from Contacts where contact_id = %s;"
+        cursor.execute(query, (contact_id,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for contacts deletion was: " + str(result))
+        return result
+
+    def deleteUserFromValidates(self, uid):
+        cursor = self.conn.cursor()
+        query = "delete from validates where user_id = %s;"
+        cursor.execute(query, (uid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Validates deletion was: " + str(result))
+        return result
+
+    def deleteUserFromLogin(self, uusername, upassword):
+        cursor = self.conn.cursor()
+        query = "delete from login where uusername = %s and upassword = %s;"
+        cursor.execute(query, (uusername, upassword))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Login deletion was: " + str(result))
         return result
 
     def insertContact(self, uid, cid):  # *****
