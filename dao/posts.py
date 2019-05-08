@@ -191,16 +191,16 @@ class postsDAO:
 
     def getPostLikes(self, pid):
         cursor = self.conn.cursor()
-        query = "select post, count(*) from Post natural inner join Reaction where post = pid and type = 'like' and pid = %s group by post;"
+        query = "select * from reaction where post = %s and type = 'like';"
         cursor.execute(query, (pid,))
-        result = cursor.fetchone()
+        result = cursor.rowcount
         return result
 
     def getPostDislikes(self, pid):
         cursor = self.conn.cursor()
-        query = "select post, count(*) from Post natural inner join Reaction where post = pid and type = 'dislike' and pid = %s group by post;"
+        query = "select * from reaction where post = %s and type = 'dislike';"
         cursor.execute(query, (pid,))
-        result = cursor.fetchone()
+        result = cursor.rowcount
         return result
 
     def getUsersWhoDislikedPost(self, pid):
@@ -268,3 +268,10 @@ class postsDAO:
                 hashtags.append(word)
 
         return hashtags
+
+    def getUserById(self, uid):
+        cursor = self.conn.cursor()
+        query = "select * from Users where uid = %s;"
+        cursor.execute(query, (uid,))
+        result = cursor.fetchone()
+        return result

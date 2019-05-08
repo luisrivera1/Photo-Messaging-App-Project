@@ -35,10 +35,10 @@ class postHandler:
         result['pdislike'] = row[5]
         return result
 
-    def build_post_likes_dict(self, row):
+    def build_post_likes_dict(self, pid, row):
         result = {}
-        result['pid'] = row[0]
-        result['plikes'] = row[1]
+        result['pid'] = pid
+        result['plikes'] = row
         return result
 
     def build_post_likes_dict2(self, pid):
@@ -47,10 +47,10 @@ class postHandler:
         result['plikes'] = 0
         return result
 
-    def build_post_dislikes_dict(self, row):
+    def build_post_dislikes_dict(self, pid, row):
         result = {}
-        result['pid'] = row[0]
-        result['pdislikes'] = row[1]
+        result['pid'] = pid
+        result['pdislikes'] = row
         return result
 
     def build_post_dislikes_dict2(self, pid):
@@ -84,16 +84,13 @@ class postHandler:
         result['pdate'] = row[4]
         return result
 
-    def build_post_attributes(self, pid, p_user, p_photo, p_date,p_likes,p_dislikes,p_replies,p_chat):
+    def build_post_attributes(self, pid, p_user, p_photo, p_message, p_date):
         result = {}
         result['pid'] = pid
-        result['p_user'] = p_user
-        result['p_photo'] = p_photo
-        result['p_date'] = p_date
-        result['p_likes'] = p_likes
-        result['p_dislikes'] = p_dislikes
-        result['p_replies'] = p_replies
-        result['p_chat'] = p_chat
+        result['puser'] = p_user
+        result['pphoto'] = p_photo
+        result['pmessage'] = p_message
+        result['pdate'] = p_date
         return result
 
     # def getAllPosts(self):
@@ -160,25 +157,31 @@ class postHandler:
             result_list.append(result)
         return jsonify(Posts=result_list)
 
-
     def insertPost(self, form):
         print("form: ", form)
-        if len(form) != 8:
+        if len(form) != 4:
             return jsonify(Error="Malformed post request"), 400
         else:
-            pid = form['pid']
-            p_user = form['p_user']
-            p_photo = form['p_photo']
-            p_message = form['p_ message']
-            p_likes = form['p_likes']
-            p_dislikes = form['p_dislikes']
-            p_date = form['p_date']
-            p_replies = form['p_replies']
+            p_user = form['puser']
+            p_photo = form['pphoto']
+            p_message = form['pmessage']
+            p_date = form['pdate']
 
-        if pid and p_user and p_photo and p_message and p_likes and p_dislikes and p_date and p_replies:
+        if p_user and p_photo and p_message and p_date:
             dao = postsDAO()
-            pid = dao.insert(pid, p_user, p_photo, p_message,p_likes,p_dislikes,p_date,p_replies)
-            result = self.build_user_attributes(pid, p_user, p_photo, p_message, p_likes,p_dislikes,p_date,p_replies)
+            if not dao.getUserById(p_user):
+                return jsonify(Error="User " + str(p_user) + " not found."), 404
+            pid = dao.insertPost(p_user, p_photo, p_message, p_date)
+            result = self.build_post_attributes(pid, p_user, p_photo, p_message, p_date)
+
+            hashtags = dao.getHashtagList(p_message)
+            print(hashtags)
+
+            if len(hashtags) > 0:
+                for hashtag in hashtags:
+                    print(hashtag)
+                    hid = dao.insertIntoHashtag(hashtag)
+                    dao.insertIntoTagged(pid, hid)
             return jsonify(User=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -224,11 +227,11 @@ class postHandler:
         if not dao.getPostById(pid):
             return jsonify(Error="Post Not Found"), 404
         else:
-            result = dao.getPostLikes(pid)
-            if not result:
-                result = self.build_post_likes_dict2(pid)
-                return jsonify(LikesOfPost=result)
-            result = self.build_post_likes_dict(result)
+            row = dao.getPostLikes(pid)
+            # if not row:
+            #     result = self.build_post_likes_dict2(pid)
+            #     return jsonify(LikesOfPost=result)
+            result = self.build_post_likes_dict(pid, row)
             return jsonify(LikesOfPost=result)
 
     def getDisikesOfAPost(self, pid):
@@ -236,11 +239,11 @@ class postHandler:
         if not dao.getPostById(pid):
             return jsonify(Error="Post Not Found"), 404
         else:
-            result = dao.getPostDislikes(pid)
-            if not result:
-                result = self.build_post_dislikes_dict2(pid)
-                return jsonify(DislikesOfPost=result)
-            result = self.build_post_dislikes_dict(result)
+            row = dao.getPostDislikes(pid)
+            # if not result:
+            #     result = self.build_post_dislikes_dict2(pid)
+            #     return jsonify(DislikesOfPost=result)
+            result = self.build_post_dislikes_dict(pid, row)
             return jsonify(DislikesOfPost=result)
 
     def getUsersWhoDislikedPost(self, pid):
