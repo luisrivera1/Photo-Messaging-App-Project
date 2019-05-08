@@ -314,7 +314,7 @@ class postHandler:
 
                     hashtags = dao.getHashtagList(pmessage)
                     print(hashtags)
-
+                    
                     if len(hashtags) > 0:
                         for hashtag in hashtags:
                             print(hashtag)
