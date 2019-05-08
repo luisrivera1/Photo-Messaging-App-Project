@@ -18,7 +18,7 @@ class postsDAO:
     def getAllPosts(self):
         result = []
         cursor = self.conn.cursor()
-        query = "select pid, puser, pphoto, pmessage, sum(case when type ='like' then 1 else 0 end) as plikes, sum(case when type='dislike' then 1 else 0 end) as pdislike from Post as P, Reaction as R, Users as U where P.pid = R.post and U.uid = P.pid group by pid order by pid;"
+        query = "select * from Post;"
         cursor.execute(query)
         for row in cursor:
             result.append(row)

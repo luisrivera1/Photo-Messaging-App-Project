@@ -110,7 +110,7 @@ class postHandler:
         result_list = []
         print(posts_list)
         for row in posts_list:
-            result = self.build_post_dict_UI(row)
+            result = self.build_post_dict(row)
             result_list.append(result)
         print(result_list)
         return jsonify(Posts=result_list)
@@ -317,7 +317,7 @@ class postHandler:
 
                     hashtags = dao.getHashtagList(pmessage)
                     print(hashtags)
-                    
+
                     if len(hashtags) > 0:
                         for hashtag in hashtags:
                             print(hashtag)
