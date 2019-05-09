@@ -237,9 +237,11 @@ def getAllPostsFromChat():
         return postHandler().getAllPostsFromChat(request.args.to_dict())
 
 
-@app.route('/PhotoMsgApp/login', methods=['GET'])
+@app.route('/PhotoMsgApp/login', methods=['POST'])
 def validate_login():
-    if request.method == 'GET':
+    if request.method == 'POST':
+        print(request.json)
+        print(Handler().validate_login(request.json))
         return Handler().validate_login(request.json)
 
 

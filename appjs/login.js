@@ -1,32 +1,23 @@
 var currentUser = "";
-var currentUserId;
 
 angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scope', '$routeParams', '$window',
     function($http, $log, $scope, $routeParams, $window) {
         var thisCtrl = this;
 
         this.user = [];
-        this.email = thisCtrl.email;
-        this.password = thisCtrl.password;
+        this.username = document.getElementById("username").value;
+        this.password = document.getElementById("password").value;
+
 
         this.login = function(){
             //var chatid = $routeParams.cid;
-            var parameter = JSON.stringify({email:this.email, password:this.password})
-            var url = "http://localhost:63342/Photo-Messaging-App-ProjectLuisPhase3.3/index.html?_ijt=msi0963v0puohkauv6kdi3ada1#!/login"
-                $http.post(url, parameter).then( function(data){
-                    // Get the user from the server through the rest api
+            var parameter = JSON.stringify({"uusername": this.username, "upassword":this.password})
+            var url = "http://localhost:5000/PhotoMsgApp/login";
 
-                    $log.log("User: ", JSON.stringify(data["data"]["User"]));
-                    result = data["data"]["User"];
-                    thisCtrl.user.push({
-                        "uid":result["uid"],
-                        "uusername":result["uusername"]
-                    });
-                    currentUser = result["uusername"];
-                    currentUserId = result["uid"];
-                    alert("Successful login for user : " + currentUser);
-                    $window.location.href = '/#!/groups';
-
+            console.log(parameter);
+            //console.log($http.get(url, parameter));
+                $http.post(url, parameter).then(function(data){
+                    $window.location.href = '/#!/chat';
                 }).catch(function(err){
                     alert("Invalid login");
                     $log.error(err.message);
@@ -35,6 +26,6 @@ angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scop
         };
 
         this.register = function(){
-            $window.location.href = '/Photo-Messaging-App-ProjectLuisPhase3.3/index.html?_ijt=ioe508iiudsdoq2o0jsmptfqpt#!/register';
+            $window.location.href = '#!/register';
         }
 }]);

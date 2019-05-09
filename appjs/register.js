@@ -18,7 +18,7 @@ angular.module('AppChat').controller('RegisterController', ['$http', '$log', '$s
             userForm.append("password", this.password);
             userForm.append("email", this.email);
 
-            var url = "http://localhost:63342/Photo-Messaging-App-ProjectLuisPhase3.3/index.html?_ijt=1cr6rg63fq039cct4po8g1mdju#!/register"
+            var url = "#!/register"
             //var reqURL = "https://quepasapp.herokuapp.com/QuePasApp/users/new";
             $http.post(url, userForm, {
                 transformRequest: angular.identity,
@@ -30,7 +30,7 @@ angular.module('AppChat').controller('RegisterController', ['$http', '$log', '$s
                         alert("Valid registration for user: " + thisCtrl.username);
                         currentUser = thisCtrl.username;
                         currentUserId = result;
-                        $window.location.href = '/#!/groups';
+                        $window.location.href = '/#!/chat';
 
                 }).catch(function(err){
                     alert("Invalid Register Field/s : " + err.message);

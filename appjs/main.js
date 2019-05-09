@@ -11,16 +11,13 @@
             templateUrl: 'pages/chat.html',
             controller: 'ChatController',
             controllerAs : 'chatCtrl'
-
-      
-
-             }).when('/register', {
+        }).when('/register', {
             templateUrl: 'pages/register.html',
             controller: 'RegisterController',
             controllerAs : 'registerCtrl'
 
         }).otherwise({
-            redirectTo: '/chat'
+            redirectTo: '/login'
         });
     }]);
 
