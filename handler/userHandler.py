@@ -254,7 +254,7 @@ class Handler:
                 return jsonify(LOGIN = "INVALID LOGIN. INVALID CREDENTIALS"),401
             else:
                 return jsonify(LOGIN = "LOGIN VALIDATED. USER " + uusername + " SUCCESSFULLY LOGGED IN."),200
-
+            
     def register_user(self, form):
         dao = usersDAO()
 
