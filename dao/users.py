@@ -120,18 +120,6 @@ class usersDAO:
 
         return False
 
-    def createUser(self,uid,ufirstname,ulastname,uemail,uusername,upassword):
-        return User(uid,ufirstname,ulastname,uemail,uusername,upassword)
-
-    def register_user(self,uid,ufirstname,ulastname,uemail,uusername,upassword):
-        for user in self.user_list:
-           print((uusername, user.getUsername()),(uid, user.getId()))
-           if user.getUsername() == uusername or user.getId() == uid:
-               print("Invalid registration, someone with that ID or Username already exists, try again")
-               return False
-        self.user_list.append(self.createUser(uid,ufirstname, ulastname, uemail, uusername, upassword))
-        return True
-
     # def postPhotoAndMsgToChat(self, cid, photo, msg):
     #     dao = chatsDAO()
     #

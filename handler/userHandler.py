@@ -254,18 +254,22 @@ class Handler:
                 return jsonify(LOGIN = "INVALID LOGIN. INVALID CREDENTIALS"),401
             else:
                 return jsonify(LOGIN = "LOGIN VALIDATED. USER " + uusername + " SUCCESSFULLY LOGGED IN."),200
-            
+
     def register_user(self, form):
         dao = usersDAO()
+
+        if len(form) != 5:
+            return jsonify(REGISTER = "Invalid registration. Not enough parameters"), 401
 
         ufirstname = form['ufirstname']
         ulastname = form['ulastname']
         uemail = form['uemail']
         uusername = form['uusername']
         upassword = form['upassword']
+
         if ufirstname and ulastname and uemail and uusername and upassword:
             row = dao.insertUser(ufirstname, ulastname, uemail, uusername, upassword)
-            if not row:
+            if not row or dao.getUserByEmail(uemail) or dao.getUsersByUsername(uusername):
                 return jsonify(REGISTER="UNSUCCESSFUL REGISTER"), 401
             else:
                 lid = dao.insertToLogin(uusername,upassword)

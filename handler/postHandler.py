@@ -12,12 +12,13 @@ class postHandler:
         result['p_date'] = row[4]
         return result
 
-    def build_post_dict_UI(self, row):
+    def build_post_dict_UI(self, row, likes, dislikes):
         result = {}
 
         dao = postsDAO()
+
         result['pid'] = row[0]
-        result['p_user'] = row[1]
+        result['p_user'] = dao.getUsernameById(row[1])
         result['p_photo'] = row[2]
 
         pid = str(row[0])
@@ -25,14 +26,19 @@ class postHandler:
         hashtags = dao.getHashtags(pid)
         print(hashtags)
 
-        added = " "
+        added = ""
 
         for hashtag in hashtags:
             added += hashtag[0] + " "
 
-        result['p_message'] = row[3] + added
-        result['plikes'] = row[4]
-        result['pdislike'] = row[5]
+        result['p_message'] = row[3]
+        result['p_hashtags'] = added
+
+
+        print(type(row[4]))
+        result['p_date'] = row[4].strftime("%B %d, %Y")
+        result['plikes'] = likes
+        result['pdislikes'] = dislikes
         return result
 
     def build_post_likes_dict(self, pid, row):
@@ -110,7 +116,9 @@ class postHandler:
         result_list = []
         print(posts_list)
         for row in posts_list:
-            result = self.build_post_dict(row)
+            likes = dao.getPostLikes(row[0])
+            dislikes = dao.getPostDislikes(row[0])
+            result = self.build_post_dict_UI(row, likes, dislikes)
             result_list.append(result)
         print(result_list)
         return jsonify(Posts=result_list)

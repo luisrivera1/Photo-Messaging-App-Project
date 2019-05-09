@@ -17,7 +17,7 @@
             controllerAs : 'registerCtrl'
 
         }).otherwise({
-            redirectTo: '/login'
+            redirectTo: '/chat'
         });
     }]);
 

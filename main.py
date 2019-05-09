@@ -248,7 +248,7 @@ def validate_login():
 @app.route('/PhotoMsgApp/register', methods=['POST'])
 def register_user():
     if request.method == 'POST':
-        return Handler().register_user(request.json)
+        return Handler().insertUser(request.json)
 
 
 #  http://127.0.0.1:5000/PhotoMsgApp/contacts?uid=2

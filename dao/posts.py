@@ -275,3 +275,11 @@ class postsDAO:
         cursor.execute(query, (uid,))
         result = cursor.fetchone()
         return result
+
+    def getUsernameById(self, uid):
+        cursor = self.conn.cursor()
+        query = "select uusername from Users where uid = %s;"
+        cursor.execute(query, (uid,))
+        result = cursor.fetchone()[0]
+        return result
+
