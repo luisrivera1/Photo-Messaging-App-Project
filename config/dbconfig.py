@@ -1,10 +1,10 @@
 # Database configuration information
 
 pg_config = {
-    'user' : 'carlos',
-    'passwd' : 'Tozanarkand',
+    'user' : 'ramon2',
+    'passwd' : '12345678',
     'host' : 'localhost',
-    'dbname' : 'PhotoMsgApp'
+    'dbname' : 'photomsgapp'
 }
 
 # 'user': 'luis',

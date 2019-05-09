@@ -105,10 +105,10 @@ def usersOfChat(cid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/chats/<int:cid>/users/<int:uid>', methods=['DELETE'])
-def userOfChat(cid, uid):
+@app.route('/PhotoMsgApp/chats/<int:cid>/user/<int:admin_id>/delete/<int:uid>', methods=['DELETE'])
+def deleteMemberOfChat(cid, admin_id, uid):
     if request.method == "DELETE":
-        return chatHandler().deleteUserFromChat(cid, uid)
+        return chatHandler().deleteUserFromChat(cid, admin_id, uid)
     else:
         return jsonify(Error="Method not allowed."), 405
 

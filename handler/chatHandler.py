@@ -141,7 +141,7 @@ class chatHandler:
                 else:
                     return jsonify(Error="Delete chat was unsuccessful"), 400
 
-    def deleteUserFromChat(self, cid, uid):
+    def deleteUserFromChat(self, cid, admin_id, uid):
         dao = chatsDAO()
         dao2 = usersDAO()
         if not dao.getChatById(cid):
@@ -150,6 +150,10 @@ class chatHandler:
             return jsonify(Error="User with id: " + str(uid) + " not found."), 404
         if not dao.isMember(cid, uid):
             return jsonify(Error="User with id: " + str(uid) + " is not a member of chat with id: " + str(cid))
+        if not dao.isAdmin(cid, admin_id):
+            return jsonify(Error="You are not admin")
+        if admin_id == uid:
+            return jsonify(Error="You cannot remove yourself from the chat.")
         if dao.deleteUserFromChat(cid, uid) == 1:
             return jsonify(DeletedChatMember="User: " + str(uid) + " from Chat " + str(cid) + " was deleted."), 200
         else:
