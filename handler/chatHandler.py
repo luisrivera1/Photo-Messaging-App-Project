@@ -55,6 +55,21 @@ class chatHandler:
             result_list.append(result)
         return jsonify(Chats=result_list)
 
+    def getAllChatsOfUser(self, uid):
+        dao2 = usersDAO()
+        if not dao2.getUserById(uid):
+            return jsonify(Error="User " + str(uid) + " not found"), 404
+        dao = chatsDAO()
+        chat_list = dao.getAllChatsOfUser(uid)
+        if not chat_list:
+            return jsonify(NoChats="User " + str(uid) + " is not a member of any chat."), 404
+        result_list = []
+        for row in chat_list:
+            print(row)
+            result = self.build_chats_dict(row)
+            result_list.append(result)
+        return jsonify(Chats=result_list)
+
     def getChatsById(self, cid):
         dao = chatsDAO()
         row = dao.getChatById(cid)

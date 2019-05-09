@@ -47,6 +47,15 @@ def getUserById(uid):
         return jsonify(Error="Method not allowed."), 405
 
 
+@app.route('/PhotoMsgApp/users/<int:uid>/chats', methods=['GET'])
+def getAllChatsOfUser(uid):
+    print(uid)
+    if request.method == 'GET':
+        return chatHandler().getAllChatsOfUser(uid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET', 'POST', 'DELETE'])
 def getAllContactsFromUser(uid):
     if request.method == 'GET':
