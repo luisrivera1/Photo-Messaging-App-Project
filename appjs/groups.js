@@ -15,7 +15,7 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
                     console.log(currentUser)
                     thisCtrl.groupList = response.data.Chats
                     })};
-
+                    
         this.redirectToLogin = function(){
             $window.location.href = '/#!/login';
             return

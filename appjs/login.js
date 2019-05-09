@@ -14,9 +14,15 @@ angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scop
             var parameter = JSON.stringify({"uusername": this.username, "upassword":this.password})
             var url = "http://localhost:5000/PhotoMsgApp/login";
 
-            console.log(parameter);
+            //console.log(parameter);
             //console.log($http.get(url, parameter));
                 $http.post(url, parameter).then(function(data){
+                    id_url = "http://localhost:5000/PhotoMsgApp/uid"
+                    console.log(this.username.value)
+                    $http.get(id_url, { params : {"username": this.username.value}}).then(function(data)
+                    {
+                        currentUser = data.data["ID"]
+                    })
                     $window.location.href = '#!/groups';
                 }).catch(function(err){
                     alert("Invalid login");
@@ -28,5 +34,4 @@ angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scop
         this.register = function(){
             $window.location.href = '#!/register';
         }
-
 }]);
