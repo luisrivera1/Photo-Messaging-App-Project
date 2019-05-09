@@ -8,11 +8,11 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
         this.loadGroups = function(){
 
             //var chatid = $routeParams.cid;
-            // var reqURL = "https://quepasapp.herokuapp.com/QuePasApp/users/" + currentUserId + "/groups/";
             var url = "http://localhost:5000/PhotoMsgApp/chats"
 
                 $http.get(url).then(function(response){
                     console.log("Response: "+JSON.stringify(response));
+                    console.log(currentUser)
                     thisCtrl.groupList = response.data.Chats
                     })};
 
