@@ -9,28 +9,29 @@ angular.module('AppChat').controller('RegisterController', ['$http', '$log', '$s
         this.email = thisCtrl.email;
 
         this.register = function(){
-            var userForm = new FormData();
+           // var userForm = new FormData();
 
 
-            userForm.append("username", this.username);
-            userForm.append("firstname", this.firstname);
-            userForm.append("lastname", this.lastname);
-            userForm.append("password", this.password);
-            userForm.append("email", this.email);
+//            userForm.append("username", this.username);
+//            userForm.append("firstname", this.firstname);
+//            userForm.append("lastname", this.lastname);
+//            userForm.append("password", this.password);
+//            userForm.append("email", this.email);
+            this.firstname = document.getElementById("firstname").value;
+            this.lastname = document.getElementById("lastname").value;
+            this.email = document.getElementById("email").value;
+            this.username = document.getElementById("username").value;
+            this.password = document.getElementById("password").value;
 
-            var url = "#!/register"
+
+
+            var url = "http://localhost:5000/PhotoMsgApp/register";
+            var param = JSON.stringify({"ufirstname":this.firstname, "ulastname": this.lastname, "uemail": this.email,
+                                        "uusername":this.username, "upassword":this.password})
             //var reqURL = "https://quepasapp.herokuapp.com/QuePasApp/users/new";
-            $http.post(url, userForm, {
-                transformRequest: angular.identity,
-                headers: {'Content-Type': undefined}
-            }).then(  function(response){
-                        // Get the user from the server through the rest api
-                        result = response.data.userId;
-                        $log.log(result);
-                        alert("Valid registration for user: " + thisCtrl.username);
-                        currentUser = thisCtrl.username;
-                        currentUserId = result;
-                        $window.location.href = '/#!/chat';
+            $http.post(url, param).then( function(response){
+                        alert("Valid registration for user: " + this.username);
+                        $window.location.href = '/#!/login';
 
                 }).catch(function(err){
                     alert("Invalid Register Field/s : " + err.message);

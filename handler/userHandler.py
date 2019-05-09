@@ -257,19 +257,20 @@ class Handler:
 
     def register_user(self, form):
         dao = usersDAO()
-        uid = form['uid']
-        if dao.getUserById2(uid):
-            return jsonify(Error="User not found."), 404
+
         ufirstname = form['ufirstname']
         ulastname = form['ulastname']
         uemail = form['uemail']
         uusername = form['uusername']
         upassword = form['upassword']
-        if uid and ufirstname and ulastname and uemail and uusername and upassword:
-            row = dao.register_user(uid, ufirstname, ulastname, uemail, uusername, upassword)
+        if ufirstname and ulastname and uemail and uusername and upassword:
+            row = dao.insertUser(ufirstname, ulastname, uemail, uusername, upassword)
             if not row:
                 return jsonify(REGISTER="UNSUCCESSFUL REGISTER"), 401
             else:
+                lid = dao.insertToLogin(uusername,upassword)
+                dao.insertToValidates(lid, row)
+
                 return jsonify(REGISTER="USER " + uusername + " REGISTERED"), 200
         else:
             return jsonify(Error="Unexpected attributes in update request"), 400
