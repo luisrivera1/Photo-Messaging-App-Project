@@ -29,8 +29,6 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
                     }
                 });
 
-
-
         };
 
         this.redirectToLogin = function(){
