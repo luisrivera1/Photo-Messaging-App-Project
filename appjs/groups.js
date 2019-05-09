@@ -12,7 +12,7 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
 
             var chatid = $routeParams.cid;
             var reqURL = "https://quepasapp.herokuapp.com/QuePasApp/users/" + currentUserId + "/groups/";
-             var url = "http://localhost:5000/PhotoMsgApp/chats"
+             var url = "http://localhost:5000/PhotoMsgApp/groups"
             var index = 0;
                 $http.get(url).then( function(data){
                     // Get the messages from the server through the rest api
