@@ -21,13 +21,13 @@
             controller: 'GroupsController',
             controllerAs : 'groupsCtrl'
 
-           }).when('/joinGroups', {
+           }).when('/chatlist', {
             templateUrl: 'pages/joinGroup.html',
             controller: 'JoinGroupsController',
             controllerAs : 'joinGroupsCtrl'
 
         }).otherwise({
-            redirectTo: '/chat'
+            redirectTo: '/login'
         });
     }]);
 

@@ -17,15 +17,16 @@ angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scop
             console.log(parameter);
             //console.log($http.get(url, parameter));
                 $http.post(url, parameter).then(function(data){
-                    $window.location.href = '/#!/chat';
+                    $window.location.href = '#!/groups';
                 }).catch(function(err){
                     alert("Invalid login");
                     $log.error(err.message);
-                    $window.location.href = '/#!/login';
+                    $window.location.href = '#!/login';
                 });
         };
 
         this.register = function(){
             $window.location.href = '#!/register';
         }
+
 }]);

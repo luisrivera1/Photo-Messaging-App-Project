@@ -19,7 +19,6 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                 function(response){
                     console.log("Response: "+JSON.stringify(response));
                     thisCtrl.messageList = response.data.Posts
-
                 },
                 function(response){
                     console.log("Error response: "+JSON.stringify(response));
