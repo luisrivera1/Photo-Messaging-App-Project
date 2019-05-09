@@ -6,16 +6,20 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
         this.newGroup = "";
 
         this.loadGroups = function(){
+            console.log(currentUser);
 
-            //var chatid = $routeParams.cid;
-            var url = "http://localhost:5000/PhotoMsgApp/chats"
-
+            var url = "http://localhost:5000/PhotoMsgApp/users/" + currentUser + "/chats";
+            console.log(url)
                 $http.get(url).then(function(response){
                     console.log("Response: "+JSON.stringify(response));
-                    console.log(currentUser)
+                    console.log(response.data.Chats)
                     thisCtrl.groupList = response.data.Chats
-                    })};
-                    
+                    }).catch(function(response){
+                       console.log(response)
+                       alert("User has no chats.");
+                    });
+                 };
+
         this.redirectToLogin = function(){
             $window.location.href = '/#!/login';
             return

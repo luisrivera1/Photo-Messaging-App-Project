@@ -17,13 +17,16 @@ angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scop
             //console.log(parameter);
             //console.log($http.get(url, parameter));
                 $http.post(url, parameter).then(function(data){
-                    id_url = "http://localhost:5000/PhotoMsgApp/uid"
-                    console.log(this.username.value)
-                    $http.get(id_url, { params : {"username": this.username.value}}).then(function(data)
+                    id_url = "http://localhost:5000/PhotoMsgApp/uid";
+
+                    $http.get(id_url, { params : {"username": this.username.value}}).then(function(response)
                     {
-                        currentUser = data.data["ID"]
-                    })
-                    $window.location.href = '#!/groups';
+                        console.log(response);
+                        console.log(response["data"]);
+                        currentUser = response.data["ID"];
+                        console.log(currentUser);
+                        $window.location.href = '#!/groups';
+                    });
                 }).catch(function(err){
                     alert("Invalid login");
                     $log.error(err.message);

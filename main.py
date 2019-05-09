@@ -47,6 +47,15 @@ def getUserById(uid):
         return jsonify(Error="Method not allowed."), 405
 
 
+@app.route('/PhotoMsgApp/users/<int:uid>/chats', methods=['GET'])
+def getAllChatsOfUser(uid):
+    print(uid)
+    if request.method == 'GET':
+        return chatHandler().getAllChatsOfUser(uid)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/PhotoMsgApp/users/<int:uid>/contacts', methods=['GET', 'POST', 'DELETE'])
 def getAllContactsFromUser(uid):
     if request.method == 'GET':
@@ -105,10 +114,10 @@ def usersOfChat(cid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/chats/<int:cid>/users/<int:uid>', methods=['DELETE'])
-def userOfChat(cid, uid):
+@app.route('/PhotoMsgApp/chats/<int:cid>/user/<int:admin_id>/delete/<int:uid>', methods=['DELETE'])
+def deleteMemberOfChat(cid, admin_id, uid):
     if request.method == "DELETE":
-        return chatHandler().deleteUserFromChat(cid, uid)
+        return chatHandler().deleteUserFromChat(cid, admin_id, uid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -309,6 +318,7 @@ def replyToPost(pid):
 def getIdByUsername():
     print(request.args)
     if request.method == "GET":
+        print(Handler().getIdByUsername(request.args).data)
         return Handler().getIdByUsername(request.args)
 
 if __name__ == '__main__':

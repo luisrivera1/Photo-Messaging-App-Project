@@ -55,6 +55,21 @@ class chatHandler:
             result_list.append(result)
         return jsonify(Chats=result_list)
 
+    def getAllChatsOfUser(self, uid):
+        dao2 = usersDAO()
+        if not dao2.getUserById(uid):
+            return jsonify(Error="User " + str(uid) + " not found"), 404
+        dao = chatsDAO()
+        chat_list = dao.getAllChatsOfUser(uid)
+        if not chat_list:
+            return jsonify(NoChats="User " + str(uid) + " is not a member of any chat."), 404
+        result_list = []
+        for row in chat_list:
+            print(row)
+            result = self.build_chats_dict(row)
+            result_list.append(result)
+        return jsonify(Chats=result_list)
+
     def getChatsById(self, cid):
         dao = chatsDAO()
         row = dao.getChatById(cid)
@@ -141,7 +156,7 @@ class chatHandler:
                 else:
                     return jsonify(Error="Delete chat was unsuccessful"), 400
 
-    def deleteUserFromChat(self, cid, uid):
+    def deleteUserFromChat(self, cid, admin_id, uid):
         dao = chatsDAO()
         dao2 = usersDAO()
         if not dao.getChatById(cid):
@@ -150,6 +165,10 @@ class chatHandler:
             return jsonify(Error="User with id: " + str(uid) + " not found."), 404
         if not dao.isMember(cid, uid):
             return jsonify(Error="User with id: " + str(uid) + " is not a member of chat with id: " + str(cid))
+        if not dao.isAdmin(cid, admin_id):
+            return jsonify(Error="You are not admin")
+        if admin_id == uid:
+            return jsonify(Error="You cannot remove yourself from the chat.")
         if dao.deleteUserFromChat(cid, uid) == 1:
             return jsonify(DeletedChatMember="User: " + str(uid) + " from Chat " + str(cid) + " was deleted."), 200
         else:
