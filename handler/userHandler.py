@@ -408,3 +408,16 @@ class Handler:
             return jsonify(User=result)
         except:
             return jsonify(Error="Malformed query string"), 400
+
+
+    def getIdByUsername(self, args):
+        dao = usersDAO()
+
+        username = args['username']
+        user = dao.getUsersByUsername(username)
+
+        if not user:
+            return jsonify(Error = "No user exists with that username")
+
+        else:
+            return jsonify(ID = user[0])

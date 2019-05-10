@@ -314,5 +314,11 @@ def replyToPost(pid):
     if request.method == 'POST':
         return postHandler().addReplyToPost(pid, request.json)
 
+@app.route('/PhotoMsgApp/uid', methods = ['GET'])
+def getIdByUsername():
+    print(request.args)
+    if request.method == "GET":
+        return Handler().getIdByUsername(request.args)
+
 if __name__ == '__main__':
     app.run()

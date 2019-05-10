@@ -16,8 +16,18 @@
             controller: 'RegisterController',
             controllerAs : 'registerCtrl'
 
+          }).when('/groups', {
+            templateUrl: 'pages/group.html',
+            controller: 'GroupsController',
+            controllerAs : 'groupsCtrl'
+
+           }).when('/chatlist', {
+            templateUrl: 'pages/joinGroup.html',
+            controller: 'JoinGroupsController',
+            controllerAs : 'joinGroupsCtrl'
+
         }).otherwise({
-            redirectTo: '/chat'
+            redirectTo: '/login'
         });
     }]);
 
