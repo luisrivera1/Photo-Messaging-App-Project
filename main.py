@@ -318,6 +318,7 @@ def replyToPost(pid):
 def getIdByUsername():
     print(request.args)
     if request.method == "GET":
+        print(Handler().getIdByUsername(request.args).data)
         return Handler().getIdByUsername(request.args)
 
 if __name__ == '__main__':
