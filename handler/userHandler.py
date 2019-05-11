@@ -311,8 +311,10 @@ class Handler:
                 if cid:
                     if not dao.getUserById(cid):
                         return jsonify(Error="Contact User with id " + str(cid) + " not found."), 404
-                    elif dao.getContactFromUserId(uid, cid):
+                    if dao.getContactFromUserId(uid, cid):
                         return jsonify(Error="User with id " + str(uid) + " already has contact with id " + str(cid)), 404
+                    if uid == cid:
+                        return jsonify(Error="You cannot add yourself to your own contact list.")
                     result = self.build_contact_attributes(dao.insertContact(uid, cid))
                     print(result)
                     return jsonify(Contact=result), 201
