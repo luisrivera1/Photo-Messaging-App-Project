@@ -35,5 +35,11 @@ angular.module('AppChat').controller('HomeController', ['$http', '$log', '$scope
             return
         }
 
+        this.redirectToChat = function(){
+            console.log(document.activeElement.getAttribute("value"));
+            localStorage.setItem("chatname", document.activeElement.getAttribute("value"));
+            $window.location.href = '/#!/chat'
+        }
+
         this.loadGroups();
 }]);

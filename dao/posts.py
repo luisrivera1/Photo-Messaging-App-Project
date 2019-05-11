@@ -283,3 +283,10 @@ class postsDAO:
         result = cursor.fetchone()[0]
         return result
 
+    def getAllPostsFromChatname(self, chatname):
+        cursor = self.conn.cursor()
+        query = "select pid, puser, pphoto, pmessage, pdate from Chat natural inner join Has natural inner join Post where chat_id = cid and post_id = pid and cname = %s;"
+        cursor.execute(query, (chatname,))
+        result = cursor.fetchall()
+        return result
+

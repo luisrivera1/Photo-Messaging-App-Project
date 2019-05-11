@@ -1,28 +1,22 @@
 angular.module('AppChat').controller('ContactController', ['$http', '$log', '$scope', '$location', '$routeParams',
     function ($http, $log, $scope, $location, $routeParams) {
 
-        var mem = sessionStorage;
         var thisCtrl = this;
-        // this.contactList_id;
-        this.userId = $routeParams.user_id;
-
-        this.uid = mem.getItem('user_id');
         this.contacts = [];
-        thisCtrl.ctid = "";
+
 
         this.loadContacts = function () {
             //TODO make this reqURL dynamic
             // alert(this.uid);
-            var reqURL = "http://localhost:5000/Pictochat/user/" + this.uid + "/contacts";
-            console.log("reqURL: " + reqURL);
+            var url = "http://localhost:5000/PhotoMsgApp/users/" + localStorage.getItem("id") + "/contacts";
             // Now issue the http request to the rest API
-            $http.get(reqURL).then(
+            $http.get(url).then(
                 // Success function
                 function (response) {
                     /*
                     * Stores the data received from python call. The jsonyfied data
                     */
-                    thisCtrl.contacts = response.data.UserContacts;
+                    thisCtrl.contacts = response.data.ContactList;
                     console.log(thisCtrl.contacts);
                 },
                 function (response) {
@@ -47,7 +41,17 @@ angular.module('AppChat').controller('ContactController', ['$http', '$log', '$sc
         };
 
         this.addContact = function () {
-            //TODO: validate url
+            var username = prompt("Enter the username of the person you wish to add");
+
+            if(person != null)
+            {
+                var url = "http://localhost:5000/PhotoMsgApp/users/" + localStorage.getItem("id") + "/contacts"
+                $http.post(url, ).then(function(response)){
+                    console.log(response)
+                    thisCtrl.push(response.data.)
+                }
+
+            }
             var reqURL = "http://localhost:5000/SocialMessagingApp/contactlist/adduser/" + thisCtrl.userId + "/" + thisCtrl.ctid;
             console.log("reqURL: " + reqURL);
 //            data = {"owner_id": thisCtrl.currentUser.user_id, "username": username}

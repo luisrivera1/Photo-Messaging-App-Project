@@ -321,5 +321,10 @@ def getIdByUsername():
         print(Handler().getIdByUsername(request.args).data)
         return Handler().getIdByUsername(request.args)
 
+@app.route('/PhotoMsgApp/posts/chat', methods = ["GET"])
+def getAllPostsFromChatname():
+    if request.method == "GET":
+        return postHandler().getAllPostsFromChatname(request.args)
+
 if __name__ == '__main__':
     app.run()

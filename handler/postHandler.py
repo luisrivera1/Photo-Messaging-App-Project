@@ -337,9 +337,24 @@ class postHandler:
                 else:
                     return jsonify(Error = "Reply could not be added.")
 
+    def getAllPostsFromChatname(self, args):
+        dao = postsDAO()
 
+        chatname = args['chatname']
 
+        post_list = dao.getAllPostsFromChatname(chatname)
 
+        if len(post_list) == 0:
+            return jsonify(Error="Chat has no posts"), 404
+
+        else:
+            result = []
+            for row in post_list:
+                likes = dao.getPostLikes(row[0])
+                dislikes = dao.getPostDislikes(row[0])
+                result.append(self.build_post_dict_UI(row, likes, dislikes))
+
+            return jsonify(Posts = result)
 
 
 
