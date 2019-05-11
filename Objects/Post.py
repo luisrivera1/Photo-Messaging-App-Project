@@ -1,4 +1,5 @@
 class Post:
+
     def __init__(self, pid, puser, pphoto, pmessage, pdate):
         self.pid = pid
         self.puser = puser
@@ -8,6 +9,7 @@ class Post:
         self.plikes = 0
         self.pdislikes = 0
         self.preplies = []
+
 
     def getId (self):
         return self.pid
@@ -37,7 +39,10 @@ class Post:
         self.plikes = self.plikes + 1
 
     def addDislike(self):
-        self.pDislikes = self.pDislikes + 1
+        self.pdislikes = self.pdislikes + 1
 
     def addComment(self, comment):
         self.preplies.append(comment)
+
+
+

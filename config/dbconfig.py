@@ -1,7 +1,27 @@
-#Databse configuration information
+# Database configuration information
+
+# pg_config = {
+#     'user' : 'luis',
+#     'passwd' : 'Anib2013',
+#     'host' : 'localhost',
+#     'dbname' : 'photoMsgApp'
+# }
+
+# 'user': 'luis',
+# 'passwd': 'Anib2013',
+# 'host': 'localhost',
+# 'dbname': 'photoMsgApp'
 
 pg_config = {
-    'user' : 'root',
-    'passwd' : 'root',
-    'dbname' : 'myapp'
-}
+    'user': 'carlos',
+    'passwd': 'Tozanarkand',
+    'host': 'localhost',
+    'dbname': 'PhotoMsgApp'
+    }
+
+# pg_config = {
+# # 'user': 'ramon',
+# # 'passwd': '12345678',
+# # 'host': 'localhost',
+# # 'dbname': 'photomsgspp'
+# }

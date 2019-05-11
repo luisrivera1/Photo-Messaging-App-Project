@@ -1,4 +1,5 @@
 class User:
+
     def __init__(self, uid, ufirstname, ulastname, uemail, uusername, upassword):
         self.uid = uid
         self.ufirstname = ufirstname
@@ -27,10 +28,16 @@ class User:
     def getPassword (self):
         return self.upassword
 
+    def addToChatList(self, chatname):
+        self.chat_list.append(chatname)
+
+    def removeFromChatList(self, chatname):
+        self.chat_list.remove(chatname)
+
     def getContactList(self):
         return self.contact_list
 
-    def appendToContactList(self, user):  # This receives a USER object
+    def appendToContactList(self, user):  # This receives a PARTIAL USER object
         self.contact_list.append(user)
 
     def deleteFromContactList(self, user):
@@ -38,6 +45,3 @@ class User:
 
     def addToChatList(self, chatname):
         self.chat_list.append(chatname)
-
-    def removeFromChatList(self, chatname):
-        self.chat_list.remove(chatname)
