@@ -13,9 +13,12 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             //thisCtrl.messageList.push({"id": 2, "text": "Hello World", "author": "Joe",
              //   "like" : 11, "nolike" : 12});
 
-            var url = "http://localhost:5000/PhotoMsgApp/posts"
+            var url = "http://localhost:5000/PhotoMsgApp/posts/chat"
 
-            $http.get(url).then(
+            chatname = localStorage.getItem("chatname");
+            //console.log(params)
+
+            $http.get(url, { params : {"chatname" : chatname } }).then(
                 function(response){
                     console.log("Response: "+JSON.stringify(response));
                     thisCtrl.messageList = response.data.Posts

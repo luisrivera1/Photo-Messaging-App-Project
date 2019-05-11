@@ -26,6 +26,15 @@ class chatsDAO:
             result.append(row)
         return result
 
+    def getAllChatsOfUser(self, uid):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select cid, cname, cadmin from chat natural inner join ismember where cid = chat_id and user_id = %s;"
+        cursor.execute(query, (uid,))
+        for row in cursor:
+            result.append(row)
+        return result
+
     def getChatById(self, cid):
         cursor = self.conn.cursor()
         query = "Select * from Chat where cid=%s;"
@@ -42,12 +51,11 @@ class chatsDAO:
         return result
 
     def getChatByChatName(self, cname):
-        result = []
-        for chat in self.chat_list:
-            if chat.getName() == cname:
-                for attribute, value in vars(chat).items():
-                    result.append(value)
-        return result
+        cursor = self.conn.cursor()
+        query = "select cid from chat where cname = %s;"
+        cursor.execute(query, (cname,))
+        cid = cursor.fetchone()
+        return cid
 
     def getChatMemberById(self, cid, mem_id):
         result = []

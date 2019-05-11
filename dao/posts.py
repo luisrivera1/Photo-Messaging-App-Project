@@ -238,6 +238,14 @@ class postsDAO:
         self.conn.commit()
         return result
 
+    def insertIntoHas(self, cid, pid):
+        cursor = self.conn.cursor()
+        query = "insert into has(chat_id, post_id) values (%s, %s);"
+        cursor.execute(query, (cid, pid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
     def insertIntoIsReply(self, rid, pid):
         cursor = self.conn.cursor()
         query = "insert into isReply(reply_id, original_id) values (%s, %s);"
@@ -281,5 +289,12 @@ class postsDAO:
         query = "select uusername from Users where uid = %s;"
         cursor.execute(query, (uid,))
         result = cursor.fetchone()[0]
+        return result
+
+    def getAllPostsFromChatname(self, chatname):
+        cursor = self.conn.cursor()
+        query = "select pid, puser, pphoto, pmessage, pdate from Chat natural inner join Has natural inner join Post where chat_id = cid and post_id = pid and cname = %s;"
+        cursor.execute(query, (chatname,))
+        result = cursor.fetchall()
         return result
 

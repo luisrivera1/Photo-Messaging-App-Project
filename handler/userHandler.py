@@ -306,12 +306,15 @@ class Handler:
             return jsonify(Error="User with id " + str(uid) + " not found."), 404
         else:
             if len(form) == 1:
-                cid = form['cid']
+                cusername = form['cusername']
+                cid = dao.getUsersByUsername(cusername)[0]
                 if cid:
                     if not dao.getUserById(cid):
                         return jsonify(Error="Contact User with id " + str(cid) + " not found."), 404
-                    elif dao.getContactFromUserId(uid, cid):
+                    if dao.getContactFromUserId(uid, cid):
                         return jsonify(Error="User with id " + str(uid) + " already has contact with id " + str(cid)), 404
+                    if uid == cid:
+                        return jsonify(Error="You cannot add yourself to your own contact list.")
                     result = self.build_contact_attributes(dao.insertContact(uid, cid))
                     print(result)
                     return jsonify(Contact=result), 201
@@ -408,3 +411,15 @@ class Handler:
             return jsonify(User=result)
         except:
             return jsonify(Error="Malformed query string"), 400
+
+    def getIdByUsername(self, args):
+        dao = usersDAO()
+
+        username = args['username']
+        user = dao.getUsersByUsername(username)
+
+        if not user:
+            return jsonify(Error = "No user exists with that username")
+
+        else:
+            return jsonify(ID = user[0])
