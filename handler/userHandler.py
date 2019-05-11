@@ -419,7 +419,7 @@ class Handler:
         user = dao.getUsersByUsername(username)
 
         if not user:
-            return jsonify(Error = "No user exists with that username")
+            return jsonify(Error="No user exists with that username")
 
         else:
-            return jsonify(ID = user[0])
+            return jsonify(ID=user[0])

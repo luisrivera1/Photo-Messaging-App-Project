@@ -2,11 +2,7 @@ from flask import Flask, jsonify, request
 from handler.userHandler import Handler
 from handler.postHandler import postHandler
 from handler.statHandler import statHandler
-
-from handler.supplier import SupplierHandler
 from handler.chatHandler import chatHandler
-from Objects.Chat import Chat
-from Objects.User import User
 
 
 # Import Cross-Origin Resource Sharing to enable
@@ -200,10 +196,12 @@ def getAllPosts():
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/posts/<int:pid>', methods=['GET'])
+@app.route('/PhotoMsgApp/posts/<int:pid>', methods=['GET', 'DELETE'])
 def getASinglePost(pid):
     if request.method == 'GET':
         return postHandler().getPostById(pid)
+    if request.method == 'DELETE':
+        return postHandler().deletePost(pid)
     else:
         return jsonify(Error="Method not allowed."), 405
 

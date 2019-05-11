@@ -246,6 +246,33 @@ class postsDAO:
         self.conn.commit()
         return result
 
+    def deleteFromHas(self, pid):
+        cursor = self.conn.cursor()
+        query = "delete from has where post_id = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Has deletion was: " + str(result))
+        return result
+
+    def deleteFromTagged(self, pid):
+        cursor = self.conn.cursor()
+        query = "delete from tagged where post_id = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Post deletion was: " + str(result))
+        return result
+
+    def deletePost(self, pid):
+        cursor = self.conn.cursor()
+        query = "delete from post where pid = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Post deletion was: " + str(result))
+        return result
+
     def insertIntoIsReply(self, rid, pid):
         cursor = self.conn.cursor()
         query = "insert into isReply(reply_id, original_id) values (%s, %s);"

@@ -55,9 +55,18 @@ class statsDAO:
         result = []
         for row in dates:
             cursor = self.conn.cursor()
-            query = "select * from post where pdate = %s;"
+            query = "select puser, count(*) from post where pdate = %s group by puser;"
             cursor.execute(query, (row,))
-            result.append([row[0].strftime("%B %d, %Y"), cursor.rowcount])
+            tempMax = self.getMaxOfActiveUsers(row)
+            for row2 in cursor:
+                if row2[1] == tempMax:
+                    result.append([row[0].strftime("%B %d, %Y"), row2[0]])
         return result
+
+    def getMaxOfActiveUsers(self, date):
+        cursor = self.conn.cursor()
+        query = "select max(count) from (select puser, count(*) from post where pdate = %s group by puser) as C;"
+        cursor.execute(query, (date,))
+        return cursor.fetchone()[0]
 
 
