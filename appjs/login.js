@@ -1,4 +1,4 @@
-var currentUser = "";
+//var currentUser = "";
 
 angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scope', '$routeParams', '$window',
     function($http, $log, $scope, $routeParams, $window) {
@@ -21,11 +21,10 @@ angular.module('AppChat').controller('LoginController', ['$http', '$log', '$scop
 
                     $http.get(id_url, { params : {"username": this.username.value}}).then(function(response)
                     {
-                        console.log(response);
-                        console.log(response["data"]);
-                        currentUser = response.data["ID"];
-                        console.log(currentUser);
-                        $window.location.href = '#!/groups';
+
+                        localStorage.setItem("id",  response.data["ID"]);
+                        console.log(localStorage.getItem("id"));
+                        $window.location.href = '#!/home';
                     });
                 }).catch(function(err){
                     alert("Invalid login");
