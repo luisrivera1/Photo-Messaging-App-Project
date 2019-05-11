@@ -307,12 +307,25 @@ def getAllStats(param):
                 return statHandler().getStatByChoice(request.args.to_dict(), param)
 
 
+@app.route('/PhotoMsgApp/stats', methods=['GET'])
+def getAllStatsJson():
+    if request.method == 'GET':
+        if not request.json:
+            return statHandler().getAllStats()
+        return statHandler().getStatByChoice(request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/PhotoMsgApp/posts/<int:pid>/reply', methods=['POST'])
 def replyToPost(pid):
     print(pid)
     print(request.json)
     if request.method == 'POST':
         return postHandler().addReplyToPost(pid, request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
 
 @app.route('/PhotoMsgApp/uid', methods = ['GET'])
 def getIdByUsername():
@@ -320,6 +333,9 @@ def getIdByUsername():
     if request.method == "GET":
         print(Handler().getIdByUsername(request.args).data)
         return Handler().getIdByUsername(request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
 
 if __name__ == '__main__':
     app.run()

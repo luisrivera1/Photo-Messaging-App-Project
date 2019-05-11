@@ -238,6 +238,14 @@ class postsDAO:
         self.conn.commit()
         return result
 
+    def insertIntoHas(self, cid, pid):
+        cursor = self.conn.cursor()
+        query = "insert into has(chat_id, post_id) values (%s, %s);"
+        cursor.execute(query, (cid, pid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
     def insertIntoIsReply(self, rid, pid):
         cursor = self.conn.cursor()
         query = "insert into isReply(reply_id, original_id) values (%s, %s);"
