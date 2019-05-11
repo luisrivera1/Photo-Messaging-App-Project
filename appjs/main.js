@@ -16,15 +16,20 @@
             controller: 'RegisterController',
             controllerAs : 'registerCtrl'
 
-          }).when('/groups', {
-            templateUrl: 'pages/group.html',
-            controller: 'GroupsController',
-            controllerAs : 'groupsCtrl'
+          }).when('/home', {
+            templateUrl: 'pages/home.html',
+            controller: 'HomeController',
+            controllerAs : 'homeCtrl'
 
-           }).when('/chatlist', {
-            templateUrl: 'pages/joinGroup.html',
-            controller: 'JoinGroupsController',
-            controllerAs : 'joinGroupsCtrl'
+           }).when('/contactlist', {
+            templateUrl: 'pages/contactlist.html',
+            controller: 'ContactController',
+            controllerAs : 'contactCtrl'
+
+             }).when('/dashboard', {
+            templateUrl: 'pages/dashboard.html',
+            controller: 'DashboardController',
+            controllerAs : 'dashboardCtrl'
 
         }).otherwise({
             redirectTo: '/login'

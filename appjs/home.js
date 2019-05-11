@@ -1,4 +1,4 @@
-angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$scope', '$routeParams', '$window',
+angular.module('AppChat').controller('HomeController', ['$http', '$log', '$scope', '$routeParams', '$window',
     function($http, $log, $scope, $routeParams, $window) {
 
         var thisCtrl = this;
@@ -6,9 +6,9 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
         this.newGroup = "";
 
         this.loadGroups = function(){
-            console.log(currentUser);
-
-            var url = "http://localhost:5000/PhotoMsgApp/users/" + currentUser + "/chats";
+            id = localStorage.getItem("id");
+            console.log(id);
+            var url = "http://localhost:5000/PhotoMsgApp/users/" + id + "/chats";
             console.log(url)
                 $http.get(url).then(function(response){
                     console.log("Response: "+JSON.stringify(response));
@@ -21,13 +21,24 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
                  };
 
         this.redirectToLogin = function(){
+            localStorage.setItem("id", "");
             $window.location.href = '/#!/login';
             return
         }
 
-        this.redirectToJoinGroups = function(){
-            $window.location.href = '/#!/joinGroups';
+        this.redirectToDashboard = function(){
+            $window.location.href = '/#/dashboard'
+         }
+
+        this.redirectToContactList = function(){
+            $window.location.href = '/#!/contactlist';
             return
+        }
+
+        this.redirectToChat = function(){
+            console.log(document.activeElement.getAttribute("value"));
+            localStorage.setItem("chatname", document.activeElement.getAttribute("value"));
+            $window.location.href = '/#!/chat'
         }
 
         this.loadGroups();

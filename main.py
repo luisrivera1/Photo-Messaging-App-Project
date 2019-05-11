@@ -337,5 +337,10 @@ def getIdByUsername():
         return jsonify(Error="Method not allowed."), 405
 
 
+@app.route('/PhotoMsgApp/posts/chat', methods = ["GET"])
+def getAllPostsFromChatname():
+    if request.method == "GET":
+        return postHandler().getAllPostsFromChatname(request.args)
+
 if __name__ == '__main__':
     app.run()

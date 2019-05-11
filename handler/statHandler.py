@@ -2,7 +2,7 @@ from handler import postHandler
 from flask import jsonify
 from operator import itemgetter
 from dao.users import usersDAO
-from dao.stats import statsDAO
+
 
 
 class statHandler:
