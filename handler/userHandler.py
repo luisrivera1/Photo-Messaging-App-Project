@@ -412,7 +412,6 @@ class Handler:
         except:
             return jsonify(Error="Malformed query string"), 400
 
-
     def getIdByUsername(self, args):
         dao = usersDAO()
 
