@@ -167,19 +167,25 @@ class postHandler:
 
     def insertPost(self, form):
         print("form: ", form)
-        if len(form) != 4:
+        if len(form) != 5:
             return jsonify(Error="Malformed post request"), 400
         else:
             p_user = form['puser']
             p_photo = form['pphoto']
             p_message = form['pmessage']
             p_date = form['pdate']
+            cname = form['cname']
 
         if p_user and p_photo and p_message and p_date:
             dao = postsDAO()
             if not dao.getUserById(p_user):
                 return jsonify(Error="User " + str(p_user) + " not found."), 404
             pid = dao.insertPost(p_user, p_photo, p_message, p_date)
+            cid = chatsDAO().getChatByChatName(cname)
+            if not cid:
+                return jsonify(Error="Chat with name: " + str(cname) + " not found")
+            if not dao.insertIntoHas(cid, pid):
+                return jsonify(Error="Inserting into table HAS failed")
             result = self.build_post_attributes(pid, p_user, p_photo, p_message, p_date)
 
             hashtags = dao.getHashtagList(p_message)

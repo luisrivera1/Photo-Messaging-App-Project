@@ -128,6 +128,7 @@ class chatHandler:
                     if cname and cadmin:
                         dao = chatsDAO()
                         cid = dao.createChat(cname, cadmin)
+
                         result = self.build_chats_attributes(cid, cname, cadmin)
                         return jsonify(Chat=result), 201
                     else:

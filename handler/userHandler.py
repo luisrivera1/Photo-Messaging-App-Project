@@ -306,7 +306,8 @@ class Handler:
             return jsonify(Error="User with id " + str(uid) + " not found."), 404
         else:
             if len(form) == 1:
-                cid = form['cid']
+                cusername = form['cusername']
+                cid = dao.getUsersByUsername(cusername)[0]
                 if cid:
                     if not dao.getUserById(cid):
                         return jsonify(Error="Contact User with id " + str(cid) + " not found."), 404
@@ -421,5 +422,3 @@ class Handler:
 
         else:
             return jsonify(ID = user[0])
-
-
