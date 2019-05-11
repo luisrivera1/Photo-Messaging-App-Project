@@ -7,29 +7,14 @@ angular.module('AppChat').controller('GroupsController', ['$http', '$log', '$sco
 
         this.loadGroups = function(){
 
-            if(currentUser == "")
-                thisCtrl.redirectToLogin();
+            //var chatid = $routeParams.cid;
+            // var reqURL = "https://quepasapp.herokuapp.com/QuePasApp/users/" + currentUserId + "/groups/";
+            var url = "http://localhost:5000/PhotoMsgApp/chats"
 
-            var chatid = $routeParams.cid;
-            var reqURL = "https://quepasapp.herokuapp.com/QuePasApp/users/" + currentUserId + "/groups/";
-             var url = "http://localhost:5000/PhotoMsgApp/groups"
-            var index = 0;
-                $http.get(url).then( function(data){
-                    // Get the messages from the server through the rest api
-
-                    groups = data["data"]["Groups"];
-                    $log.log("Groups Loaded: ", JSON.stringify(groups));
-                    for(g in groups){
-                        group = groups[g];
-                        thisCtrl.groupList.push({
-                                    "id":group["groupId"],
-                                    "name":group["groupName"],
-                                    "owner":group["ownerId"]
-                        });
-                    }
-                });
-
-        };
+                $http.get(url).then(function(response){
+                    console.log("Response: "+JSON.stringify(response));
+                    thisCtrl.groupList = response.data.Chats
+                    })};
 
         this.redirectToLogin = function(){
             $window.location.href = '/#!/login';

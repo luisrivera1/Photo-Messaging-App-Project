@@ -1,6 +1,6 @@
 (function() {
 
-    var app = angular.module('AppChat',['ngRoute']);
+   var app = angular.module('AppChat', ['ngRoute', 'ngFileUpload']);
 
     app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider, $location) {
         $routeProvider.when('/login', {
@@ -21,14 +21,50 @@
             controller: 'GroupsController',
             controllerAs : 'groupsCtrl'
 
-           }).when('/joinGroups', {
+           }).when('/chatlist', {
             templateUrl: 'pages/joinGroup.html',
             controller: 'JoinGroupsController',
             controllerAs : 'joinGroupsCtrl'
 
         }).otherwise({
-            redirectTo: '/chat'
+            redirectTo: '/login'
         });
     }]);
+
+   app.directive('ngFile', ['$parse', function ($parse) {
+ return {
+  restrict: 'A',
+  link: function(scope, element, attrs) {
+   element.bind('change', function(){
+
+    $parse(attrs.ngFile).assign(scope,element[0].files)
+    scope.$apply();
+   });
+  }
+ };
+}]);
+
+app.controller('userCtrl', ['$scope', '$http', function ($scope, $http) {
+
+ $scope.upload = function(value){
+  var fd=new FormData();
+  angular.forEach($scope.uploadfiles,function(file){
+  fd.append('file',file);
+ });
+
+ $http({
+  method: 'post',
+  url: '"http://localhost:5000/PhotoMsgApp/posts',
+  data: fd,
+  headers: {'Content-Type': undefined},
+ }).then(function successCallback(response) {
+  // Store response data
+  $scope.response = response.data;
+ });
+}
+
+}]);
+
+
 
 })();

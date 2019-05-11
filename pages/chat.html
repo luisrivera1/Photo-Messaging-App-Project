@@ -1,20 +1,44 @@
 <div ng-cloak style="align-content: center">
-    <div class="row">
-        <div class="col s12 m6">
-            <div class="card teal darken-1">
-                <div class="card-content ">
-                    <i class="material-icons prefix" style="color: white">mode_edit</i> <span text-white style="font-size:larger; color:white">Message:</span>
-                     <textarea style="background: white" id="textarea1" class="materialize-textarea" ng-model="chatCtrl.newText"></textarea>
-                </div>
-                <div class="card-action white">
-                    <button class="btn waves-effect waves-light " type="submit" name="action" ng-click="chatCtrl.postMsg()">Enviar
-                    <i class="material-icons right">send</i>
-                    </button>
-                </div>
-            </div>
-        </div>
+     <div class="card-footer" ng-app="AppChat" ng-controller="ChatController">
+                    <form name="myForm">
+                        <div ng-show="myForm.file.$valid">
+                            <img ngf-thumbnail="picFile" class="img_msg">
+                        </div>
+                        <button class="btn" style="margin: 10px 0;" ng-click="picFile = null" ng-show="picFile">Remove
+                        </button>
+                        <div class="input-group">
 
-    </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text attach_btn" type="file" ngf-select ng-model="picFile"
+                                      name="file"
+                                      accept="image/*" ngf-max-size="2MB" required
+                                      ngf-model-invalid="errorFile"><i class="fa fa-paperclip"></i>
+                                    </span>
+                            </div>
+                            <textarea class="form-control type_msg" name="newText" ng-model="chatCtrl.newText"
+                                      placeholder="Type your message..." required></textarea>
+
+                            <div class="input-group-append">
+                                <!--<button class="input-group-text send_btn" ng-disabled="!myForm.$valid"-->
+                                        <!--ng-click="uploadPic(picFile)"><i class="fa fa-location-arrow"></i></button>-->
+                                <button class="input-group-text send_btn" ng-disabled="!myForm.$valid"
+                                        ng-click="chatCtrl.postMsg()"><i class="fa fa-location-arrow"></i></button>
+
+                            </div>
+                        </div>
+                        <i ng-show="myForm.newText.$error.required">Message required*</i>
+                        <i ng-show="myForm.file.$error.maxSize">File too large
+                            {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+                        <span class="progress" ng-show="picFile.progress >= 0">
+        <div style="width:{{picFile.progress}}%"
+             ng-bind="picFile.progress + '%'"></div>
+                        </span>
+                        <span ng-show="picFile.result">Upload Successful</span>
+                        <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
+
+                    </form>
+
+                </div>
 
     <!--<div  id="chat-list" style="height:300px;overflow:auto">-->
     <div>
