@@ -167,19 +167,25 @@ class postHandler:
 
     def insertPost(self, form):
         print("form: ", form)
-        if len(form) != 4:
+        if len(form) != 5:
             return jsonify(Error="Malformed post request"), 400
         else:
             p_user = form['puser']
             p_photo = form['pphoto']
             p_message = form['pmessage']
             p_date = form['pdate']
+            cname = form['cname']
 
         if p_user and p_photo and p_message and p_date:
             dao = postsDAO()
             if not dao.getUserById(p_user):
                 return jsonify(Error="User " + str(p_user) + " not found."), 404
             pid = dao.insertPost(p_user, p_photo, p_message, p_date)
+            cid = chatsDAO().getChatByChatName(cname)
+            if not cid:
+                return jsonify(Error="Chat with name: " + str(cname) + " not found")
+            if not dao.insertIntoHas(cid, pid):
+                return jsonify(Error="Inserting into table HAS failed")
             result = self.build_post_attributes(pid, p_user, p_photo, p_message, p_date)
 
             hashtags = dao.getHashtagList(p_message)
@@ -337,9 +343,24 @@ class postHandler:
                 else:
                     return jsonify(Error = "Reply could not be added.")
 
+    def getAllPostsFromChatname(self, args):
+        dao = postsDAO()
 
+        chatname = args['chatname']
 
+        post_list = dao.getAllPostsFromChatname(chatname)
 
+        if len(post_list) == 0:
+            return jsonify(Error="Chat has no posts"), 404
+
+        else:
+            result = []
+            for row in post_list:
+                likes = dao.getPostLikes(row[0])
+                dislikes = dao.getPostDislikes(row[0])
+                result.append(self.build_post_dict_UI(row, likes, dislikes))
+
+            return jsonify(Posts = result)
 
 
 

@@ -1,10 +1,22 @@
 from handler import postHandler
 from flask import jsonify
 from operator import itemgetter
+from dao.users import usersDAO
+
+
 
 class statHandler:
     def __init__(self):
         self.post_dao = postHandler.postsDAO()
+
+    def build_post_per_user_per_day_stat_dict(self, row, dates):
+        result = {}
+
+        result['pid'] = row[0]
+        result['p_user'] = row[1]
+        result['p_photo'] = row[2]
+        result['p_message'] = row[3]
+        return result
 
     def getMostActiveUsers(self, date):
         user_dict = self.post_dao.getUsersDictByDay(date)
@@ -74,10 +86,9 @@ class statHandler:
     def getDislikesPerDay2(self,date):
         return jsonify(DateOfInterest = date, DislikesPerDay = self.getDislikesPerDay(date))
 
-
     def getAllStats(self, date):
-        return jsonify(DateOfInterest = date, MostActiveUsers = self.getMostActiveUsers(date), RepliesPerDay = self.getRepliesPerDay(date),
-                       LikesPerDay =  self.getLikesPerDay(date), DislikesPerDay = self.getDislikesPerDay(date), PostsPerDay = self.getPostsPerDay(date))
+        return jsonify(DateOfInterest=date, MostActiveUsers=self.getMostActiveUsers(date), RepliesPerDay=self.getRepliesPerDay(date),
+                       LikesPerDay=self.getLikesPerDay(date), DislikesPerDay=self.getDislikesPerDay(date), PostsPerDay=self.getPostsPerDay(date))
 
     def getPostsPerDayByUser(self, user, date):
         user_post_dict = self.post_dao.getUserPostsByDateDict(user, date)
@@ -89,7 +100,7 @@ class statHandler:
 
         return 0
 
-    def getPostsPerDayByUser2(self, user, date):
+    def getPostsPerDayByUser2(self, user):
         return jsonify(DateOfInterest = date, UserOfInterest = user, PostsPerDay = self.getPostsPerDayByUser(user, date))
 
     def getRepliesPerPhoto(self, photo):
@@ -139,31 +150,45 @@ class statHandler:
         return [sorted_hashtag_dict[0][0], sorted_hashtag_dict[1][0], sorted_hashtag_dict[2][0]]
 
     def getTrendingHashtags2(self, date):
-        return jsonify(DateOfInterest = date, TrendingHashtags = self.getTrendingHashtags(date))
+        return jsonify(DateOfInterest=date, TrendingHashtags=self.getTrendingHashtags(date))
 
-    def getStatByChoice(self, args, date):
-        stat = args['stat']
-
-        if len(args) == 2:
-            user = args['user']
-
-        if stat == "mostactiveusers":
-            return self.getMostActiveUsers2(date)
-        elif stat == "repliesperday":
-            return self.getRepliesPerDay2(date)
-        elif stat == "postsperday":
-            return self.getPostsPerDay2(date)
-        elif stat == "likesperday":
-            return self.getLikesPerDay2(date)
-        elif stat == "dislikesperday":
-            return self.getDislikesPerDay2(date)
-        elif stat == "postsperdaybyuser":
-            return self.getPostsPerDayByUser2(user, date)
-        elif stat == "trending":
-            return self.getTrendingHashtags2(date)
-        else:
-            return jsonify(Error = "Invalid statistic operation"), 404
-
+    def getStatByChoice(self, form):
+        stat = form['stat']
+        dao = statsDAO()
+        if len(form) == 2:
+            uid = form['uid']
+            if stat == "postsperdaybyuser":
+                dao2 = usersDAO()
+                if not dao2.getUserById(uid):
+                    return jsonify(Error="User " + str(uid) + " not found"), 404
+                dates = dao.getDatesOfPostsPerDayByUser(uid)
+                if not dates:
+                    return jsonify(Error="No Posts found for user: " + str(uid)), 400
+                result_list = dao.getPostsPerDayByUser(uid, dates)
+                # result_list = []
+                # for row in posts_count_list:
+                #     result = self.build_post_per_user_per_day_stat_dict(row)
+                #     result_list.append(result)
+                return jsonify(PostsPerDayOfUser=result_list)
+            return jsonify(Error="Invalid statistic per user operation"), 404
+        if len(form) == 1:
+            if stat == "mostactiveusers":
+                dates = dao.getPostDatesAvailable()
+                if not dates:
+                    return jsonify(Error="No Posts found"), 400
+                return jsonify(MostActiveUsersPerDay=dao.getMostActiveUsers(dates))
+            elif stat == "repliesperday":
+                return dao.getRepliesPerDay(date)
+            elif stat == "postsperday":
+                return dao.getPostsPerDay(date)
+            elif stat == "likesperday":
+                return dao.getLikesPerDay(date)
+            elif stat == "dislikesperday":
+                return dao.getDislikesPerDay(date)
+            elif stat == "trending":
+                return dao.getTrendingHashtags(date)
+            return jsonify(Error="Invalid statistic operation"), 404
+        return jsonify(Error="Malformed stats request"), 400
 
     def getPhotoStatsByChoice(self, args, photo):
         stat = args['stat']

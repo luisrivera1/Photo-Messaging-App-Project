@@ -51,12 +51,11 @@ class chatsDAO:
         return result
 
     def getChatByChatName(self, cname):
-        result = []
-        for chat in self.chat_list:
-            if chat.getName() == cname:
-                for attribute, value in vars(chat).items():
-                    result.append(value)
-        return result
+        cursor = self.conn.cursor()
+        query = "select cid from chat where cname = %s;"
+        cursor.execute(query, (cname,))
+        cid = cursor.fetchone()
+        return cid
 
     def getChatMemberById(self, cid, mem_id):
         result = []

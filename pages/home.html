@@ -6,13 +6,12 @@
     <button type="button" class="btn btn-dark btn-lg">Dashboard</button>
     <button type="button" class="btn btn-dark btn-lg" ng-click="homeCtrl.redirectToLogin()">Logout</button>
 </div>
-
 <div>
 
 </div>
 
 <div ng-repeat="g in homeCtrl.groupList" style = "display: flex; flex-direction: column; justify-content: center; align-items: stretch;">
-    <button type="button" class="btn btn-light btn-lg">{{g.cname}}</button>
+    <button type="button" class="btn btn-light btn-lg" id = "chatname" value = {{g.cname}} ng-click= "homeCtrl.redirectToChat()">{{g.cname}}</button>
 <!--                        <div class="card-image">-->
 <!--&lt;!&ndash;                            <img src="images/group.jpg"  >&ndash;&gt;-->
 <!--&lt;!&ndash;                            &lt;!&ndash; Card Title is the name of the group chat&ndash;&gt;&ndash;&gt;-->
