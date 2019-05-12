@@ -8,7 +8,9 @@
                         <table>
                             <tbody>
                             <tr ng-repeat="c in contactCtrl.contacts">
-                                <th> <center>{{c.ufirstname}} {{c.ulastname}}</center></th>
+                                <th>
+                                    <center>{{c.ufirstname}} {{c.ulastname}}</center>
+                                </th>
                             </tr>
 
                             </tbody>
@@ -22,7 +24,8 @@
                         </button>
 
                         <button class="waves-effect blue-grey lighten-1 btn-small float-right"
-                                type="submit" name="action" id = "addcontact" ng-click="contactCtrl.addContact()"> ADD CONTACT
+                                type="submit" name="action" id="addcontact" ng-click="contactCtrl.addContact()"> ADD
+                            CONTACT
                             <!--i class="material-icons right">send</i>-->
                         </button>
                     </div>

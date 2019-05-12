@@ -202,11 +202,14 @@ class postHandler:
 
     def deletePost(self, pid):
         dao = postsDAO()
-        if not dao.getUserById(pid):
+        if not dao.getPostById(pid):
             return jsonify(Error="Post not found."), 404
         else:
-            dao.delete(pid)
-            return jsonify(DeleteStatus="OK"), 200
+            dao.deleteFromHas(pid)
+            dao.deleteFromTagged(pid)
+            if dao.deletePost(pid) == 1:
+                return jsonify(DeleteStatus="Successfully deleted post: " + str(pid)), 200
+            return jsonify(Error="Delete Failed"), 400
 
     def updateLikeDislike(self, args):
         pid = int(args['pid'])
@@ -361,6 +364,3 @@ class postHandler:
                 result.append(self.build_post_dict_UI(row, likes, dislikes))
 
             return jsonify(Posts = result)
-
-
-

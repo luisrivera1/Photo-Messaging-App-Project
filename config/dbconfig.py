@@ -7,6 +7,11 @@ pg_config = {
     'dbname' : 'photoMsgApp'
 }
 
+# 'user': 'luis',
+# 'passwd': 'Anib2013',
+# 'host': 'localhost',
+# 'dbname': 'photoMsgApp'
+
 # pg_config = {
 #     'user': 'carlos',
 #     'passwd': 'Tozanarkand',
@@ -15,8 +20,8 @@ pg_config = {
 #     }
 
 # pg_config = {
-#     'user': 'ramon2',
-#     'passwd': '12345678',
-#     'host': 'localhost',
-#     'dbname': 'photomsgapp'
+# # 'user': 'ramon',
+# # 'passwd': '12345678',
+# # 'host': 'localhost',
+# # 'dbname': 'photomsgspp'
 # }

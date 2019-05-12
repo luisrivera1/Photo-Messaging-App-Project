@@ -2,12 +2,7 @@ from flask import Flask, jsonify, request
 from handler.userHandler import Handler
 from handler.postHandler import postHandler
 from handler.statHandler import statHandler
-
-
 from handler.chatHandler import chatHandler
-from Objects.Chat import Chat
-from Objects.User import User
-
 
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
@@ -173,6 +168,7 @@ def usersWholikedPost(pid):
     else:
         return jsonify(Error="Method not allowed."), 405
 
+
 # @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
 # def modifyContacts(cid):
 #     print(cid)
@@ -200,10 +196,12 @@ def getAllPosts():
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/posts/<int:pid>', methods=['GET'])
+@app.route('/PhotoMsgApp/posts/<int:pid>', methods=['GET', 'DELETE'])
 def getASinglePost(pid):
     if request.method == 'GET':
         return postHandler().getPostById(pid)
+    if request.method == 'DELETE':
+        return postHandler().deletePost(pid)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -279,13 +277,13 @@ La ruta tiene dos opciones:
   existe la posibilidad para ver todas las estadisticas
   asociadas a dicha fecha, o el poder ver una estadistica en
   particular.
-  
+
   Ejemplo: /PhotoMsgApp/stats/02-24-2019 (Todas las estadisticas)
            /PhotoMsgApp/stats/02-24-2019?likesperday (Estadistica especifica)
-           
+
   Segunda alternativa es que el parametro sea un string representando una foto.
   Dicho parametro sirve para devolver las estadisticas de la foto pertinente.
-  
+
   Ejemplo: /PhotoMsgApp/stats/pollo.png (Todas las estadisticas)
            /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
 '''
@@ -327,7 +325,7 @@ def replyToPost(pid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/uid', methods = ['GET'])
+@app.route('/PhotoMsgApp/uid', methods=['GET'])
 def getIdByUsername():
     print(request.args)
     if request.method == "GET":
@@ -337,10 +335,11 @@ def getIdByUsername():
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/posts/chat', methods = ["GET"])
+@app.route('/PhotoMsgApp/posts/chat', methods=["GET"])
 def getAllPostsFromChatname():
     if request.method == "GET":
         return postHandler().getAllPostsFromChatname(request.args)
+
 
 if __name__ == '__main__':
     app.run()

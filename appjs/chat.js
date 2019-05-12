@@ -1,8 +1,10 @@
-angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location', 'Upload', '$routeParams',
-    function($http, $log, $scope,$rootScope, Upload, $location, $routeParams) {
+angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location','$window', 'Upload', '$routeParams',
+    function($http, $log, $scope,$rootScope, $window, Upload, $location, $routeParams) {
         var thisCtrl = this;
 
         this.messageList = [];
+        this.usersInChat = [];
+
         this.counter  = 2;
         this.newText = "";
 
@@ -13,15 +15,14 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             //thisCtrl.messageList.push({"id": 2, "text": "Hello World", "author": "Joe",
              //   "like" : 11, "nolike" : 12});
 
-            var url = "http://localhost:5000/PhotoMsgApp/posts/chat"
+            var url = "http://localhost:5000/PhotoMsgApp/posts"
 
-            chatname = localStorage.getItem("chatname");
-            //console.log(params)
-
-            $http.get(url, { params : {"chatname" : chatname } }).then(
+            $http.get(url).then(
                 function(response){
                     console.log("Response: "+JSON.stringify(response));
                     thisCtrl.messageList = response.data.Posts
+                this.loadUsers();
+
                 },
                 function(response){
                     console.log("Error response: "+JSON.stringify(response));
@@ -62,11 +63,13 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
         this.loadMessages();
 
+
+
           // upload on file select or drop
     $scope.uploadPic = function (file) {
         Upload.upload({
-            url: 'https://angular-file-upload-cors-srv.appspot.com/upload',
-            data: {file: file, 'username': $scope.username}
+            url: 'http://localhost:5000/PhotoMsgApp/posts',
+            data: {file: file}
         })
 
         file.upload.then(function (response) {
@@ -81,6 +84,35 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                 file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
             });
         };
+
+        this.redirectToHome = function(){
+            window.location.href= '/#!/home';
+        }
+   this.loadUsers = function(){
+            chatname = localStorage.getItem("chatname");
+            var id_url = "http://localhost:5000/PhotoMsgApp/chats";
+
+            $http.get(id_url, { params : {"cname" : chatname}}).then(function(response){
+                localStorage.setItem("chatid", response.data.Chat);
+            });
+
+
+            //console.log(id);
+            var id = localStorage.getItem("chatid");
+            var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/users";
+            console.log(url)
+                $http.get(url).then(function(response){
+                    console.log("Response: "+JSON.stringify(response));
+                    console.log(response.data.UsersInChat)
+                    thisCtrl.usersInChat = response.data.UsersInChat;
+                    }).catch(function(response){
+                       console.log(response)
+                       alert("No Users in Chat.");
+                    });
+                 };
+
+
+
 
 
 }]);
