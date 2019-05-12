@@ -89,10 +89,10 @@ def getAllChats():
     #     else:
     #         return chatHandler().addPostToChat(request.args.to_dict(), request.json)
     if request.method == "GET":
-        if not request.args:
+        if not request.json:
             return chatHandler().getAllChats()
         else:
-            return chatHandler().searchChats(request.args.to_dict())
+            return chatHandler().getChatsByChatname(request.json)
     elif request.method == "POST":
         if not request.json:
             return jsonify(Error="Need to specify parameters for chat creation"), 405
@@ -335,10 +335,13 @@ def getIdByUsername():
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/posts/chat', methods = ["GET"])
+@app.route('/PhotoMsgApp/posts/chat', methods=["GET"])
 def getAllPostsFromChatname():
     if request.method == "GET":
         return postHandler().getAllPostsFromChatname(request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
 
 if __name__ == '__main__':
     app.run()

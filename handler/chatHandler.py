@@ -76,8 +76,18 @@ class chatHandler:
         if not row:
             return jsonify(Error="Chat Not Found"), 404
         else:
-            chats = self.build_chats_dict(row)
-            return jsonify(Chats=chats)
+            chat = self.build_chats_dict(row)
+            return jsonify(Chats=chat)
+
+    def getChatsByChatname(self, form):
+        dao = chatsDAO()
+        cname = form['cname']
+        cid = dao.getChatByChatName(cname)
+        if not cid:
+            return jsonify(Error="Chat Not Found"), 404
+        else:
+            # chats = self.build_chats_dict(row)
+            return jsonify(Chat={"cid":cid})
 
     def getChatMemberByID(self, chat_id, mem_id):
         dao = chatsDAO()
