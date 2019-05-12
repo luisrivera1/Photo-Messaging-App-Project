@@ -77,4 +77,3 @@ class statsDAO:
             cursor.execute(query, (row,))
             results.append([row[0].strftime("%B %d, %Y"), cursor.rowcount])
         return results
-
