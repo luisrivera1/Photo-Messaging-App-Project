@@ -69,4 +69,12 @@ class statsDAO:
         cursor.execute(query, (date,))
         return cursor.fetchone()[0]
 
+    def getPostsPerDates(self, dates):
+        results = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select * from post where pdate = %s;"
+            cursor.execute(query, (row,))
+            results.append([row[0].strftime("%B %d, %Y"), cursor.rowcount])
+        return results
 

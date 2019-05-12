@@ -170,24 +170,27 @@ class statHandler:
                 # for row in posts_count_list:
                 #     result = self.build_post_per_user_per_day_stat_dict(row)
                 #     result_list.append(result)
-                return jsonify(PostsPerDayOfUser=result_list)
+                return jsonify(PostsPerDayOfUser=result_list), 200
             return jsonify(Error="Invalid statistic per user operation"), 404
         if len(form) == 1:
             if stat == "mostactiveusers":
                 dates = dao.getPostDatesAvailable()
                 if not dates:
                     return jsonify(Error="No Posts found"), 400
-                return jsonify(MostActiveUsersPerDay=dao.getMostActiveUsers(dates))
-            elif stat == "repliesperday":
-                return dao.getRepliesPerDay(date)
-            elif stat == "postsperday":
-                return dao.getPostsPerDay(date)
-            elif stat == "likesperday":
-                return dao.getLikesPerDay(date)
-            elif stat == "dislikesperday":
-                return dao.getDislikesPerDay(date)
+                return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers(dates)), 200
+            elif stat == "repliesperdates":
+                return dao.getRepliesPerDates(dates)
+            elif stat == "postsperdates":
+                dates = dao.getPostDatesAvailable()
+                if not dates:
+                    return jsonify(Error="No Posts found"), 400
+                return jsonify(PostsPerDates=dao.getPostsPerDates(dates)), 200
+            elif stat == "likesperdates":
+                return dao.getLikesPerDate(dates)
+            elif stat == "dislikesperdates":
+                return dao.getDislikesPerDates(dates)
             elif stat == "trending":
-                return dao.getTrendingHashtags(date)
+                return dao.getTrendingHashtags(dates)
             return jsonify(Error="Invalid statistic operation"), 404
         return jsonify(Error="Malformed stats request"), 400
 
