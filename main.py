@@ -89,10 +89,10 @@ def getAllChats():
     #     else:
     #         return chatHandler().addPostToChat(request.args.to_dict(), request.json)
     if request.method == "GET":
-        if not request.json:
+        if not request.args:
             return chatHandler().getAllChats()
         else:
-            return chatHandler().getChatsByChatname(request.json)
+            return chatHandler().getChatsByChatname(request.args)
     elif request.method == "POST":
         if not request.json:
             return jsonify(Error="Need to specify parameters for chat creation"), 405
