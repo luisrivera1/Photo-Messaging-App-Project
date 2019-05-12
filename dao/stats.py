@@ -69,6 +69,15 @@ class statsDAO:
             result.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
         return result
 
+    def getDisikesPerDate(self, dates):
+        result = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select count(*) from Reaction where rdate = %s and type = 'dislike';"
+            cursor.execute(query, (row,))
+            result.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
+        return result
+
     def getMostActiveUsers(self, dates):
         result = []
         for row in dates:

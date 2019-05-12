@@ -195,7 +195,7 @@ class statHandler:
                 dates = dao.getReactionsDatesAvailable()
                 if not dates:
                     return jsonify(Error="No reactions found"), 400
-                return dao.getDislikesPerDates(dates)
+                return jsonify(Dislikes=dao.getDisikesPerDate(dates)), 200
             elif stat == "trending":
                 return dao.getTrendingHashtags(dates)
             return jsonify(Error="Invalid statistic operation"), 404
