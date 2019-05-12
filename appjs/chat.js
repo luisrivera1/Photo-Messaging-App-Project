@@ -1,78 +1,97 @@
-angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location','$window', 'Upload', '$routeParams',
-    function($http, $log, $scope,$rootScope, $window, Upload, $location, $routeParams) {
+angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location', '$window', 'Upload', '$routeParams',
+    function ($http, $log, $scope, $rootScope, $window, Upload, $location, $routeParams) {
         var thisCtrl = this;
 
         this.messageList = [];
         this.usersInChat = [];
 
-        this.counter  = 2;
+        this.counter = 2;
         this.newText = "";
 
-        this.loadMessages = function(){
+        this.loadUsers = function () {
+            var chatname = localStorage.getItem("chatname");
+            console.log(chatname);
+            var id_url = "http://localhost:5000/PhotoMsgApp/chatid";
+            var params = JSON.stringify({"cname":chatname});
+            $http.get(id_url, params).then(function (response) {
+                localStorage.setItem("chatid", response.data.Chat);
+                console.log(response)
+                console.log(response.data)
+            });
+
+
+            //console.log(id);
+            var id = localStorage.getItem("chatid");
+            var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/users";
+            console.log(url)
+            $http.get(url).then(function (response) {
+                console.log("Response: " + JSON.stringify(response));
+                console.log(response.data.UsersInChat);
+                thisCtrl.usersInChat = response.data.UsersInChat;
+            }).catch(function (response) {
+                console.log(response)
+                alert("No Users in Chat.");
+            });
+        };
+
+
+        this.loadMessages = function () {
             // Get the messages from the server through the rest api
-           // thisCtrl.messageList.push({"id": 1, "text": "Hola Mi Amigo", "author" : "Bob",
+            // thisCtrl.messageList.push({"id": 1, "text": "Hola Mi Amigo", "author" : "Bob",
             //"like" : 4, "nolike" : 1});
             //thisCtrl.messageList.push({"id": 2, "text": "Hello World", "author": "Joe",
-             //   "like" : 11, "nolike" : 12});
+            //   "like" : 11, "nolike" : 12});
 
-            var url = "http://localhost:5000/PhotoMsgApp/posts"
+            var url = "http://localhost:5000/PhotoMsgApp/posts";
+
 
             $http.get(url).then(
-                function(response){
-                    console.log("Response: "+JSON.stringify(response));
-                    thisCtrl.messageList = response.data.Posts
-                this.loadUsers();
-
-                },
-                function(response){
-                    console.log("Error response: "+JSON.stringify(response));
+                function (response) {
+                    console.log("Response: " + JSON.stringify(response));
+                    thisCtrl.messageList = response.data.Posts;
+                }),
+                function (response) {
+                    console.log("Error response: " + JSON.stringify(response));
                     var status = response.status;
 
-                    if(status==0){
+                    if (status == 0) {
                         alert("No internet connection");
-                    }
-                    else if (status == 401) {
+                    } else if (status == 401) {
                         alert("Session has expired");
-                    }
-                    else if (status == 403) {
+                    } else if (status == 403) {
                         alert("Authorization required");
-                    }
-                    else if (status == 404){
+                    } else if (status == 404) {
                         alert("Page not found");
-                    }
-                    else {
+                    } else {
                         alert("Internal system error has occurred");
                     }
 
-                }
-
-
-            )
-
+                };
             $log.error("Message Loaded: ", JSON.stringify(thisCtrl.messageList));
         };
 
-        this.postMsg = function(){
+        this.postMsg = function () {
             var msg = thisCtrl.newText;
             // Need to figure out who I am
             var author = "Me";
             var nextId = thisCtrl.counter++;
-            thisCtrl.messageList.unshift({"id": nextId, "p_message" : msg, "p_user" : author, "plikes" : 0, "pdislikes" : 0});
+            thisCtrl.messageList.unshift({
+                "id": nextId,
+                "p_message": msg,
+                "p_user": author,
+                "plikes": 0,
+                "pdislikes": 0
+            });
             thisCtrl.newText = "";
         };
 
-        this.loadMessages();
+        $scope.uploadPic = function (file) {
+            Upload.upload({
+                url: 'http://localhost:5000/PhotoMsgApp/posts',
+                data: {file: file}
+            })
 
-
-
-          // upload on file select or drop
-    $scope.uploadPic = function (file) {
-        Upload.upload({
-            url: 'http://localhost:5000/PhotoMsgApp/posts',
-            data: {file: file}
-        })
-
-        file.upload.then(function (response) {
+            file.upload.then(function (response) {
                 $timeout(function () {
                     file.result = response.data;
                 });
@@ -85,34 +104,11 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             });
         };
 
-        this.redirectToHome = function(){
-            window.location.href= '/#!/home';
-        }
-   this.loadUsers = function(){
-            chatname = localStorage.getItem("chatname");
-            var id_url = "http://localhost:5000/PhotoMsgApp/chats";
+        this.redirectToHome = function () {
+            window.location.href = '/#!/home';
+        };
 
-            $http.get(id_url, { params : {"cname" : chatname}}).then(function(response){
-                localStorage.setItem("chatid", response.data.Chat);
-            });
+        this.loadUsers();
+        this.loadMessages();
 
-
-            //console.log(id);
-            var id = localStorage.getItem("chatid");
-            var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/users";
-            console.log(url)
-                $http.get(url).then(function(response){
-                    console.log("Response: "+JSON.stringify(response));
-                    console.log(response.data.UsersInChat)
-                    thisCtrl.usersInChat = response.data.UsersInChat;
-                    }).catch(function(response){
-                       console.log(response)
-                       alert("No Users in Chat.");
-                    });
-                 };
-
-
-
-
-
-}]);
+    }]);

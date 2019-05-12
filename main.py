@@ -4,6 +4,7 @@ from handler.postHandler import postHandler
 from handler.statHandler import statHandler
 from handler.chatHandler import chatHandler
 
+
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
@@ -88,10 +89,10 @@ def getAllChats():
     #     else:
     #         return chatHandler().addPostToChat(request.args.to_dict(), request.json)
     if request.method == "GET":
-        if not request.args:
+        if not request.json:
             return chatHandler().getAllChats()
         else:
-            return chatHandler().searchChats(request.args.to_dict())
+            return chatHandler().getChatsByChatname(request.json)
     elif request.method == "POST":
         if not request.json:
             return jsonify(Error="Need to specify parameters for chat creation"), 405
@@ -167,7 +168,6 @@ def usersWholikedPost(pid):
         return postHandler().getUsersWhoLikedPost(pid)
     else:
         return jsonify(Error="Method not allowed."), 405
-
 
 # @app.route('/PhotoMsgApp/chats/<int:cid>', methods=['POST', 'DELETE'])
 # def modifyContacts(cid):
@@ -277,13 +277,13 @@ La ruta tiene dos opciones:
   existe la posibilidad para ver todas las estadisticas
   asociadas a dicha fecha, o el poder ver una estadistica en
   particular.
-
+  
   Ejemplo: /PhotoMsgApp/stats/02-24-2019 (Todas las estadisticas)
            /PhotoMsgApp/stats/02-24-2019?likesperday (Estadistica especifica)
-
+           
   Segunda alternativa es que el parametro sea un string representando una foto.
   Dicho parametro sirve para devolver las estadisticas de la foto pertinente.
-
+  
   Ejemplo: /PhotoMsgApp/stats/pollo.png (Todas las estadisticas)
            /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
 '''
@@ -325,7 +325,7 @@ def replyToPost(pid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/uid', methods=['GET'])
+@app.route('/PhotoMsgApp/uid', methods = ['GET'])
 def getIdByUsername():
     print(request.args)
     if request.method == "GET":
@@ -339,6 +339,8 @@ def getIdByUsername():
 def getAllPostsFromChatname():
     if request.method == "GET":
         return postHandler().getAllPostsFromChatname(request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
 if __name__ == '__main__':
