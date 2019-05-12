@@ -45,10 +45,37 @@ class statsDAO:
     def getPostDatesAvailable(self):
         result = []
         cursor = self.conn.cursor()
-        query = "select Distinct pdate from post order by pdate;"
+        query = "select distinct pdate from post order by pdate;"
         cursor.execute(query)
         for row in cursor:
             result.append(row)
+        return result
+
+    def getReactionsDatesAvailable(self):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select distinct rdate from reaction order by rdate;"
+        cursor.execute(query)
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getLikesPerDate(self, dates):
+        result = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select count(*) from Reaction where rdate = %s and type = 'like';"
+            cursor.execute(query, (row,))
+            result.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
+        return result
+
+    def getDisikesPerDate(self, dates):
+        result = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select count(*) from Reaction where rdate = %s and type = 'dislike';"
+            cursor.execute(query, (row,))
+            result.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
         return result
 
     def getMostActiveUsers(self, dates):
