@@ -325,3 +325,9 @@ class postsDAO:
         result = cursor.fetchall()
         return result
 
+    def getAllReplies(self):
+        cursor = self.conn.cursor()
+        query = "select reply_id from isReply";
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result

@@ -5,16 +5,18 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
         this.messageList = [];
         this.usersInChat = [];
 
+        document.getElementById("chatname").innerHTML = localStorage.getItem("chatname")
+
         this.counter = 2;
         this.newText = "";
 
         this.loadUsers = function () {
             var chatname = localStorage.getItem("chatname");
             console.log(chatname);
-            var id_url = "http://localhost:5000/PhotoMsgApp/chatid";
-            var params = JSON.stringify({"cname":chatname});
-            $http.get(id_url, params).then(function (response) {
-                localStorage.setItem("chatid", response.data.Chat);
+            var id_url = "http://localhost:5000/PhotoMsgApp/chats";
+
+            $http.get(id_url, { params : {"cname": chatname}}).then(function (response) {
+                localStorage.setItem("chatid", response.data.Chat["cid"]);
                 console.log(response)
                 console.log(response.data)
             });

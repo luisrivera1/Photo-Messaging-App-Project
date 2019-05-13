@@ -342,6 +342,11 @@ def getAllPostsFromChatname():
     else:
         return jsonify(Error="Method not allowed."), 405
 
+@app.route('/PhotoMsgApp/posts/chat/original', methods= ["GET"])
+def getAllOriginalPostsFromChat():
+    if request.method == "GET":
+        return postHandler().getAllOriginalPostsFromChat(request.args)
+
 
 if __name__ == '__main__':
     app.run()
