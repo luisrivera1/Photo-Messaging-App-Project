@@ -36,6 +36,12 @@
             controller: 'HomeController',
             controllerAs : 'homeCtrl'
 
+            }).when('/newChat', {
+            templateUrl: 'pages/newChat.html',
+            controller: 'NewChatController',
+            controllerAs : 'newChatCtrl'
+
+
 
         }).otherwise({
             redirectTo: '/login'
