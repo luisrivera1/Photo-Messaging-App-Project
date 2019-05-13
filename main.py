@@ -346,6 +346,8 @@ def getAllPostsFromChatname():
 def getAllOriginalPostsFromChat():
     if request.method == "GET":
         return postHandler().getAllOriginalPostsFromChat(request.args)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
 
 
 if __name__ == '__main__':

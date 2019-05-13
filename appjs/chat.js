@@ -7,6 +7,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
         document.getElementById("chatname").innerHTML = localStorage.getItem("chatname")
 
+        this.chatname = localStorage.getItem("chatname");
         this.counter = 2;
         this.newText = "";
 
@@ -44,33 +45,23 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             //thisCtrl.messageList.push({"id": 2, "text": "Hello World", "author": "Joe",
             //   "like" : 11, "nolike" : 12});
 
-            var url = "http://localhost:5000/PhotoMsgApp/posts";
+            var url = "http://localhost:5000/PhotoMsgApp/posts/chat/original";
+            //var chatname = localStorage.getItem("chatname");
 
+            console.log(url)
+            console.log(this.chatname)
 
-            $http.get(url).then(
+            $http.get(url, { params : {"chatname": this.chatname}}).then(
                 function (response) {
                     console.log("Response: " + JSON.stringify(response));
                     thisCtrl.messageList = response.data.Posts;
-                }),
-                function (response) {
-                    console.log("Error response: " + JSON.stringify(response));
-                    var status = response.status;
+                });
 
-                    if (status == 0) {
-                        alert("No internet connection");
-                    } else if (status == 401) {
-                        alert("Session has expired");
-                    } else if (status == 403) {
-                        alert("Authorization required");
-                    } else if (status == 404) {
-                        alert("Page not found");
-                    } else {
-                        alert("Internal system error has occurred");
-                    }
-
-                };
-            $log.error("Message Loaded: ", JSON.stringify(thisCtrl.messageList));
         };
+        //
+        // this.loadReplies = function() {
+        //     var url = 'http://localhost:5000/posts/' +
+        // }
 
         this.postMsg = function () {
             var msg = thisCtrl.newText;
@@ -108,6 +99,10 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
         this.redirectToHome = function () {
             window.location.href = '/#!/home';
+        };
+
+        this.redirectToReplies = function() {
+            window.location.href = '/#!/reply'
         };
 
         this.loadUsers();

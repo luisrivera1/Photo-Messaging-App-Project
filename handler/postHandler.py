@@ -369,7 +369,9 @@ class postHandler:
     def getAllOriginalPostsFromChat(self, args):
         dao = postsDAO()
 
-        chatname = args['chatname']
+        print(args)
+
+        chatname = args["chatname"]
 
         post_list = dao.getAllPostsFromChatname(chatname)
 
@@ -383,17 +385,16 @@ class postHandler:
 
             replies = []
 
+            new_post_list = []
+
             for reply in replies_temp:
                 replies.append(reply[0])
 
-            print(post_list)
-
             for post in post_list:
-                print(post[0])
-                if post[0] in replies:
-                    post_list.remove(post)
+                if not post[0] in replies:
+                    new_post_list.append(post)
 
-            for row in post_list:
+            for row in new_post_list:
                 likes = dao.getPostLikes(row[0])
                 dislikes = dao.getPostDislikes(row[0])
                 result.append(self.build_post_dict_UI(row, likes, dislikes))
