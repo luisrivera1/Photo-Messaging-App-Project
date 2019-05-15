@@ -133,3 +133,21 @@ class statsDAO:
         for row in cursor:
             results.append(row)
         return results
+
+    def getRepliesPerDates(self, dates):  # number of replies per date
+        results = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select count(*) as total from isreply natural inner join post where pid = reply_id and pdate = %s;"
+            cursor.execute(query, (row,))
+            results.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
+        return results
+
+    def getAvailableRepliesDates(self):
+        results = []
+        cursor = self.conn.cursor()
+        query = "select distinct pdate from isreply natural inner join post where pid = reply_id;"
+        cursor.execute(query)
+        for row in cursor:
+            results.append(row)
+        return results

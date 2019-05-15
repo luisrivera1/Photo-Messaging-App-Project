@@ -179,7 +179,10 @@ class statHandler:
                     return jsonify(Error="No Posts found"), 400
                 return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers(dates)), 200
             elif stat == "repliesperdates":
-                return dao.getRepliesPerDates(dates)
+                dates = dao.getAvailableRepliesDates()
+                if not dates:
+                    return jsonify(Error="No replies found"), 400
+                return jsonify(RepliesPerDates=dao.getRepliesPerDates(dates)), 200
             elif stat == "postsperdates":
                 dates = dao.getPostDatesAvailable()
                 if not dates:
