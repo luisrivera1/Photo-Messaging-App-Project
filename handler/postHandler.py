@@ -365,4 +365,37 @@ class postHandler:
             return jsonify(Posts = result)
 
 
+    def getAllOriginalPostsFromChat(self, args):
+        dao = postsDAO()
 
+        print(args)
+
+        chatname = args["chatname"]
+
+        post_list = dao.getAllPostsFromChatname(chatname)
+
+        if len(post_list) == 0:
+            return jsonify(Error = "Chat has no posts."), 404
+
+        else:
+            result = []
+
+            replies_temp = dao.getAllReplies()
+
+            replies = []
+
+            new_post_list = []
+
+            for reply in replies_temp:
+                replies.append(reply[0])
+
+            for post in post_list:
+                if not post[0] in replies:
+                    new_post_list.append(post)
+
+            for row in new_post_list:
+                likes = dao.getPostLikes(row[0])
+                dislikes = dao.getPostDislikes(row[0])
+                result.append(self.build_post_dict_UI(row, likes, dislikes))
+
+            return jsonify(Posts = result)
