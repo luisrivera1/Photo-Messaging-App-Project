@@ -395,12 +395,12 @@
                                     </p>
                                 </div>
                                 <div class="card-action bg-primary">
-                                    <a class="btn-floating btn-small waves-effect waves-light blue"><i
+                                    <button class="btn-floating btn-small waves-effect waves-light blue" value = {{m.pid}} ng-click = "chatCtrl.addLike()"> <i
                                             class="material-icons">thumb_up
-                                    </i></a> <span ng-bind="m.plikes">  </span>
-                                    <a class="btn-floating btn-small waves-effect waves-light blue"><i
+                                    </i></button> <span ng-bind="m.plikes">  </span>
+                                    <button class="btn-floating btn-small waves-effect waves-light blue"><i
                                             class="material-icons">thumb_down
-                                    </i></a><span ng-bind="m.pdislikes">  </span>
+                                    </i></button><span ng-bind="m.pdislikes">  </span>
 
                                     <button type="submit" class="btn-floating btn-small waves-effect grey"
                                             value={{m.pid}}>

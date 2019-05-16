@@ -60,15 +60,17 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
         //     var url = 'http://localhost:5000/posts/' +
         // }
 
-        this.uploadPic = function (file) {
-            console.log(file);
-            var id = localStorage.getItem("id");
-            var photo =  "http://localhost:5000/static/";
-            var url = "http://localhost:5000/PhotoMsgApp/posts";
-            var message = $scope.message;
-            console.log(photo);
-            console.log(message);
-           // var data = JSON.stringify({"puser": id, "pphoto": file, "pmessage": $scope.message, "pdate" : new Date(), "cname" : localStorage.getItem("chatname")});
+//        this.uploadPic = function (file) {
+//            console.log(file);
+//            var id = localStorage.getItem("id");
+//            var photo =  "http://localhost:5000/static/";
+//            var url = "http://localhost:5000/PhotoMsgApp/posts";
+//            var message = $scope.message;
+//            console.log(photo);
+//            console.log(message);
+//
+//
+//            var data = JSON.stringify({"puser": id, "pphoto": file, "pmessage": $scope.message, "pdate" : new Date(), "cname" : localStorage.getItem("chatname")});
             //$http.post(url, data).then(function(response){
             //    console.log(response.data);
                 //this.messageList.push(response.data.Post);
@@ -109,7 +111,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                      console.log(response.data)
                      var contact_id = response.data["ID"];
 
-                     url = "http://localhost:5000/chats/" + cid + "/contacts/" + contact_id;
+                     url = "http://localhost:5000/chats/contacts/";
                      console.log(url)
 
                      data = JSON.stringify({"cid": cid, "contact_id": contact_id})
@@ -124,6 +126,74 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             };
 
         };
+
+       this.addLike = function (post) {
+           var today = new Date();
+           var dd = today.getDate();
+           var mm = today.getMonth() + 1; //January is 0!
+           var yyyy = today.getFullYear();
+           today = dd + '-' + mm + '-' + yyyy; // pdate
+
+           var type = "like";
+           var usr = localStorage.getItem("id");
+           var post = document.activeElement.getAttribute("value")
+
+           var url = "http://localhost:5000/posts/" + post + "/likes/" + usr;
+
+           $http.put(url).then(function((
+                location.reload())
+           )
+       };
+
+       this.addDislike = function(post) {
+           var today = new Date();
+           var dd = today.getDate();
+           var mm = today.getMonth() + 1; //January is 0!
+           var yyyy = today.getFullYear();
+           today = dd + '-' + mm + '-' + yyyy; // pdate
+
+           var usr = localStorage.getItem("id");
+           var post = document.activeElement.getAttribute("value")
+           var type = "like";
+
+           var url = "http://localhost:5000/posts/" + post + "/dislikes/" + usr;
+
+           $http.put(url).then(function()
+               location.reload()
+           )
+
+       };
+
+//            // Build the data object
+//            var data = {};
+//            data.post_id = post['postId'];
+//            data.react_type = 1;
+//            //TODO: remove user_id
+//            data.user_id = this.user;
+//
+//            // Now create the url with the route to talk with the rest API
+//            var reqURL = "http://localhost:5000/Pictochat/post/react";
+//            console.log("reqURL: " + reqURL);
+//
+//            // configuration headers for HTTP request
+//            var config = {
+//                withCredentials: true,
+//                headers: {
+//                    'Content-Type': 'application/json;charset=utf-8;'
+//                }
+//            };
+//            $http.post(reqURL, data, config).then(
+//                // Success function
+//                function ((response) {
+//                    console.log("data: " + JSON.stringify(response.data));
+//                    // tira un mensaje en un alert
+//                    console.log("Post " + response.data.React.post_id + " Liked");
+//                    post.dislikes = response.data.React.totalDislikes;
+//                    post.likes = response.data.React.totalLikes;
+//                   // M.toast({html: 'Post Liked!'})
+//                )};
+//            );
+//        };
 
         this.loadUsers();
         this.loadMessages();
