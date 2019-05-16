@@ -139,7 +139,12 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                      console.log(url)
 
                      data = JSON.stringify({"cid": cid, "contact_id": contact_id})
-                     $http.post(url, data).then(function(response2){
+                     $http.post(url, data, { headers: {
+                      'Access-Control-Allow-Origin': '*',
+                      'Access-Control-Allow-Methods': ['POST', 'OPTIONS', 'PUT'],
+                      'Access-Control-Allow-Headers': ["Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Content-Type"],
+                      'Content-Type': 'application/json',  // <-- here
+                    }}).then(function(response2){
                         console.log(response2.data)
                         this.usersInChat.push(response2.data.AddedChatMember)
                         location.reload()
@@ -164,7 +169,11 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
            var url = "http://localhost:5000/posts/" + post + "/likes/" + usr;
 
-           $http.put(url).then(function(response){
+           $http.put(url, {  headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:5000/PhotoMsgApp/login',
+      'Content-Type': 'application/json',  // <-- here
+      'Authorization': 'Basic clopez26:password'
+    }}).then(function(response){
                 console.log(response)
                 location.reload()
            })
@@ -183,7 +192,11 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
            var url = "http://localhost:5000/posts/" + post + "/dislikes/" + usr;
 
-           $http.put(url).then(function(response){
+           $http.put(url, { headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:5000/PhotoMsgApp/login',
+      'Content-Type': 'application/json',  // <-- here
+      'Authorization': 'Basic clopez26:password'
+    }}).then(function(response){
                console.log(response)
                location.reload()
            })
