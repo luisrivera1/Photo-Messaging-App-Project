@@ -137,7 +137,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
                      url = "http://localhost:5000/chats/contacts/";
                      console.log(url);
-                });
+
                      data = JSON.stringify({"cid": cid, "contact_id": contact_id});
                      $http.post(url, data).then(function(response2){
                         console.log(response2.data);
@@ -147,7 +147,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                          console.log(err)
                          alert("User could not be added to chat.")
                      });
-                //});
+                });
             };
 
         };

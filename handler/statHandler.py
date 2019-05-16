@@ -143,15 +143,19 @@ class statHandler:
     def getDislikesPerPhoto2(self, photo):
         return jsonify(PhotoOfInterest = photo, NumberOfDislikes = self.getDislikesPerPhoto(photo))
 
-    def getTrendingHashtags(self, date):
-        hashtag_dict = self.post_dao.getPopularHashtagDict(date)
+    def getTrendingHashtagsTotal(self):
+        dao = statsDAO()
+        dates = dao.getAvailableTrendingDates()
+        if not dates:
+            return jsonify(Error="No hashtags found"), 400
+        return jsonify(TrendingHashtags=dao.getTrendringHashtagsTotal(dates)), 200
 
-        sorted_hashtag_dict = sorted(hashtag_dict.items(), key=itemgetter(1), reverse=True)
-
-        return [sorted_hashtag_dict[0][0], sorted_hashtag_dict[1][0], sorted_hashtag_dict[2][0]]
-
-    def getTrendingHashtags2(self, date):
-        return jsonify(DateOfInterest=date, TrendingHashtags=self.getTrendingHashtags(date))
+    def getMostActiveUsers(self):
+        dao = statsDAO()
+        dates = dao.getPostDatesAvailable()
+        if not dates:
+            return jsonify(Error="No Posts found"), 400
+        return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers(dates)), 200
 
     def getStatByChoice(self, form):
         stat = form['stat']

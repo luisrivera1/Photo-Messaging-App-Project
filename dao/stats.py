@@ -125,6 +125,20 @@ class statsDAO:
             #result.append([joker4, [joker, joker2, joker3]])
         return result
 
+    def getTrendringHashtagsTotal(self, dates):
+        result = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select distinct * from hashtag natural inner join tagged natural inner join post where pdate = %s and pid = post_id and hid = hashtag_id;"
+            cursor.execute(query, (row,))
+            temp = cursor.rowcount
+            # joker = temp[0][0]
+            # joker2 = temp[1][0]
+            # joker3 = temp[2][0]
+            # joker4 = row[0].strftime("%B %d, %Y")
+            result.append([row[0].strftime("%B %d, %Y"), temp])
+        return result
+
     def getAvailableTrendingDates(self):
         results = []
         cursor = self.conn.cursor()

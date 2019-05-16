@@ -24,7 +24,7 @@ google.charts.setOnLoadCallback(drawDislikesPerPostChart);
 
 // Hashtags
 function reformatHashtagsData(jsonData){
-    var temp = jsonData.Hashtags;
+    var temp = jsonData.TrendingHashtags;
     console.log(temp)
     console.log("temp: " + JSON.stringify(temp));
 
@@ -33,8 +33,9 @@ function reformatHashtagsData(jsonData){
 
     for(i=0; i < temp.length && i < 10; i++) {
         dataElement = [];
-        dataElement.push(temp[i]["hashtag_text"]);
-        dataElement.push(temp[i]["Total"]);
+        console.log(temp[i][1])
+        dataElement.push(temp[i][0]);
+        dataElement.push(temp[i][1]);
         result.push(dataElement);
     }
     console.log(result);
@@ -44,7 +45,7 @@ function reformatHashtagsData(jsonData){
 
 function drawHashtagsChart() {
     var jsonData = $.ajax({
-        url: "http://127.0.0.1:5000/Pictochat/dashboard/hashtags",
+        url: "http://127.0.0.1:5000/PhotoMsgApp/stats/hashtags",
         dataType: "json",
         async: false
     }).responseText;
@@ -53,20 +54,20 @@ function drawHashtagsChart() {
 
     // Create our data table out of JSON data loaded from server.
     var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Hashtag');
+    data.addColumn('string', 'Dates');
     data.addColumn('number', 'Total');
 
     data.addRows(reformatHashtagsData(JSON.parse(jsonData)));
 
     var options = {
-        title: 'Trending Hashtags',
+        title: 'Trending Hashtags Total per date',
         chartArea: {width: '800px'},
         hAxis: {
-            title: 'Total Hashtags',
+            title: 'Dates',
             minValue: 0
         },
         vAxis: {
-            title: 'Hashtag'
+            title: 'Total'
         }
     };
 

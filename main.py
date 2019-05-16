@@ -123,8 +123,8 @@ def contactsOfChat(cid, contact_id):
     print(cid, contact_id)
     if request.method == "POST":
         return chatHandler().addContactToChat(request.json)
-    elif request.method == "OPTIONS":
-        return chatHandler().addContactToChat(request.json)
+    # elif request.method == "OPTIONS":
+    #     return chatHandler().addContactToChat(request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -318,6 +318,22 @@ def getAllStatsJson():
         return jsonify(Error="Method not allowed."), 405
 
 
+@app.route('/PhotoMsgApp/stats/hashtags', methods=['GET'])
+def getTrendingHashtags():
+    if request.method == 'GET':
+        return statHandler().getTrendingHashtagsTotal()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/stats/mostactiveusers', methods=['GET'])
+def getMostActiveUsers():
+    if request.method == 'GET':
+        return statHandler().getMostActiveUsers()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/PhotoMsgApp/posts/<int:pid>/reply', methods=['POST'])
 def replyToPost(pid):
     print(pid)
@@ -366,6 +382,14 @@ def getValidUsersToAddToChat(cid, uid):
 def updatePostDislikes(pid, uid):
     if request.method == 'PUT':
         return postHandler().updatePostDislikes(pid, uid)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/likes/<int:uid>', methods=['PUT'])
+def updatePostLikes(pid, uid):
+    if request.method == 'PUT':
+        return postHandler().updatePostLikes(pid, uid)
     else:
         return jsonify(Error = "Method not allowed"), 405
 
