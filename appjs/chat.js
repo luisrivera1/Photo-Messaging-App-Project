@@ -1,5 +1,5 @@
-angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location', '$window', '$timeout', '$routeParams', 'Upload','$route',
-    function ($http, $log, $scope, $rootScope,$location, $window,$timeout, $routeParams,Upload,$route) {
+angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location', '$window', '$timeout', '$routeParams', 'Upload', '$route',
+    function ($http, $log, $scope, $rootScope, $location, $window, $timeout, $routeParams, Upload, $route) {
         var thisCtrl = this;
 
         this.messageList = [];
@@ -11,6 +11,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
         this.counter = 2;
         this.newText = "";
         this.filename = "";
+        this.contactId;
 
         this.loadUsers = function () {
             var chatname = localStorage.getItem("chatname");
@@ -38,33 +39,33 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             });
         };
 
-        this.addUsers = function () {
-            var chatname = localStorage.getItem("chatname");
-            console.log(chatname);
-            var id_url = "http://localhost:5000/PhotoMsgApp/chats";
-
-            $http.get(id_url, {params: {"cname": chatname}}).then(function (response) {
-                localStorage.setItem("chatid", response.data.Chat["cid"]);
-                console.log(response);
-                console.log(response.data)
-            });
-
-            var id = localStorage.getItem("chatid");
-            var username = prompt("Enter the username of the person you wish to add");
-
-            if (username != null) {
-                var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/contacts/" + localStorage.getItem("chatname");
-                var param = JSON.stringify({"cusername": username});
-                $http.post(url, param).then(function (response) {
-                    console.log(response);
-                    this.usersInChat.push(response.data.AddedChatMember)
-
-                })
-            } else {
-                alert("No user with that username exists.");
-            }
-
-        };
+        // this.addUsers = function () {
+        //     var chatname = localStorage.getItem("chatname");
+        //     console.log(chatname);
+        //     var id_url = "http://localhost:5000/PhotoMsgApp/chats";
+        //
+        //     $http.get(id_url, {params: {"cname": chatname}}).then(function (response) {
+        //         localStorage.setItem("chatid", response.data.Chat["cid"]);
+        //         console.log(response);
+        //         console.log(response.data)
+        //     });
+        //
+        //     var id = localStorage.getItem("chatid");
+        //     var username = prompt("Enter the username of the person you wish to add");
+        //
+        //     if (username != null) {
+        //         var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/contacts/" + localStorage.getItem("chatname");
+        //         var param = JSON.stringify({"cusername": username});
+        //         $http.post(url, param).then(function (response) {
+        //             console.log(response);
+        //             this.usersInChat.push(response.data.AddedChatMember)
+        //
+        //         })
+        //     } else {
+        //         alert("No user with that username exists.");
+        //     }
+        //
+        // };
 
         this.loadMessages = function () {
             // Get the messages from the server through the rest api
@@ -129,7 +130,13 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
             file.upload = Upload.upload({
                 url: 'http://localhost:5000/PhotoMsgApp/post/new',
-                data: {"puser": localStorage.getItem("id"), file: file, "pmessage": $scope.message, "pdate": new Date(), "chatName":localStorage.getItem("chatname")}
+                data: {
+                    "puser": localStorage.getItem("id"),
+                    file: file,
+                    "pmessage": $scope.message,
+                    "pdate": new Date(),
+                    "chatName": localStorage.getItem("chatname")
+                }
             });
 
             file.upload.then(function (response) {
@@ -278,7 +285,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             data.usr = localStorage.getItem("id");
 
             // Now create the url with the route to talk with the rest API
-            var reqURL = "http://localhost:5000/PhotoMsgApp/posts/"+data.post+"/likes/"+data.usr;
+            var reqURL = "http://localhost:5000/PhotoMsgApp/posts/" + data.post + "/likes/" + data.usr;
             console.log("reqURL: " + reqURL);
 
             // configuration headers for HTTP request
@@ -316,7 +323,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                 }
             );
         };
-         //insert like on post
+        //insert like on post
         this.dislikeAdd = function (post) {
             // Build the data object
             var data = {};
@@ -326,7 +333,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             data.usr = localStorage.getItem("id");
 
             // Now create the url with the route to talk with the rest API
-            var reqURL = "http://localhost:5000/PhotoMsgApp/posts/"+data.post+"/dislikes/"+data.usr;
+            var reqURL = "http://localhost:5000/PhotoMsgApp/posts/" + data.post + "/dislikes/" + data.usr;
             console.log("reqURL: " + reqURL);
 
             // configuration headers for HTTP request
@@ -360,6 +367,53 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                     }
                 }
             );
+        };
+
+        this.addUserToChat = function () {
+            var username = prompt("Enter username of user to insert.");
+
+            if (username != null) {
+                var cid = localStorage.getItem("chatid");
+
+                var url = "http://localhost:5000/PhotoMsgApp/uid";
+                 var config = {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            };
+
+                $http.get(url, {params: {"username": username}}, config).then(
+                    function (response) {
+                        console.log(response.data);
+                        thisCtrl.contactId = response.data["ID"];
+                        thisCtrl.addUserToChat2();
+                    });
+            };
+              this.addUserToChat2 = function () {
+
+                var url = "http://localhost:5000/chats/contacts/";
+                console.log(url);
+                var data = {};
+
+                 var config = {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            };
+                data = {"cid": cid, "contact_id": thisCtrl.contactId};
+                $http.post(url, data, config).then(
+                    function (response) {
+                    console.log(response.data);
+                    this.usersInChat.push(response.data.AddedChatMember);
+                    // location.reload()
+                }).catch(function (err) {
+                    console.log(err);
+                    alert("User could not be added to chat.")
+                });
+            }
+
         };
 
     }]);
