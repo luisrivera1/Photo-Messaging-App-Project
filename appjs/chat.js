@@ -88,7 +88,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 //                // Math.min is to fix IE which reports 200% sometimes
 //                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
 //            });
-        };
+//         };
 
 //         this.deleteUserFromChat = function () {
 //             //console.log(this.chatname);
@@ -132,21 +132,22 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                 var url = "http://localhost:5000/PhotoMsgApp/uid"
 
                 $http.get(url, { params : { "username" : username } }).then(function(response){
-                     console.log(response.data)
+                     console.log(response.data);
                      var contact_id = response.data["ID"];
 
                      url = "http://localhost:5000/chats/contacts/";
-                     console.log(url)
-
-                     data = JSON.stringify({"cid": cid, "contact_id": contact_id})
+                     console.log(url);
+                });
+                     data = JSON.stringify({"cid": cid, "contact_id": contact_id});
                      $http.post(url, data).then(function(response2){
-                        console.log(response2.data)
-                        this.usersInChat.push(response2.data.AddedChatMember)
+                        console.log(response2.data);
+                        this.usersInChat.push(response2.data.AddedChatMember);
                         location.reload()
-                     }).catch(function(){
+                     }).catch(function(err){
+                         console.log(err)
                          alert("User could not be added to chat.")
                      });
-                });
+                //});
             };
 
         };
@@ -164,9 +165,9 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
            var url = "http://localhost:5000/posts/" + post + "/likes/" + usr;
 
-           $http.put(url).then(function((
-                location.reload())
-           )
+           $http.put(url).then(function() {
+               location.reload()
+           })
        };
 
        this.addDislike = function(post) {
@@ -182,9 +183,9 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
            var url = "http://localhost:5000/posts/" + post + "/dislikes/" + usr;
 
-           $http.put(url).then(function()
+           $http.put(url).then(function() {
                location.reload()
-           )
+           })
 
        };
 

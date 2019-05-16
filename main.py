@@ -118,7 +118,7 @@ def deleteMemberOfChat(cid, admin_id, uid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/chats//contacts/', methods=['POST', 'OPTIONS'])
+@app.route('/PhotoMsgApp/chats/contacts/', methods=['POST', 'OPTIONS'])
 def contactsOfChat(cid, contact_id):
     print(cid, contact_id)
     if request.method == "POST":
