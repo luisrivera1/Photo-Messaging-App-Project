@@ -1,6 +1,7 @@
 from flask import jsonify
 from dao.posts import postsDAO
 from dao.chats import chatsDAO
+from datetime import date
 
 class postHandler:
     def build_post_dict(self, row):
@@ -399,3 +400,33 @@ class postHandler:
                 result.append(self.build_post_dict_UI(row, likes, dislikes))
 
             return jsonify(Posts = result)
+
+    def updatePostLikes(self, pid, uid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        if not dao.getUserById(uid):
+            return jsonify(Error="User " + str(uid) + " not found."), 404
+        else:
+            if not dao.didUserReact(pid, uid):
+                if dao.insertLikeIntoReaction(pid, uid, date.today()) == 1:
+                    row = dao.getPostLikes(pid)
+                    result = self.build_post_likes_dict(pid, row)
+                    return jsonify(UpdatedLikesOfPost=result)
+                return jsonify(Error="Like Update failed"), 404
+            return jsonify(Error="User " + str(uid) + " has already reacted to post " + str(pid))
+
+    def updatePostDislikes(self, pid, uid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        if not dao.getUserById(uid):
+            return jsonify(Error="User " + str(uid) + " not found."), 404
+        else:
+            if not dao.didUserReact(pid, uid):
+                if dao.insertDislikeIntoReaction(pid, uid, date.today()) == 1:
+                    row = dao.getPostDislikes(pid)
+                    result = self.build_post_dislikes_dict(pid, row)
+                    return jsonify(UpdatedDisikesOfPost=result)
+                return jsonify(Error="Dislike Update failed"), 404
+            return jsonify(Error="User " + str(uid) + " has already reacted to post " + str(pid))

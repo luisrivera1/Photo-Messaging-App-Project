@@ -90,6 +90,30 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 //            });
         };
 
+//         this.deleteUserFromChat = function () {
+//             //console.log(this.chatname);
+//             var id = localStorage.getItem("chatid");
+//             var id_url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/user/" + uid + 00000000;
+// /PhotoMsgApp/chats/<int:cid>/user/<int:admin_id>/delete/<int:uid>'
+//             $http.get(id_url, { params : {"cname": this.chatname}}).then(function (response) {
+//                 localStorage.setItem("chatid", response.data.Chat["cid"]);
+//                 console.log(response.data.Chat)
+//
+//                      //console.log(id);
+//
+//                 var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/users";
+//                 console.log(url)
+//                 $http.get(url).then(function (response) {
+//                     console.log("Response: " + JSON.stringify(response));
+//                     console.log(response.data.UsersInChat);
+//                     thisCtrl.usersInChat = response.data.UsersInChat;
+//             })
+//             });
+//
+//
+//
+//         };
+
         this.redirectToHome = function () {
             window.location.href = '/#!/home';
         };
