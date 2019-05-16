@@ -2,6 +2,9 @@ from flask import jsonify
 from dao.posts import postsDAO
 from dao.chats import chatsDAO
 
+import os
+from werkzeug.utils import secure_filename
+
 class postHandler:
     def build_post_dict(self, row):
         result = {}
@@ -165,8 +168,10 @@ class postHandler:
             result_list.append(result)
         return jsonify(Posts=result_list)
 
-    def insertPost(self, form):
+    def insertPost(self, form,file):
         print("form: ", form)
+        if not form:
+            return jsonify(Error="You cannot pass null object"), 400
         if len(form) != 5:
             return jsonify(Error="Malformed post request"), 400
         else:
@@ -400,3 +405,45 @@ class postHandler:
                 result.append(self.build_post_dict_UI(row, likes, dislikes))
 
             return jsonify(Posts = result)
+
+    def createPost(self, form, file, path):
+        dao = postsDAO()
+
+        # Assumes form contains post_msg, user_id, cname
+        if form and file and len(form) >= 3:
+            puser = form['puser']
+            pphoto = "http://127.0.0.1:5000" + path+"/"+file.filename
+            pmessage = form['pmessage']
+            pdate = form['pdate']
+            #user_id = form['puser']
+            chatName = form['chatName']
+
+            if puser and pphoto and pmessage and pdate:
+                post= dao.insertPost(puser, pphoto, pmessage, pdate)
+                post_id, pdate = post['pid'], post['pdate']
+                # post_id, post_date = post['post_id'], post['post_date']
+
+                # Upload file
+                file_secure_name = secure_filename(file.filename)
+                file_path = os.path.join(path, file_secure_name)
+                file.save(os.path.join(os.getcwd(), file_path[1:]))
+
+
+                likes = dao.getPostLikes(post_id)
+                dislikes = dao.getPostDislikes(post_id)
+
+                cid = chatsDAO().getChatByChatName(chatName)
+                if not cid:
+                    return jsonify(Error="Chat with name: " + str(chatName) + " not found")
+                if not dao.insertIntoHas(cid, post_id):
+                    return jsonify(Error="Inserting into table HAS failed")
+                row = [post_id, puser, pphoto, pmessage, pdate]
+
+                # result = self.build_post_attributes(post_id, puser, pphoto, pmessage, pdate)
+                result = self.build_post_dict_UI(row, likes, dislikes)
+
+                return jsonify(Post=result), 201
+            else:
+                return jsonify(Error='Malformed POST request'), 400
+        else:
+            return jsonify(Error='Malformed POST request'), 400

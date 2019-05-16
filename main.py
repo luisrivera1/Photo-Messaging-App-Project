@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,jsonify, request, redirect, url_for, render_template, flash
 from handler.userHandler import Handler
 from handler.postHandler import postHandler
 from handler.statHandler import statHandler
 from handler.chatHandler import chatHandler
+from werkzeug.utils import secure_filename
+import os
 
 
 # Import Cross-Origin Resource Sharing to enable
@@ -14,7 +16,18 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False  # This makes jsonify NOT sort automatically.
 # Apply CORS to this app
-CORS(app)
+CORS(app, supports_credentials=True)
+
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'PhotoMsgApp'
+app.config['UPLOAD_FOLDER'] = '/static'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+
+
+# UPLOAD_FOLDER = os.path.basename('static')
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 
 @app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
@@ -190,6 +203,7 @@ def getAllPosts():
         #     return postHandler().getPostById(request.args.to_dict())
     # http://127.0.0.1:5000/PhotoMsgApp/posts?pid=1&operation=dislike
     if request.method == 'POST':
+        print(request.json)
         return postHandler().insertPost(request.json)
 
     else:
@@ -349,6 +363,40 @@ def getAllOriginalPostsFromChat():
     else:
         return jsonify(Error = "Method not allowed"), 405
 
+@app.route('/PhotoMsgApp/post/new', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
+def createPost():
+    if request.method == 'POST':
+        if allowed_file(request.files['file'].filename):
+            return postHandler().createPost(request.form, request.files['file'], app.config['UPLOAD_FOLDER'])
+        return jsonify(Error="File extension not allowed"), 405
+    return jsonify(Error="Method not allowed"), 405
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# @app.route('/PhotoMsgApp/upload', methods=['GET', 'POST'])
+# def upload_file():
+#     print("ENTERED THINGY")
+#     if request.method == 'POST':
+#         # check if the post request has the file part
+#         if 'file' not in request.files:
+#             print('No file part')
+#             return redirect(request.url)
+#         file = request.files['file']
+#         # if user does not select file, browser also
+#         # submit a empty part without filename
+#         if file.filename == '':
+#             print('No selected file')
+#             return redirect(request.url)
+#         if file and allowed_file(file.filename):
+#             filename = secure_filename(file.filename)
+#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#             return redirect(url_for('upload_file', filename=filename))
+#
+#     return redirect(request.url)
 
 if __name__ == '__main__':
     app.run()

@@ -2,7 +2,7 @@
 
    var app = angular.module('AppChat', ['ngRoute', 'ngFileUpload']);
 
-    app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider, $location) {
+    app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $location,$locationProvider) {
         $routeProvider.when('/login', {
             templateUrl: 'pages/login.html',
             controller: 'LoginController',

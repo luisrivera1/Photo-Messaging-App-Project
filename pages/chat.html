@@ -297,14 +297,20 @@
     <div class="row justify-content-center h-100">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto chat">
             <div class="card mb-sm-3 mb-md-0 contacts_card">
-                <div class="card-header" id="chatname">
+                <div class="card-header" id="chatname"></div>
 
-                </div>
 
                 <div class="card-body contacts_body">
                     <div>
                         <h2>
                             <center>Users in Chat</center>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn-floating btn-small waves-effect grey"name="action" id="addUser" ng-click="chatCtrl.addUsers()" >
+
+                                        <i class="material-icons">add </i>
+                                    </button>
+                            </div>
+
                         </h2>
                     </div>
                     <div class="contacts" ng-repeat="user in chatCtrl.usersInChat">
@@ -437,6 +443,8 @@
 
             </div>
         </div>
+
+
     </div>
 </div>
 
