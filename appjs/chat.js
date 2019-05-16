@@ -1,5 +1,5 @@
-angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location', '$window', '$timeout', '$routeParams', 'Upload',
-    function ($http, $log, $scope, $rootScope, $window, $timeout, $location, $routeParams,Upload) {
+angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope', '$rootScope', '$location', '$window', '$timeout', '$routeParams', 'Upload','$route',
+    function ($http, $log, $scope, $rootScope,$location, $window,$timeout, $routeParams,Upload,$route) {
         var thisCtrl = this;
 
         this.messageList = [];
