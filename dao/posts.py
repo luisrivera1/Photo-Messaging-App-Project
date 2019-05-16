@@ -331,3 +331,26 @@ class postsDAO:
         cursor.execute(query)
         result = cursor.fetchall()
         return result
+
+    def didUserReact(self, pid, uid):
+        cursor = self.conn.cursor()
+        query = "select * from reaction where post = %s and usr = %s;"
+        cursor.execute(query, (pid, uid))
+        result = cursor.fetchone()
+        return result
+
+    def insertLikeIntoReaction(self, pid, uid, date):
+        cursor = self.conn.cursor()
+        query = "insert into reaction(rdate, type, usr, post) values (%s,'like', %s, %s);"
+        cursor.execute(query, (date, uid, pid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
+    def insertDislikeIntoReaction(self, pid, uid, date):
+        cursor = self.conn.cursor()
+        query = "insert into reaction(rdate, type, usr, post) values (%s,'dislike', %s, %s);"
+        cursor.execute(query, (date, uid, pid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result

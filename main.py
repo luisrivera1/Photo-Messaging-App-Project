@@ -355,6 +355,16 @@ def getAllOriginalPostsFromChat():
 def getValidUsersToAddToChat(cid, uid):
     if request.method == "GET":
         return chatHandler().getUsersForAdding(cid, uid)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/dislikes/<int:uid>', methods=['PUT'])
+def updatePostDislikes(pid, uid):
+    if request.method == 'PUT':
+        return postHandler().updatePostDislikes(pid, uid)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
 
 
 if __name__ == '__main__':
