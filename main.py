@@ -398,5 +398,21 @@ def allowed_file(filename):
 #
 #     return redirect(request.url)
 
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/dislikes/<int:uid>', methods=['POST'])
+def updatePostDislikes(pid, uid):
+    if request.method == 'POST':
+        return postHandler().updatePostDislikes(pid, uid)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
+
+
+@app.route('/PhotoMsgApp/posts/<int:pid>/likes/<int:uid>', methods=['POST'])
+def updatePostLikes(pid, uid):
+    if request.method == 'POST':
+        return postHandler().updatePostLikes(pid, uid)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
+
 if __name__ == '__main__':
     app.run()

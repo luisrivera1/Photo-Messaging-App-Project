@@ -1,9 +1,12 @@
+from datetime import date
+
 from flask import jsonify
 from dao.posts import postsDAO
 from dao.chats import chatsDAO
 
 import os
 from werkzeug.utils import secure_filename
+
 
 class postHandler:
     def build_post_dict(self, row):
@@ -36,7 +39,6 @@ class postHandler:
 
         result['p_message'] = row[3]
         result['p_hashtags'] = added
-
 
         print(type(row[4]))
         result['p_date'] = row[4].strftime("%B %d, %Y")
@@ -161,14 +163,14 @@ class postHandler:
         elif (len(args) == 1) and p_date:
             post_list = dao.getPostsByDate(p_date)
         else:
-            return jsonify(Error = "Malformed query string"), 400
+            return jsonify(Error="Malformed query string"), 400
         result_list = []
         for row in post_list:
             result = self.build_post_dict(row)
             result_list.append(result)
         return jsonify(Posts=result_list)
 
-    def insertPost(self, form,file):
+    def insertPost(self, form, file):
         print("form: ", form)
         if not form:
             return jsonify(Error="You cannot pass null object"), 400
@@ -315,41 +317,40 @@ class postHandler:
             return jsonify(RepliesOfPost=result_list)
 
     def addReplyToPost(self, pid, form):
-            dao = postsDAO()
+        dao = postsDAO()
 
-            # validate that post exists
-            if not dao.getPostById(pid):
-                return jsonify(Error = "Post to reply to does not exist,"), 404
+        # validate that post exists
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post to reply to does not exist,"), 404
 
-            # validate json
-            if len(form) != 4:
-                return jsonify(Error = "Invalid post arguments.")
+        # validate json
+        if len(form) != 4:
+            return jsonify(Error="Invalid post arguments.")
+
+        else:
+            puser = form['puser']
+            pphoto = form['pphoto']
+            pmessage = form['pmessage']
+            pdate = form['pdate']
+
+            if puser and pphoto and pmessage and pdate:
+                reply_id = dao.insertPost(puser, pphoto, pmessage, pdate)
+
+                dao.insertIntoIsReply(reply_id, pid)
+
+                hashtags = dao.getHashtagList(pmessage)
+                print(hashtags)
+
+                if len(hashtags) > 0:
+                    for hashtag in hashtags:
+                        print(hashtag)
+                        hid = dao.insertIntoHashtag(hashtag)
+                        dao.insertIntoTagged(pid, hid)
+
+                return jsonify(Reply="Reply successfully added.")
 
             else:
-                puser = form['puser']
-                pphoto = form['pphoto']
-                pmessage = form['pmessage']
-                pdate = form['pdate']
-
-
-                if puser and pphoto and pmessage and pdate:
-                    reply_id = dao.insertPost(puser, pphoto, pmessage, pdate)
-
-                    dao.insertIntoIsReply(reply_id, pid)
-
-                    hashtags = dao.getHashtagList(pmessage)
-                    print(hashtags)
-
-                    if len(hashtags) > 0:
-                        for hashtag in hashtags:
-                            print(hashtag)
-                            hid = dao.insertIntoHashtag(hashtag)
-                            dao.insertIntoTagged(pid, hid)
-
-                    return jsonify(Reply = "Reply successfully added.")
-
-                else:
-                    return jsonify(Error = "Reply could not be added.")
+                return jsonify(Error="Reply could not be added.")
 
     def getAllPostsFromChatname(self, args):
         dao = postsDAO()
@@ -368,8 +369,7 @@ class postHandler:
                 dislikes = dao.getPostDislikes(row[0])
                 result.append(self.build_post_dict_UI(row, likes, dislikes))
 
-            return jsonify(Posts = result)
-
+            return jsonify(Posts=result)
 
     def getAllOriginalPostsFromChat(self, args):
         dao = postsDAO()
@@ -381,7 +381,7 @@ class postHandler:
         post_list = dao.getAllPostsFromChatname(chatname)
 
         if len(post_list) == 0:
-            return jsonify(Error = "Chat has no posts."), 404
+            return jsonify(Error="Chat has no posts."), 404
 
         else:
             result = []
@@ -404,7 +404,7 @@ class postHandler:
                 dislikes = dao.getPostDislikes(row[0])
                 result.append(self.build_post_dict_UI(row, likes, dislikes))
 
-            return jsonify(Posts = result)
+            return jsonify(Posts=result)
 
     def createPost(self, form, file, path):
         dao = postsDAO()
@@ -412,14 +412,14 @@ class postHandler:
         # Assumes form contains post_msg, user_id, cname
         if form and file and len(form) >= 3:
             puser = form['puser']
-            pphoto = "http://127.0.0.1:5000" + path+"/"+file.filename
+            pphoto = "http://127.0.0.1:5000" + path + "/" + file.filename
             pmessage = form['pmessage']
             pdate = form['pdate']
-            #user_id = form['puser']
+            # user_id = form['puser']
             chatName = form['chatName']
 
             if puser and pphoto and pmessage and pdate:
-                post= dao.insertPost(puser, pphoto, pmessage, pdate)
+                post = dao.insertPost(puser, pphoto, pmessage, pdate)
                 post_id, pdate = post['pid'], post['pdate']
                 # post_id, post_date = post['post_id'], post['post_date']
 
@@ -427,7 +427,6 @@ class postHandler:
                 file_secure_name = secure_filename(file.filename)
                 file_path = os.path.join(path, file_secure_name)
                 file.save(os.path.join(os.getcwd(), file_path[1:]))
-
 
                 likes = dao.getPostLikes(post_id)
                 dislikes = dao.getPostDislikes(post_id)
@@ -447,3 +446,33 @@ class postHandler:
                 return jsonify(Error='Malformed POST request'), 400
         else:
             return jsonify(Error='Malformed POST request'), 400
+
+    def updatePostLikes(self, pid, uid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        if not dao.getUserById(uid):
+            return jsonify(Error="User " + str(uid) + " not found."), 404
+        else:
+            if not dao.didUserReact(pid, uid):
+                if dao.insertLikeIntoReaction(pid, uid, date.today()) == 1:
+                    row = dao.getPostLikes(pid)
+                    result = self.build_post_likes_dict(pid, row)
+                    return jsonify(UpdatedLikesOfPost=result)
+                return jsonify(Error="Like Update failed"), 404
+            return jsonify(Error="User " + str(uid) + " has already reacted to post " + str(pid))
+
+    def updatePostDislikes(self, pid, uid):
+        dao = postsDAO()
+        if not dao.getPostById(pid):
+            return jsonify(Error="Post Not Found"), 404
+        if not dao.getUserById(uid):
+            return jsonify(Error="User " + str(uid) + " not found."), 404
+        else:
+            if not dao.didUserReact(pid, uid):
+                if dao.insertDislikeIntoReaction(pid, uid, date.today()) == 1:
+                    row = dao.getPostDislikes(pid)
+                    result = self.build_post_dislikes_dict(pid, row)
+                    return jsonify(UpdatedDisikesOfPost=result)
+                return jsonify(Error="Dislike Update failed"), 404
+            return jsonify(Error="User " + str(uid) + " has already reacted to post " + str(pid))

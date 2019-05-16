@@ -127,13 +127,6 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
         $scope.uploadPic = function (file) {
 
-            //photo_name = file["name"];
-
-            //photo = "http://localhost:5000/static/" + photo_name
-
-            // params = {"puser": localStorage.getItem("id"), "pphoto": file, "pmessage": $scope.message, "pdate": new Date(), "chatName":localStorage.getItem("chatname")};
-            // console.log(params);
-
             file.upload = Upload.upload({
                 url: 'http://localhost:5000/PhotoMsgApp/post/new',
                 data: {"puser": localStorage.getItem("id"), file: file, "pmessage": $scope.message, "pdate": new Date(), "chatName":localStorage.getItem("chatname")}
@@ -274,5 +267,99 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
         this.loadUsers();
         this.loadMessages();
+
+        //insert like on post
+        this.likeAdd = function (post) {
+            // Build the data object
+            var data = {};
+            data.post = post['pid'];
+            data.type = 'like';
+            //TODO: remove user_id
+            data.usr = localStorage.getItem("id");
+
+            // Now create the url with the route to talk with the rest API
+            var reqURL = "http://localhost:5000/PhotoMsgApp/posts/"+data.post+"/likes/"+data.usr;
+            console.log("reqURL: " + reqURL);
+
+            // configuration headers for HTTP request
+            var config = {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            };
+            $http.post(reqURL, data, config).then(
+                // Success function
+                function (response) {
+                    console.log("data: " + JSON.stringify(response.data));
+                    // tira un mensaje en un alert
+                    // console.log("Post " + response.data.React.post_id + " Liked");
+                    // post.plikes = response.data.React.UpdatedLikesOfPost.plikes;
+                    $route.reload();
+
+                }, //Error function
+                function (response) {
+
+                    var status = response.status;
+
+                    if (status === 0) {
+                        alert("No hay conexion a Internet");
+                    } else if (status === 401) {
+                        alert("Su sesion expiro. Conectese de nuevo.");
+                    } else if (status === 403) {
+                        alert("No esta autorizado a usar el sistema.");
+                    } else if (status === 404) {
+                        alert("No se encontro la informacion solicitada.");
+                    } else {
+                        alert("Error interno del sistema.");
+                    }
+                }
+            );
+        };
+         //insert like on post
+        this.dislikeAdd = function (post) {
+            // Build the data object
+            var data = {};
+            data.post = post['pid'];
+            data.type = 'like';
+            //TODO: remove user_id
+            data.usr = localStorage.getItem("id");
+
+            // Now create the url with the route to talk with the rest API
+            var reqURL = "http://localhost:5000/PhotoMsgApp/posts/"+data.post+"/dislikes/"+data.usr;
+            console.log("reqURL: " + reqURL);
+
+            // configuration headers for HTTP request
+            var config = {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            };
+            $http.post(reqURL, data, config).then(
+                // Success function
+                function (response) {
+                    console.log("data: " + JSON.stringify(response.data));
+                    $route.reload();
+
+                }, //Error function
+                function (response) {
+
+                    var status = response.status;
+
+                    if (status === 0) {
+                        alert("No hay conexion a Internet");
+                    } else if (status === 401) {
+                        alert("Su sesion expiro. Conectese de nuevo.");
+                    } else if (status === 403) {
+                        alert("No esta autorizado a usar el sistema.");
+                    } else if (status === 404) {
+                        alert("No se encontro la informacion solicitada.");
+                    } else {
+                        alert("Error interno del sistema.");
+                    }
+                }
+            );
+        };
 
     }]);
