@@ -13,8 +13,9 @@ from flask_cors import CORS, cross_origin
 # Activate
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False  # This makes jsonify NOT sort automatically.
+app.config['CORS_HEADERS'] = 'Content-Type'
 # Apply CORS to this app
-CORS(app)
+CORS(app, supports_credentials = True)
 
 
 @app.route('/PhotoMsgApp/users', methods=['GET', 'POST'])
@@ -118,12 +119,12 @@ def deleteMemberOfChat(cid, admin_id, uid):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/PhotoMsgApp/chats//contacts/', methods=['POST', 'OPTIONS'])
+@app.route('/PhotoMsgApp/chats/contacts/', methods=['POST', 'OPTIONS', 'PUT'])
+@cross_origin(origin = '*', headers = ['Content-Type','Access-Control-Allow-Origin', 'Access-Control-Allow-Method', 'Access-Control-Allow-Headers'])
+
 def contactsOfChat(cid, contact_id):
     print(cid, contact_id)
     if request.method == "POST":
-        return chatHandler().addContactToChat(request.json)
-    elif request.method == "OPTIONS":
         return chatHandler().addContactToChat(request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
