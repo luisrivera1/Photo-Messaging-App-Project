@@ -297,14 +297,20 @@
     <div class="row justify-content-center h-100">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto chat">
             <div class="card mb-sm-3 mb-md-0 contacts_card">
-                <div class="card-header" id="chatname">
+                <div class="card-header" id="chatname"></div>
 
-                </div>
 
                 <div class="card-body contacts_body">
                     <div>
                         <h2>
                             <center>Users in Chat</center>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn-floating btn-small waves-effect grey"name="action" id="addUser" ng-click="chatCtrl.addUsers()" >
+
+                                        <i class="material-icons">add </i>
+                                    </button>
+                            </div>
+
                         </h2>
                     </div>
                     <div class="contacts" ng-repeat="user in chatCtrl.usersInChat">
@@ -315,20 +321,11 @@
                                 </div>
                                 <div class="user_info">
                                     <span>{{user.ufirstname}} {{user.ulastname}}</span>
-                                    <!--<button class="waves-effect blue-grey lighten-1 btn-small" value={{user.uid}} ng-click="chatCtrl.deleteUserFromChat()">Delete-->
-                                <!--User from Chat <i class="fa fa-minus"-->
-                                              <!--aria-hidden="true"></i></button>-->
                                 </div>
                             </div>
                         </li>
                     </div>
                 </div>
-
-                <p>
-                  <button class="btn btn-primary" id = "adduser" role = "button" type="button"  ng-click = "chatCtrl.addUserToChat()">
-                    Add User To Chat
-                  </button>
-                </p>
 
 
                 <div class="card-footer" ng-app="fileUpload" ng-controller="ChatController">
@@ -354,8 +351,8 @@
                             <div class="input-group-append">
                                 <!--<button class="input-group-text send_btn" ng-disabled="!myForm.$valid"-->
                                 <!--ng-click="uploadPic(picFile)"><i class="fa fa-location-arrow"></i></button>-->
-                                <button class="input-group-text send_btn"
-                                        ng-click="chatCtrl.uploadPic()"><i class="fa fa-location-arrow"></i></button>
+                                <button class="input-group-text send_btn" ng-disabled="!myForm.$valid"
+                                        ng-click="uploadPic(file)"><i class="fa fa-location-arrow"></i></button>
 
                             </div>
                         </div>
@@ -398,12 +395,12 @@
                                     </p>
                                 </div>
                                 <div class="card-action bg-primary">
-                                    <button class="btn-floating btn-small waves-effect waves-light blue" value = {{m.pid}} ng-click = "chatCtrl.addLike()"> <i
+                                    <a ng-click="chatCtrl.likeAdd(m)" class="btn-floating btn-small waves-effect waves-light blue"><i
                                             class="material-icons">thumb_up
-                                    </i></button> <span ng-bind="m.plikes">  </span>
-                                    <button class="btn-floating btn-small waves-effect waves-light blue" value = {{m.pid}} ng-click = "chatCtrl.addDislike()"><i
+                                    </i></a> <span ng-bind="m.plikes">  </span>
+                                    <a ng-click="chatCtrl.dislikeAdd(m)" class="btn-floating btn-small waves-effect waves-light blue"><i
                                             class="material-icons">thumb_down
-                                    </i></button><span ng-bind="m.pdislikes">  </span>
+                                    </i></a><span ng-bind="m.pdislikes">  </span>
 
                                     <button type="submit" class="btn-floating btn-small waves-effect grey"
                                             value={{m.pid}}>
@@ -446,11 +443,10 @@
 
             </div>
         </div>
+
+
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
