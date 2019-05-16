@@ -140,7 +140,7 @@ class chatHandler:
                         cid = dao.createChat(cname, cadmin)
 
                         result = self.build_chats_attributes(cid, cname, cadmin)
-                        return jsonify(Chat=result), 201
+                        return jsonify(Chat=result), 200
                     else:
                         return jsonify(Error="Unexpected attributes in create chat request"), 400
                 except:
@@ -301,3 +301,50 @@ class chatHandler:
                 result = self.build_posts_from_chat_dict(row)
                 result_list.append(result)
             return jsonify(UsersInChat=result_list)
+
+    def getUsersForAdding(self, cid, uid):
+        dao = chatsDAO()
+        udao = usersDAO()
+
+        if not dao.getChatById(cid):
+            return jsonify(Error = "Chat not found."), 404
+
+        elif not udao.getUserById(uid):
+            return jsonify(Error = "User not found."), 404
+
+        else:
+            chat_members = dao.getAllUsersFromChat(cid)
+
+            if len(chat_members) == 1:
+                return jsonify(Error = "Only user in chat is admin.")
+
+            contact_list = udao.getContactListFromUserId(uid)
+
+            print(chat_members)
+            print(contact_list)
+
+            contacts = []
+
+            for contact in contact_list:
+                if not contact in chat_members:
+                    contacts.append(contact)
+
+            print(contacts)
+
+            if len(contacts) > 0:
+                result = []
+
+                for row in contacts:
+                    result.append(self.build_users_from_chat_dict(row))
+
+                    print(result)
+
+                return jsonify(Contacts = result), 200
+
+            else:
+                return jsonify(Error = "All users in contact list already in chat.")
+
+
+
+
+

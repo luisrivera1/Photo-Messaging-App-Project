@@ -12,29 +12,26 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
         this.newText = "";
 
         this.loadUsers = function () {
-            var chatname = localStorage.getItem("chatname");
-            console.log(chatname);
+            console.log(this.chatname);
             var id_url = "http://localhost:5000/PhotoMsgApp/chats";
 
-            $http.get(id_url, { params : {"cname": chatname}}).then(function (response) {
+            $http.get(id_url, { params : {"cname": this.chatname}}).then(function (response) {
                 localStorage.setItem("chatid", response.data.Chat["cid"]);
-                console.log(response)
-                console.log(response.data)
+                console.log(response.data.Chat)
+
+                     //console.log(id);
+                var id = localStorage.getItem("chatid");
+                var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/users";
+                console.log(url)
+                $http.get(url).then(function (response) {
+                    console.log("Response: " + JSON.stringify(response));
+                    console.log(response.data.UsersInChat);
+                    thisCtrl.usersInChat = response.data.UsersInChat;
+            })
             });
 
 
-            //console.log(id);
-            var id = localStorage.getItem("chatid");
-            var url = "http://localhost:5000/PhotoMsgApp/chats/" + id + "/users";
-            console.log(url)
-            $http.get(url).then(function (response) {
-                console.log("Response: " + JSON.stringify(response));
-                console.log(response.data.UsersInChat);
-                thisCtrl.usersInChat = response.data.UsersInChat;
-            }).catch(function (response) {
-                console.log(response)
-                alert("No Users in Chat.");
-            });
+
         };
 
 
@@ -63,38 +60,32 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
         //     var url = 'http://localhost:5000/posts/' +
         // }
 
-        this.postMsg = function () {
-            var msg = thisCtrl.newText;
-            // Need to figure out who I am
-            var author = "Me";
-            var nextId = thisCtrl.counter++;
-            thisCtrl.messageList.unshift({
-                "id": nextId,
-                "p_message": msg,
-                "p_user": author,
-                "plikes": 0,
-                "pdislikes": 0
-            });
-            thisCtrl.newText = "";
-        };
+        this.uploadPic = function (file) {
+            console.log(file);
+            var id = localStorage.getItem("id");
+            var photo =  "http://localhost:5000/static/";
+            var url = "http://localhost:5000/PhotoMsgApp/posts";
+            var message = $scope.message;
+            console.log(photo);
+            console.log(message);
+           // var data = JSON.stringify({"puser": id, "pphoto": file, "pmessage": $scope.message, "pdate" : new Date(), "cname" : localStorage.getItem("chatname")});
+            //$http.post(url, data).then(function(response){
+            //    console.log(response.data);
+                //this.messageList.push(response.data.Post);
+            //});
 
-        $scope.uploadPic = function (file) {
-            Upload.upload({
-                url: 'http://localhost:5000/PhotoMsgApp/posts',
-                data: {file: file}
-            })
-
-            file.upload.then(function (response) {
-                $timeout(function () {
-                    file.result = response.data;
-                });
-            }, function (response) {
-                if (response.status > 0)
-                    $scope.errorMsg = response.status + ': ' + response.data;
-            }, function (evt) {
-                // Math.min is to fix IE which reports 200% sometimes
-                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-            });
+//
+//            file.upload.then(function (response) {
+//                $timeout(function () {
+//                    file.result = response.data;
+//                });
+//            }, function (response) {
+//                if (response.status > 0)
+//                    $scope.errorMsg = response.status + ': ' + response.data;
+//            }, function (evt) {
+//                // Math.min is to fix IE which reports 200% sometimes
+//                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+//            });
         };
 
         this.redirectToHome = function () {

@@ -196,7 +196,7 @@ class postHandler:
                     print(hashtag)
                     hid = dao.insertIntoHashtag(hashtag)
                     dao.insertIntoTagged(pid, hid)
-            return jsonify(User=result), 201
+            return jsonify(Post=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
