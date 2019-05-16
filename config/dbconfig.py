@@ -12,12 +12,12 @@
 # 'host': 'localhost',
 # 'dbname': 'photoMsgApp'
 
-# pg_config = {
-#     'user': 'carlos',
-#     'passwd': 'Tozanarkand',
-#     'host': 'localhost',
-#     'dbname': 'PhotoMsgApp'
-#     }
+pg_config = {
+    'user': 'carlos',
+    'passwd': 'Tozanarkand',
+    'host': 'localhost',
+    'dbname': 'PhotoMsgApp'
+    }
 
 pg_config = {
 'user': 'ramon2',

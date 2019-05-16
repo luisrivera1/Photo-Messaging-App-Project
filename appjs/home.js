@@ -20,6 +20,27 @@ angular.module('AppChat').controller('HomeController', ['$http', '$log', '$scope
             });
         };
 
+        this.createChat = function(){
+           var chatname = prompt("Enter chat name.")
+
+           if (chatname != null)
+           {
+                var id = localStorage.getItem("id");
+                var url = "http://localhost:5000/PhotoMsgApp/chats"
+
+                data = JSON.stringify({"cname" : chatname, "cadmin" : id})
+                $http.post(url, data).then(function (response){
+                    console.log(response.data)
+                    this.groupList.push(response.data.Chat)
+                }).catch(function(error){
+                    alert("Chat not created.");
+                });
+            }
+
+            $window.location.href = '/#!/home'
+        }
+
+
         this.redirectToLogin = function () {
             localStorage.setItem("id", "");
             $window.location.href = '/#!/login';
