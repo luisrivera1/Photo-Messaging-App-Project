@@ -19,9 +19,9 @@ pg_config = {
     'dbname': 'PhotoMsgApp'
     }
 
-# pg_config = {
-# # 'user': 'ramon',
-# # 'passwd': '12345678',
-# # 'host': 'localhost',
-# # 'dbname': 'photomsgspp'
-# }
+pg_config = {
+'user': 'ramon2',
+'passwd': '12345678',
+'host': 'localhost',
+'dbname': 'photomsgapp'
+}

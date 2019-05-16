@@ -307,6 +307,8 @@ class Handler:
         else:
             if len(form) == 1:
                 cusername = form['cusername']
+                if not cusername:
+                    return jsonify(Error="Username left blank"), 405
                 cid = dao.getUsersByUsername(cusername)[0]
                 if cid:
                     if not dao.getUserById(cid):

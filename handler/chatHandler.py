@@ -146,13 +146,15 @@ class chatHandler:
                 except:
                     return jsonify(Error="Unexpected attributes in create chat request"), 400
 
-    def deleteChat(self, form):
-        if len(form) != 2:
+    def deleteChat(self, args):
+        if len(args) != 2:
             return jsonify(Error="Malformed delete chat request"), 400
 
         try:
-            cid = form['cid']
-            uid = form['uid']
+            cid = int(args['cid'])
+            uid = int(args['uid'])
+            # cid = form['cid']
+            # uid = form['uid']
         except:
             return jsonify(Error="Unexpected attributes in delete chat request"), 400
         dao = chatsDAO()

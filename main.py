@@ -98,7 +98,7 @@ def getAllChats():
             return jsonify(Error="Need to specify parameters for chat creation"), 405
         return chatHandler().createChat(request.json)
     elif request.method == "DELETE":
-        return chatHandler().deleteChat(request.json)
+        return chatHandler().deleteChat(request.args)
 
 
 @app.route('/PhotoMsgApp/chats/<int:cid>/users', methods=['GET'])
@@ -341,6 +341,7 @@ def getAllPostsFromChatname():
         return postHandler().getAllPostsFromChatname(request.args)
     else:
         return jsonify(Error="Method not allowed."), 405
+
 
 @app.route('/PhotoMsgApp/posts/chat/original', methods= ["GET"])
 def getAllOriginalPostsFromChat():

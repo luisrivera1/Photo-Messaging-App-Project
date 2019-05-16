@@ -1,5 +1,5 @@
-angular.module('AppChat').controller('ContactController', ['$http', '$log', '$scope', '$location', '$routeParams',
-    function ($http, $log, $scope, $location, $routeParams) {
+angular.module('AppChat').controller('ContactController', ['$http', '$log', '$scope', '$location', '$routeParams', '$window',
+    function ($http, $log, $scope, $location, $routeParams, $window) {
 
         var thisCtrl = this;
         this.contacts = [];
@@ -42,21 +42,24 @@ angular.module('AppChat').controller('ContactController', ['$http', '$log', '$sc
         this.addContact = function () {
             var username = prompt("Enter the username of the person you wish to add");
 
-            if(username != null)
+            if(username != null || username != "")
             {
                 var url = "http://localhost:5000/PhotoMsgApp/users/" + localStorage.getItem("id") + "/contacts"
                 var param = JSON.stringify({"cusername" :  username});
                 $http.post(url, param).then(function(response){
                     console.log(response)
                     this.contacts.push(response.data.Contact)
-
-                 })
+                    alert("Contact added");
+                 }).catch(function (response) {
+                console.log(response)
+                alert("Contact NOT added");
+            });
             }
              else{
                 alert("No user with that username exists.");
               };
-
             $window.location.href = '/#!/contactlist';
+
         };
 
         this.showChats = function () {

@@ -326,7 +326,6 @@ class postHandler:
                 pmessage = form['pmessage']
                 pdate = form['pdate']
 
-
                 if puser and pphoto and pmessage and pdate:
                     reply_id = dao.insertPost(puser, pphoto, pmessage, pdate)
 

@@ -104,3 +104,50 @@ class statsDAO:
             cursor.execute(query, (row,))
             results.append([row[0].strftime("%B %d, %Y"), cursor.rowcount])
         return results
+
+    def getTrendringHashtags(self, dates):
+        result = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select htext, count(*) as Total from hashtag natural inner join tagged natural inner join post where pdate = %s and  hid = hashtag_id and pid = post_id group by htext order by Total desc;"
+            cursor.execute(query, (row,))
+            temp = cursor.fetchall()
+            # joker = temp[0][0]
+            # joker2 = temp[1][0]
+            # joker3 = temp[2][0]
+            # joker4 = row[0].strftime("%B %d, %Y")
+            if len(temp) == 1:
+                result.append([row[0].strftime("%B %d, %Y"), [temp[0][0]]])
+            elif len(temp) == 2:
+                result.append([row[0].strftime("%B %d, %Y"), [temp[0][0], temp[1][0]]])
+            else:
+                result.append([row[0].strftime("%B %d, %Y"), [temp[0][0], temp[1][0], temp[2][0]]])
+            #result.append([joker4, [joker, joker2, joker3]])
+        return result
+
+    def getAvailableTrendingDates(self):
+        results = []
+        cursor = self.conn.cursor()
+        query = "select distinct pdate from post natural inner join tagged natural inner join hashtag where hid = hashtag_id and pid = post_id order by pdate;"
+        cursor.execute(query)
+        for row in cursor:
+            results.append(row)
+        return results
+
+    def getRepliesPerDates(self, dates):  # number of replies per date
+        results = []
+        for row in dates:
+            cursor = self.conn.cursor()
+            query = "select count(*) as total from isreply natural inner join post where pid = reply_id and pdate = %s;"
+            cursor.execute(query, (row,))
+            results.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
+        return results
+
+    def getAvailableRepliesDates(self):
+        results = []
+        cursor = self.conn.cursor()
+        query = "select distinct pdate from isreply natural inner join post where pid = reply_id;"
+        cursor.execute(query)
+        for row in cursor:
+            results.append(row)
+        return results

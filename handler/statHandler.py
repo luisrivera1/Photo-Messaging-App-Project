@@ -179,8 +179,10 @@ class statHandler:
                     return jsonify(Error="No Posts found"), 400
                 return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers(dates)), 200
             elif stat == "repliesperdates":
-
-                return dao.getRepliesPerDates(dates)
+                dates = dao.getAvailableRepliesDates()
+                if not dates:
+                    return jsonify(Error="No replies found"), 400
+                return jsonify(RepliesPerDates=dao.getRepliesPerDates(dates)), 200
             elif stat == "postsperdates":
                 dates = dao.getPostDatesAvailable()
                 if not dates:
@@ -197,7 +199,10 @@ class statHandler:
                     return jsonify(Error="No reactions found"), 400
                 return jsonify(Dislikes=dao.getDisikesPerDate(dates)), 200
             elif stat == "trending":
-                return dao.getTrendingHashtags(dates)
+                dates = dao.getAvailableTrendingDates()
+                if not dates:
+                    return jsonify(Error="No hashtags found"), 400
+                return jsonify(TrendingHashtags=dao.getTrendringHashtags(dates)), 200
             return jsonify(Error="Invalid statistic operation"), 404
         return jsonify(Error="Malformed stats request"), 400
 
