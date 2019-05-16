@@ -96,6 +96,35 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             window.location.href = '/#!/reply'
         };
 
+        this.addUserToChat = function(){
+            var username = prompt("Enter username of user to insert.")
+
+            if(username != null)
+            {
+                var cid = localStorage.getItem("chatid");
+
+                var url = "http://localhost:5000/PhotoMsgApp/uid"
+
+                $http.get(url, { params : { "username" : username } }).then(function(response){
+                     console.log(response.data)
+                     var contact_id = response.data["ID"];
+
+                     url = "http://localhost:5000/chats/" + cid + "/contacts/" + contact_id;
+                     console.log(url)
+
+                     data = JSON.stringify({"cid": cid, "contact_id": contact_id})
+                     $http.post(url, data).then(function(response2){
+                        console.log(response2.data)
+                        this.usersInChat.push(response2.data.AddedChatMember)
+                        location.reload()
+                     }).catch(function(){
+                         alert("User could not be added to chat.")
+                     });
+                });
+            };
+
+        };
+
         this.loadUsers();
         this.loadMessages();
 
