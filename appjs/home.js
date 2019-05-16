@@ -34,6 +34,8 @@ angular.module('AppChat').controller('HomeController', ['$http', '$log', '$scope
                     this.groupList.push(response.data.Chat)
                 });
             }
+
+            location.reload()
         }
 
         this.deleteChat = function(){
@@ -41,19 +43,24 @@ angular.module('AppChat').controller('HomeController', ['$http', '$log', '$scope
 
         if (chatname != null)
         {
-            var id = localStorage.getItem(id);
+            var id = localStorage.getItem("id");
             var url = "http://localhost:5000/PhotoMsgApp/chats"
 
             $http.get(url, { params : {"cname": chatname}}).then(function (response) {
                 localStorage.setItem("chatid", response.data.Chat["cid"]);
-                console.log(response.data.Chat)});
+                console.log(response.data.Chat);
 
                 $http.delete(url, { params : {"uid" : id, "cid" : localStorage.getItem("chatid")}}).then(function(response){
                 console.log(response.data)
-                }).catch(function(err){
+                location.reload()
+
+                })}).catch(function(err){
+                    console.log(err)
                     alert("Chat could not be deleted!");
                 });
-              };
+          }
+
+
 
         }
 

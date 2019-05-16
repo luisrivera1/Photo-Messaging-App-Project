@@ -58,7 +58,7 @@ angular.module('AppChat').controller('ContactController', ['$http', '$log', '$sc
              else{
                 alert("No user with that username exists.");
               };
-            $window.location.href = '/#!/contactlist';
+            location.reload()
 
         };
 
