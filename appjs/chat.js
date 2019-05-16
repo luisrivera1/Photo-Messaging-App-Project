@@ -88,7 +88,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 //                // Math.min is to fix IE which reports 200% sometimes
 //                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
 //            });
-        };
+ //       };
 
 //         this.deleteUserFromChat = function () {
 //             //console.log(this.chatname);
@@ -164,9 +164,10 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
            var url = "http://localhost:5000/posts/" + post + "/likes/" + usr;
 
-           $http.put(url).then(function((
-                location.reload())
-           )
+           $http.put(url).then(function(response){
+                console.log(response)
+                location.reload()
+           })
        };
 
        this.addDislike = function(post) {
@@ -182,9 +183,10 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
 
            var url = "http://localhost:5000/posts/" + post + "/dislikes/" + usr;
 
-           $http.put(url).then(function()
+           $http.put(url).then(function(response){
+               console.log(response)
                location.reload()
-           )
+           })
 
        };
 
