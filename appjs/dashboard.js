@@ -39,7 +39,7 @@ function reformatHashtagsData(jsonData){
 function drawHashtagsChart()
 {
     var jsonData = $.ajax({
-        url: "http://localhost:5000/chatGroup/HashTag/Top",
+        url: "http://localhost:5000/PhotoMsgApp/stat",
         dataType: "json",
         async: false
     }).responseText;
@@ -50,7 +50,7 @@ function drawHashtagsChart()
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Hashtag');
     data.addColumn('number', 'Position');
-    data.addRows(reformatHashtagsData(JSON.parse(jsonData)));
+    data.addRows(JSON.parse(jsonData));
 
     var options = {
         title: 'Trending Hashtags',

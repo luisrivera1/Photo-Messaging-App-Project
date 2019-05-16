@@ -133,11 +133,11 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                      console.log(response.data)
                      var contact_id = response.data["ID"];
 
-                     url = "http://localhost:5000/chats/" + cid + "/contacts/" + contact_id;
+                     var url2 = "http://localhost:5000/chats/" + cid + "/contacts/" + contact_id;
                      console.log(url)
 
                      data = JSON.stringify({"cid": cid, "contact_id": contact_id})
-                     $http.post(url, data).then(function(response2){
+                     $http.post(url2, data).then(function(response2){
                         console.log(response2.data)
                         this.usersInChat.push(response2.data.AddedChatMember)
                         location.reload()

@@ -74,7 +74,7 @@ angular.module('AppChat').controller('HomeController', ['$http', '$log', '$scope
         }
 
         this.redirectToDashboard = function () {
-            $window.location.href = '/#/dashboard'
+            $window.location.href = '/#!/dashboard'
         }
 
         this.redirectToContactList = function () {
