@@ -176,8 +176,8 @@ function drawMostActiveUsersChart() {
 
     // Create our data table out of JSON data loaded from server.
     var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Dates');
-    data.addColumn('number', 'Total');
+    data.addColumn('string', 'Name');
+    data.addColumn('number', 'Total Number of Posts');
 
     data.addRows(reformatMostActiveUsersData(JSON.parse(jsonData)));
 
@@ -188,13 +188,14 @@ function drawMostActiveUsersChart() {
         },
         chartArea: {width: '800px'},
         hAxis: {
-            title: 'Dates'//,
+            title: 'Name'//,
             //minValue: 0
         },
         vAxis: {
-            title: 'Total'
+            title: 'Total Number of Posts'
         },
-        colors: ['#2AC560']
+        colors: ['#2AC560'],
+        bars: 'horizontal'
     };
 
     var chart = new google.charts.Bar(document.getElementById('mostactiveusers'));

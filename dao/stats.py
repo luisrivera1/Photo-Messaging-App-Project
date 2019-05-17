@@ -84,17 +84,44 @@ class statsDAO:
             cursor = self.conn.cursor()
             query = "select puser, count(*) from post where pdate = %s group by puser;"
             cursor.execute(query, (row,))
-            tempMax = self.getMaxOfActiveUsers(row)
+            tempMax = self.getMaxOfActivityUsers(row)
             for row2 in cursor:
                 if row2[1] == tempMax:
                     result.append([row[0].strftime("%B %d, %Y"), row2[0]])
         return result
 
-    def getMaxOfActiveUsers(self, date):
+    def getMaxOfActivityUsers(self, date):
         cursor = self.conn.cursor()
         query = "select max(count) from (select puser, count(*) from post where pdate = %s group by puser) as C;"
         cursor.execute(query, (date,))
         return cursor.fetchone()[0]
+
+    def getMostActiveUsers(self):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select * from (select ufirstname, ulastname, count(*) as total from post natural inner join users where uid = puser group by ufirstname, ulastname) as C order by total desc;"
+        cursor.execute(query)
+        i = 1;
+        for row in cursor:
+            if i > 3:
+                break
+            result.append([row[0] + " " + row[1], row[2]])
+            i += 1
+        # if len(cursor) == 1:
+        #     result.append([cursor[0] + " " + cursor[1], cursor[2]])
+        # elif len(cursor) == 2:
+        #     result.append([row[0].strftime("%B %d, %Y"), [temp[0][0], temp[1][0]]])
+        # else:
+        #     result.append([row[0].strftime("%B %d, %Y"), [temp[0][0], temp[1][0], temp[2][0]]])
+        return result
+
+    def isTherePost(self):
+        cursor = self.conn.cursor()
+        query = "select * from post;"
+        cursor.execute(query)
+        if cursor.rowcount >= 1:
+            return True
+        return False
 
     def getPostsPerDates(self, dates):
         results = []

@@ -166,10 +166,9 @@ class statHandler:
 
     def getMostActiveUsers(self):
         dao = statsDAO()
-        dates = dao.getPostDatesAvailable()
-        if not dates:
+        if not dao.isTherePost():
             return jsonify(Error="No Posts found"), 400
-        return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers(dates)), 200
+        return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers()), 200
 
     def getStatByChoice(self, form):
         stat = form['stat']
