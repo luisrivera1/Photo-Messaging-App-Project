@@ -414,9 +414,8 @@ def updatePostLikes(pid, uid):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
-@app.route('/PhotoMsgApp/chats/contacts/', methods=['POST'])
-def contactsOfChat(cid, contact_id):
-    print(cid, contact_id)
+@app.route('/PhotoMsgApp/chats/contacts', methods=['POST'])
+def contactsOfChat():
     if request.method == "POST":
         return chatHandler().addContactToChat(request.json)
     else:

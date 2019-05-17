@@ -22,7 +22,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                 localStorage.setItem("chatid", response.data.Chat["cid"]);
                 console.log(response);
                 console.log(response.data)
-            });
+
 
 
             //console.log(id);
@@ -36,6 +36,8 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             }).catch(function (response) {
                 console.log(response);
                 alert("No Users in Chat.");
+            });
+
             });
         };
 
@@ -376,12 +378,13 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                 var cid = localStorage.getItem("chatid");
 
                 var url = "http://localhost:5000/PhotoMsgApp/uid";
-                 var config = {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-            };
+                var config = {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8;'
+
+                    }
+                };
 
                 $http.get(url, {params: {"username": username}}, config).then(
                     function (response) {
@@ -389,26 +392,29 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
                         thisCtrl.contactId = response.data["ID"];
                         thisCtrl.addUserToChat2();
                     });
-            };
-              this.addUserToChat2 = function () {
+            }
+            ;
+            this.addUserToChat2 = function () {
 
-                var url = "http://localhost:5000/chats/contacts/";
+                var url = "http://localhost:5000/chats/contacts";
                 console.log(url);
-                var data = {};
 
-                 var config = {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-            };
+                var config = {
+                    //withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8;'
+                    }
+                };
+
+                console.log(thisCtrl.contactId);
+
                 data = {"cid": cid, "contact_id": thisCtrl.contactId};
                 $http.post(url, data, config).then(
                     function (response) {
-                    console.log(response.data);
-                    this.usersInChat.push(response.data.AddedChatMember);
-                    // location.reload()
-                }).catch(function (err) {
+                        console.log(response.data);
+                        this.usersInChat.push(response.data.AddedChatMember);
+                        // location.reload()
+                    }).catch(function (err) {
                     console.log(err);
                     alert("User could not be added to chat.")
                 });

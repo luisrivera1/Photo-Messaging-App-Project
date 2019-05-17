@@ -418,15 +418,38 @@ class postHandler:
             # user_id = form['puser']
             chatName = form['chatName']
 
+
+
             if puser and pphoto and pmessage and pdate:
+                temp = pmessage
+
+                p_message = pmessage.split()
+                pmessage = ""
+
+                for word in p_message:
+                    if not word[0] == "#":
+                        pmessage = pmessage + word + " "
+
                 post = dao.insertPost(puser, pphoto, pmessage, pdate)
                 post_id, pdate = post['pid'], post['pdate']
                 # post_id, post_date = post['post_id'], post['post_date']
+
+                hashtags = dao.getHashtagList(temp)
+                print(hashtags)
+
+                if len(hashtags) > 0:
+                    for hashtag in hashtags:
+                        print(hashtag)
+                        hid = dao.insertIntoHashtag(hashtag)
+                        dao.insertIntoTagged(post_id, hid)
+
 
                 # Upload file
                 file_secure_name = secure_filename(file.filename)
                 file_path = os.path.join(path, file_secure_name)
                 file.save(os.path.join(os.getcwd(), file_path[1:]))
+
+
 
                 likes = dao.getPostLikes(post_id)
                 dislikes = dao.getPostDislikes(post_id)
