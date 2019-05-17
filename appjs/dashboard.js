@@ -127,7 +127,7 @@ function drawMostActivityOfUsersChart() {
         chart: {
             title: 'Most Activity of Users Per Date'
         },
-        chartArea: {width: '800px'},
+        chartArea: {width: '900px'},
         hAxis: {
             title: 'Dates'//,
             //minValue: 0
@@ -186,7 +186,7 @@ function drawMostActiveUsersChart() {
             title: 'Most Active Users Per Date',
             subtitle: 'Top 3'
         },
-        chartArea: {width: '800px'},
+        chartArea: {width: '900px'},
         hAxis: {
             title: 'Name'//,
             //minValue: 0
