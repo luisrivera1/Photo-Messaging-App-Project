@@ -192,3 +192,16 @@ class statsDAO:
         for row in cursor:
             results.append(row)
         return results
+
+    def getTopHashtags(self):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select htext, count(*) as Total from hashtag natural inner join tagged natural inner join post where hid = hashtag_id and pid = post_id group by htext order by Total desc;"
+        cursor.execute(query)
+        i = 1;
+        for row in cursor:
+            if i > 3:
+                break
+            result.append([row[0], row[1]])
+            i += 1
+        return result

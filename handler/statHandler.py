@@ -223,6 +223,13 @@ class statHandler:
             return jsonify(Error="Invalid statistic operation"), 404
         return jsonify(Error="Malformed stats request"), 400
 
+    def getTopHashtags(self):
+        dao = statsDAO()
+        dates = dao.getAvailableTrendingDates()
+        if not dates:
+            return jsonify(Error="No hashtags found"), 400
+        return jsonify(TopHashtags=dao.getTopHashtags()), 200
+
     # def getPhotoStatsByChoice(self, args, photo):
     #     stat = args['stat']
     #

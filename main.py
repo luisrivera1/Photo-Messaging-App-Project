@@ -445,5 +445,13 @@ def contactsOfChat():
     else:
         return jsonify(Error="Method not allowed."), 405
 
+@app.route('/PhotoMsgApp/stats/tophashtags', methods=['GET'])
+def getTopHashtags():
+    if request.method == 'GET':
+        return statHandler().getTopHashtags()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 if __name__ == '__main__':
     app.run()
