@@ -412,34 +412,7 @@
                     </div>
                 </div>
 
-               <div class="col-md-9 reply_container">
-                    <h4>Replies</h4>
-                    <div style="overflow: auto">
-                        <div class="card-action" ng-repeat="r in m.replies">
-                            <h6><strong>{{r.reply_username}} </strong></h6>
-                            <p>
-                                {{r.reply_msg}}
-                            </p>
-                            <span class="reply_date right">{{r.reply_date}}</span>
 
-                        </div>
-                    </div>
-                    <div class="card-action" style="display: flex; padding: 30px 0 0">
-                        <form name="form"
-                              ng-submit="chatCtrl.replyPost(m, replyTxt, 'reply'+m.postId)"
-                              role="form"
-                              style="width: 100%">
-                            <div style="display: flex">
-                                <input class="input_msg_write" id="reply{{m.postId}}" name="replyText"
-                                       ng-model="replyTxt"
-                                       placeholder="Reply Post..." required/>
-                                <button class="btn-floating btn-small waves-effect grey" type="submit">
-                                    <i class="material-icons">reply </i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
 
             </div>
         </div>
