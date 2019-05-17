@@ -200,9 +200,13 @@ class chatHandler:
     #                 return jsonify(Error="User Not Found"), 404
     #     print("Invalid operation. Removal not allowed.")
 
-    def addContactToChat(self, cid, contact_id):
+    def addContactToChat(self, form):
         dao = chatsDAO()
         dao2 = usersDAO()
+
+        cid = form["cid"]
+        contact_id = form["contact_id"]
+
         if not dao.getChatById(cid):
             return jsonify(Error="Chat with id: " + str(cid) + " not found."), 404
         if not dao2.getUserById(contact_id):
