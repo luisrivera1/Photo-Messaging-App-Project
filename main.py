@@ -2,8 +2,6 @@ from flask import Flask, jsonify, request
 from handler.userHandler import Handler
 from handler.postHandler import postHandler
 from handler.statHandler import statHandler
-
-from handler.supplier import SupplierHandler
 from handler.chatHandler import chatHandler
 from Objects.Chat import Chat
 from Objects.User import User
