@@ -74,7 +74,7 @@ angular.module('AppChat').controller('ChatController', ['$http', '$log', '$scope
             //thisCtrl.messageList.push({"id": 2, "text": "Hello World", "author": "Joe",
             //   "like" : 11, "nolike" : 12});
 
-            var url = "http://localhost:5000/PhotoMsgApp/posts/chat/original";
+            var url = "http://localhost:5000/PhotoMsgApp/posts/chat";
             //var chatname = localStorage.getItem("chatname");
 
             console.log(url);
