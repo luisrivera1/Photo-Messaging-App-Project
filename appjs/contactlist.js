@@ -60,6 +60,11 @@ angular.module('AppChat').controller('ContactController', ['$http', '$log', '$sc
             $window.location.href = '/#!/contactlist';
         };
 
+        this.redirectToHome = function(){
+            $window.location.href = '/#!/home';
+        }
+
+
         this.loadContacts();
 
       }]);

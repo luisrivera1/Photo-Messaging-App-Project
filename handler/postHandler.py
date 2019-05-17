@@ -441,6 +441,15 @@ class postHandler:
                 # result = self.build_post_attributes(post_id, puser, pphoto, pmessage, pdate)
                 result = self.build_post_dict_UI(row, likes, dislikes)
 
+                hashtags = dao.getHashtagList(pmessage)
+                print(hashtags)
+
+                if len(hashtags) > 0:
+                    for hashtag in hashtags:
+                        print(hashtag)
+                        hid = dao.insertIntoHashtag(hashtag)
+                        dao.insertIntoTagged(post_id, hid)
+
                 return jsonify(Post=result), 201
             else:
                 return jsonify(Error='Malformed POST request'), 400
