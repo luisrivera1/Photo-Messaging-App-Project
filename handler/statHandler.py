@@ -170,6 +170,13 @@ class statHandler:
             return jsonify(Error="No Posts found"), 400
         return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers()), 200
 
+    def getTopHashtags(self):
+        dao = statsDAO()
+        dates = dao.getAvailableTrendingDates()
+        if not dates:
+            return jsonify(Error="No hashtags found"), 400
+        return jsonify(TopHashtags=dao.getTopHashtags()), 200
+
     def getStatByChoice(self, form):
         stat = form['stat']
         dao = statsDAO()

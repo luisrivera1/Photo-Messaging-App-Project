@@ -13,6 +13,7 @@ google.charts.load('current', {'packages': ['corechart', 'bar', 'table', 'linech
 google.charts.setOnLoadCallback(drawHashtagsChart);
 google.charts.setOnLoadCallback(drawMostActivityOfUsersChart);
 google.charts.setOnLoadCallback(drawMostActiveUsersChart);
+google.charts.setOnLoadCallback(drawTopHashtagsChart);
 google.charts.setOnLoadCallback(drawPostChart);
 google.charts.setOnLoadCallback(drawRepliesChart);
 google.charts.setOnLoadCallback(drawLikesChart);
@@ -199,6 +200,66 @@ function drawMostActiveUsersChart() {
     };
 
     var chart = new google.charts.Bar(document.getElementById('mostactiveusers'));
+
+    chart.draw(data, options);
+
+}
+
+// TopHashtags
+function reformatTopHashtagsData(jsonData){
+    var temp = jsonData.TopHashtags;
+    console.log(temp)
+    console.log("temp: " + JSON.stringify(temp));
+
+    var result = [];
+    var i;
+
+    for(i=0; i < temp.length && i < 10; i++) {
+        dataElement = [];
+        console.log(temp[i][1])
+        dataElement.push(temp[i][0]);
+        dataElement.push(temp[i][1]);
+        result.push(dataElement);
+    }
+    console.log(result);
+    return result;
+}
+
+
+function drawTopHashtagsChart() {
+    var jsonData = $.ajax({
+        url: "http://127.0.0.1:5000/PhotoMsgApp/stats/tophashtags",
+        dataType: "json",
+        async: false
+    }).responseText;
+    console.log(jsonData);
+    console.log("jsonData: " + JSON.parse(jsonData));
+
+    // Create our data table out of JSON data loaded from server.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Hashtag');
+    data.addColumn('number', 'Total Number of Times Hashtag is Used');
+
+    data.addRows(reformatTopHashtagsData(JSON.parse(jsonData)));
+
+    var options = {
+        chart: {
+            title: 'Top Hashtags Used',
+            subtitle: 'Top 3'
+        },
+        chartArea: {width: '900px'},
+        hAxis: {
+            title: 'Name'//,
+            //minValue: 0
+        },
+        vAxis: {
+            title: 'Total Number of Times Hashtag is used'
+        },
+        colors: ['#2AC560'],
+        bars: 'horizontal'
+    };
+
+    var chart = new google.charts.Bar(document.getElementById('tophashtags'));
 
     chart.draw(data, options);
 

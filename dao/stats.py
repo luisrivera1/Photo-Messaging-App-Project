@@ -107,12 +107,19 @@ class statsDAO:
                 break
             result.append([row[0] + " " + row[1], row[2]])
             i += 1
-        # if len(cursor) == 1:
-        #     result.append([cursor[0] + " " + cursor[1], cursor[2]])
-        # elif len(cursor) == 2:
-        #     result.append([row[0].strftime("%B %d, %Y"), [temp[0][0], temp[1][0]]])
-        # else:
-        #     result.append([row[0].strftime("%B %d, %Y"), [temp[0][0], temp[1][0], temp[2][0]]])
+        return result
+
+    def getTopHashtags(self):
+        result = []
+        cursor = self.conn.cursor()
+        query = "select htext, count(*) as Total from hashtag natural inner join tagged natural inner join post where hid = hashtag_id and pid = post_id group by htext order by Total desc;"
+        cursor.execute(query)
+        i = 1;
+        for row in cursor:
+            if i > 3:
+                break
+            result.append([row[0], row[1]])
+            i += 1
         return result
 
     def isTherePost(self):
