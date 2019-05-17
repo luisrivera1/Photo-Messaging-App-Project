@@ -20,8 +20,8 @@ pg_config = {
 #     }
 
 # pg_config = {
-# # 'user': 'ramon',
-# # 'passwd': '12345678',
-# # 'host': 'localhost',
-# # 'dbname': 'photomsgspp'
+# 'user': 'ramon2',
+# 'passwd': '12345678',
+# 'host': 'localhost',
+# 'dbname': 'photomsgapp'
 # }

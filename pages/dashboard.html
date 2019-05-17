@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <meta charset="utf-8"/>
 <html>
+<head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!--<script src="/appjs/dashboard.js"></script>-->
+
+    <title>Dashboard DB</title>
+
+</head>
 
 <body>
 
 <table>
+    <thead ><h1 style="text-align: center">Dashboard</h1></thead>
     <tbody>
     <tr>
         <td><div id="trending_hashtags" style="width: 1200px; height: 300px;"></div></td>
+    </tr>
+     <tr>
+        <td><div id="mostactivityofusers" style="width: 1200px; height: 300px;"></div></td>
+    </tr>
+    <tr>
+        <td><div id="mostactiveusers" style="width: 1200px; height: 300px;"></div></td>
     </tr>
     <tr>
         <td><div id="postPerDay" style="width: 1200px; height: 300px;"></div></td>
@@ -22,20 +39,21 @@
         <td><div id="dislikesPerDay" style="width: 1200px; height: 300px;"></div></td>
     </tr>
     <tr>
-        <td><div id="topThreeActiveUsers" style="width: 1200px; height: 300px;"></div></td>
+        <td><div id="activeUsers" style="width: 1200px; height: 300px;"></div></td>
     </tr>
-    <tr>
-        <td><div id="repliesPerPost" style="width: 1200px; height: 300px;"></div></td>
-    </tr>
+    <!--    <tr>-->
+    <!--        <td><div id="repliesPerPost" style="width: 1200px; height: 300px;"></div></td>-->
+    <!--    </tr>-->
     <tr>
         <td><div id="likesPerPost" style="width: 1200px; height: 300px;"></div></td>
     </tr>
     <tr>
         <td><div id="dislikesPerPost" style="width: 1200px; height: 300px;"></div></td>
     </tr>
+    <tr>
+        <td><div id="topThreeActiveUsers" style="width: 1200px; height: 300px;"></div></td>
+    </tr>
     </tbody>
-
 </table>
-
 </body>
 </html>

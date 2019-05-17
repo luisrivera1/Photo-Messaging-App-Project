@@ -111,7 +111,7 @@ def getAllChats():
             return jsonify(Error="Need to specify parameters for chat creation"), 405
         return chatHandler().createChat(request.json)
     elif request.method == "DELETE":
-        return chatHandler().deleteChat(request.json)
+        return chatHandler().deleteChat(request.args)
 
 
 @app.route('/PhotoMsgApp/chats/<int:cid>/users', methods=['GET'])
@@ -302,21 +302,21 @@ La ruta tiene dos opciones:
            /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
 '''
 
-
-@app.route('/PhotoMsgApp/stats/<param>', methods=['GET'])
-def getAllStats(param):
-    if request.method == 'GET':
-        if not request.args:
-            if param[0].isdigit():
-                return statHandler().getAllStats(param)
-            else:
-                return statHandler().getAllPhotoStats(param)
-
-        else:
-            if not param[0].isdigit():
-                return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
-            else:
-                return statHandler().getStatByChoice(request.args.to_dict(), param)
+#
+# @app.route('/PhotoMsgApp/stats/<param>', methods=['GET'])
+# def getAllStats(param):
+#     if request.method == 'GET':
+#         if not request.args:
+#             if param[0].isdigit():
+#                 return statHandler().getAllStats(param)
+#             else:
+#                 return statHandler().getAllPhotoStats(param)
+#
+#         else:
+#             if not param[0].isdigit():
+#                 return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
+#             else:
+#                 return statHandler().getStatByChoice(request.args.to_dict(), param)
 
 
 @app.route('/PhotoMsgApp/stats', methods=['GET'])
@@ -325,6 +325,30 @@ def getAllStatsJson():
         if not request.json:
             return statHandler().getAllStats()
         return statHandler().getStatByChoice(request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/stats/hashtags', methods=['GET'])
+def getTrendingHashtags():
+    if request.method == 'GET':
+        return statHandler().getTrendingHashtagsTotal()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/stats/mostactivityofusers', methods=['GET'])
+def getMostActivityOfUsers():
+    if request.method == 'GET':
+        return statHandler().getMostActivityOfUsers()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/stats/mostactiveusers', methods=['GET'])
+def getMostActiveUsers():
+    if request.method == 'GET':
+        return statHandler().getMostActiveUsers()
     else:
         return jsonify(Error="Method not allowed."), 405
 

@@ -40,6 +40,7 @@ class postHandler:
         result['p_message'] = row[3]
         result['p_hashtags'] = added
 
+
         print(type(row[4]))
         result['p_date'] = row[4].strftime("%B %d, %Y")
         result['plikes'] = likes
@@ -203,7 +204,7 @@ class postHandler:
                     print(hashtag)
                     hid = dao.insertIntoHashtag(hashtag)
                     dao.insertIntoTagged(pid, hid)
-            return jsonify(User=result), 201
+            return jsonify(Post=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
@@ -418,15 +419,38 @@ class postHandler:
             # user_id = form['puser']
             chatName = form['chatName']
 
+
+
             if puser and pphoto and pmessage and pdate:
+                temp = pmessage
+
+                p_message = pmessage.split()
+                pmessage = ""
+
+                for word in p_message:
+                    if not word[0] == "#":
+                        pmessage = pmessage + word + " "
+
                 post = dao.insertPost(puser, pphoto, pmessage, pdate)
                 post_id, pdate = post['pid'], post['pdate']
                 # post_id, post_date = post['post_id'], post['post_date']
+
+                hashtags = dao.getHashtagList(temp)
+                print(hashtags)
+
+                if len(hashtags) > 0:
+                    for hashtag in hashtags:
+                        print(hashtag)
+                        hid = dao.insertIntoHashtag(hashtag)
+                        dao.insertIntoTagged(post_id, hid)
+
 
                 # Upload file
                 file_secure_name = secure_filename(file.filename)
                 file_path = os.path.join(path, file_secure_name)
                 file.save(os.path.join(os.getcwd(), file_path[1:]))
+
+
 
                 likes = dao.getPostLikes(post_id)
                 dislikes = dao.getPostDislikes(post_id)
@@ -440,15 +464,6 @@ class postHandler:
 
                 # result = self.build_post_attributes(post_id, puser, pphoto, pmessage, pdate)
                 result = self.build_post_dict_UI(row, likes, dislikes)
-
-                hashtags = dao.getHashtagList(pmessage)
-                print(hashtags)
-
-                if len(hashtags) > 0:
-                    for hashtag in hashtags:
-                        print(hashtag)
-                        hid = dao.insertIntoHashtag(hashtag)
-                        dao.insertIntoTagged(post_id, hid)
 
                 return jsonify(Post=result), 201
             else:
