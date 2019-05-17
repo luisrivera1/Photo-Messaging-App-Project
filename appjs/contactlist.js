@@ -1,5 +1,5 @@
-angular.module('AppChat').controller('ContactController', ['$http', '$log', '$scope', '$location', '$routeParams',
-    function ($http, $log, $scope, $location, $routeParams) {
+angular.module('AppChat').controller('ContactController', ['$http', '$log', '$scope', '$timeout', '$location', '$window','$routeParams',
+    function ($http, $log, $scope, $timeout, $location, $window, $routeParams) {
 
         var thisCtrl = this;
         this.contacts = [];
@@ -49,6 +49,7 @@ angular.module('AppChat').controller('ContactController', ['$http', '$log', '$sc
                 $http.post(url, param).then(function(response){
                     console.log(response)
                     this.contacts.push(response.data.Contact)
+                    location.reload()
 
                  })
             }
@@ -59,9 +60,10 @@ angular.module('AppChat').controller('ContactController', ['$http', '$log', '$sc
             $window.location.href = '/#!/contactlist';
         };
 
-        this.showChats = function () {
-            $location.path('/home');
-        };
+        this.redirectToHome = function(){
+            $window.location.href = '/#!/home';
+        }
+
 
         this.loadContacts();
 

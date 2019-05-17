@@ -54,7 +54,7 @@ class chatsDAO:
         cursor = self.conn.cursor()
         query = "select cid from chat where cname = %s;"
         cursor.execute(query, (cname,))
-        cid = cursor.fetchone()
+        cid = cursor.fetchone()[0]
         return cid
 
     def getChatMemberById(self, cid, mem_id):

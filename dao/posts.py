@@ -5,6 +5,7 @@ from Objects.User import User
 from Objects.Post import Post
 from config.dbconfig import pg_config
 import psycopg2
+import psycopg2.extras
 
 
 class postsDAO:
@@ -231,10 +232,10 @@ class postsDAO:
         return result
 
     def insertPost(self, puser, pphoto, pmessage, pdate):
-        cursor = self.conn.cursor()
-        query = "insert into Post(puser, pphoto, pmessage, pdate) values (%s, %s, %s, %s) returning pid;"
-        cursor.execute(query, (puser, pphoto, pmessage, pdate))
-        result = cursor.fetchone()[0]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "insert into Post(puser, pphoto, pmessage, pdate) values (%s, %s, %s, %s) returning pid, pdate;"
+        cursor.execute(query, (puser, pphoto, pmessage, pdate,))
+        result = cursor.fetchone()
         self.conn.commit()
         return result
 
@@ -244,6 +245,33 @@ class postsDAO:
         cursor.execute(query, (cid, pid))
         result = cursor.rowcount
         self.conn.commit()
+        return result
+
+    def deleteFromHas(self, pid):
+        cursor = self.conn.cursor()
+        query = "delete from has where post_id = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Has deletion was: " + str(result))
+        return result
+
+    def deleteFromTagged(self, pid):
+        cursor = self.conn.cursor()
+        query = "delete from tagged where post_id = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Post deletion was: " + str(result))
+        return result
+
+    def deletePost(self, pid):
+        cursor = self.conn.cursor()
+        query = "delete from post where pid = %s;"
+        cursor.execute(query, (pid,))
+        result = cursor.rowcount
+        self.conn.commit()
+        print("Result for Post deletion was: " + str(result))
         return result
 
     def insertIntoIsReply(self, rid, pid):
@@ -298,3 +326,32 @@ class postsDAO:
         result = cursor.fetchall()
         return result
 
+    def getAllReplies(self):
+        cursor = self.conn.cursor()
+        query = "select reply_id from isReply";
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+
+    def insertLikeIntoReaction(self, pid, uid, date):
+        cursor = self.conn.cursor()
+        query = "insert into reaction(rdate, type, usr, post) values (%s,'like', %s, %s);"
+        cursor.execute(query, (date, uid, pid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
+    def insertDislikeIntoReaction(self, pid, uid, date):
+        cursor = self.conn.cursor()
+        query = "insert into reaction(rdate, type, usr, post) values (%s,'dislike', %s, %s);"
+        cursor.execute(query, (date, uid, pid))
+        result = cursor.rowcount
+        self.conn.commit()
+        return result
+
+    def didUserReact(self, pid, uid):
+        cursor = self.conn.cursor()
+        query = "select * from reaction where post = %s and usr = %s;"
+        cursor.execute(query, (pid, uid))
+        result = cursor.fetchone()
+        return result

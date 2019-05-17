@@ -76,8 +76,18 @@ class chatHandler:
         if not row:
             return jsonify(Error="Chat Not Found"), 404
         else:
-            chats = self.build_chats_dict(row)
-            return jsonify(Chats=chats)
+            chat = self.build_chats_dict(row)
+            return jsonify(Chats=chat)
+
+    def getChatsByChatname(self, form):
+        dao = chatsDAO()
+        cname = form['cname']
+        cid = dao.getChatByChatName(cname)
+        if not cid:
+            return jsonify(Error="Chat Not Found"), 404
+        else:
+            # chats = self.build_chats_dict(row)
+            return jsonify(Chat={"cid":cid})
 
     def getChatMemberByID(self, chat_id, mem_id):
         dao = chatsDAO()
@@ -136,13 +146,15 @@ class chatHandler:
                 except:
                     return jsonify(Error="Unexpected attributes in create chat request"), 400
 
-    def deleteChat(self, form):
-        if len(form) != 2:
+    def deleteChat(self, args):
+        if len(args) != 2:
             return jsonify(Error="Malformed delete chat request"), 400
 
         try:
-            cid = form['cid']
-            uid = form['uid']
+            cid = int(args['cid'])
+            uid = int(args['uid'])
+            # cid = form['cid']
+            # uid = form['uid']
         except:
             return jsonify(Error="Unexpected attributes in delete chat request"), 400
         dao = chatsDAO()
@@ -190,9 +202,13 @@ class chatHandler:
     #                 return jsonify(Error="User Not Found"), 404
     #     print("Invalid operation. Removal not allowed.")
 
-    def addContactToChat(self, cid, contact_id):
+    def addContactToChat(self, form):
         dao = chatsDAO()
         dao2 = usersDAO()
+
+        cid = form["cid"]
+        contact_id = form["contact_id"]
+
         if not dao.getChatById(cid):
             return jsonify(Error="Chat with id: " + str(cid) + " not found."), 404
         if not dao2.getUserById(contact_id):
@@ -291,3 +307,50 @@ class chatHandler:
                 result = self.build_posts_from_chat_dict(row)
                 result_list.append(result)
             return jsonify(UsersInChat=result_list)
+
+    def getUsersForAdding(self, cid, uid):
+        dao = chatsDAO()
+        udao = usersDAO()
+
+        if not dao.getChatById(cid):
+            return jsonify(Error = "Chat not found."), 404
+
+        elif not udao.getUserById(uid):
+            return jsonify(Error = "User not found."), 404
+
+        else:
+            chat_members = dao.getAllUsersFromChat(cid)
+
+            if len(chat_members) == 1:
+                return jsonify(Error = "Only user in chat is admin.")
+
+            contact_list = udao.getContactListFromUserId(uid)
+
+            print(chat_members)
+            print(contact_list)
+
+            contacts = []
+
+            for contact in contact_list:
+                if not contact in chat_members:
+                    contacts.append(contact)
+
+            print(contacts)
+
+            if len(contacts) > 0:
+                result = []
+
+                for row in contacts:
+                    result.append(self.build_users_from_chat_dict(row))
+
+                    print(result)
+
+                return jsonify(Contacts = result), 200
+
+            else:
+                return jsonify(Error = "All users in contact list already in chat.")
+
+
+
+
+

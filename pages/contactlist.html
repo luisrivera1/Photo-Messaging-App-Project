@@ -8,7 +8,9 @@
                         <table>
                             <tbody>
                             <tr ng-repeat="c in contactCtrl.contacts">
-                                <th> <center>{{c.ufirstname}} {{c.ulastname}}</center></th>
+                                <th>
+                                    <center>{{c.ufirstname}} {{c.ulastname}}</center>
+                                </th>
                             </tr>
 
                             </tbody>
@@ -16,13 +18,14 @@
                     </div>
                     <div class="card-action">
                         <button class=" chats waves-effect  grey btn-small"
-                                ng-click=" contactCtrl.showChats()
-                        "><i class="fa fa-chevron-left"
+                                ng-click= "contactCtrl.redirectToHome()">
+                            <i class="fa fa-chevron-left"
                              aria-hidden="true"></i> Home
                         </button>
 
                         <button class="waves-effect blue-grey lighten-1 btn-small float-right"
-                                type="submit" name="action" id = "addcontact" ng-click="contactCtrl.addContact()"> ADD CONTACT
+                                type="submit" name="action" id="addcontact" ng-click="contactCtrl.addContact()"> ADD
+                            CONTACT
                             <!--i class="material-icons right">send</i>-->
                         </button>
                     </div>
