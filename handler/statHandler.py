@@ -157,6 +157,13 @@ class statHandler:
             return jsonify(Error="No hashtags found"), 400
         return jsonify(TrendingHashtags=dao.getTrendringHashtagsTotal(dates)), 200
 
+    def getMostActivityOfUsers(self):
+        dao = statsDAO()
+        dates = dao.getPostDatesAvailable()
+        if not dates:
+            return jsonify(Error="No Posts found"), 400
+        return jsonify(MostActivityOfUsersPerDates=dao.getMostActivityOfUsers(dates)), 200
+
     def getMostActiveUsers(self):
         dao = statsDAO()
         dates = dao.getPostDatesAvailable()
@@ -184,11 +191,11 @@ class statHandler:
                 return jsonify(PostsPerDayOfUser=result_list), 200
             return jsonify(Error="Invalid statistic per user operation"), 404
         if len(form) == 1:
-            if stat == "mostactiveusers":
+            if stat == "mostactivityofusers":
                 dates = dao.getPostDatesAvailable()
                 if not dates:
                     return jsonify(Error="No Posts found"), 400
-                return jsonify(MostActiveUsersPerDates=dao.getMostActiveUsers(dates)), 200
+                return jsonify(MostActiveUsersPerDates=dao.getMostActivityOfUsers(dates)), 200
             elif stat == "repliesperdates":
                 dates = dao.getAvailableRepliesDates()
                 if not dates:

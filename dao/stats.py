@@ -78,7 +78,7 @@ class statsDAO:
             result.append([row[0].strftime("%B %d, %Y"), cursor.fetchone()[0]])
         return result
 
-    def getMostActiveUsers(self, dates):
+    def getMostActivityOfUsers(self, dates):
         result = []
         for row in dates:
             cursor = self.conn.cursor()

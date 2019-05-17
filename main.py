@@ -291,21 +291,21 @@ La ruta tiene dos opciones:
            /PhotoMsgApp/stats/pollo.png?stat=likes (Estadistica especifica)
 '''
 
-
-@app.route('/PhotoMsgApp/stats/<param>', methods=['GET'])
-def getAllStats(param):
-    if request.method == 'GET':
-        if not request.args:
-            if param[0].isdigit():
-                return statHandler().getAllStats(param)
-            else:
-                return statHandler().getAllPhotoStats(param)
-
-        else:
-            if not param[0].isdigit():
-                return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
-            else:
-                return statHandler().getStatByChoice(request.args.to_dict(), param)
+#
+# @app.route('/PhotoMsgApp/stats/<param>', methods=['GET'])
+# def getAllStats(param):
+#     if request.method == 'GET':
+#         if not request.args:
+#             if param[0].isdigit():
+#                 return statHandler().getAllStats(param)
+#             else:
+#                 return statHandler().getAllPhotoStats(param)
+#
+#         else:
+#             if not param[0].isdigit():
+#                 return statHandler().getPhotoStatsByChoice(request.args.to_dict(), param)
+#             else:
+#                 return statHandler().getStatByChoice(request.args.to_dict(), param)
 
 
 @app.route('/PhotoMsgApp/stats', methods=['GET'])
@@ -322,6 +322,14 @@ def getAllStatsJson():
 def getTrendingHashtags():
     if request.method == 'GET':
         return statHandler().getTrendingHashtagsTotal()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/PhotoMsgApp/stats/mostactivityofusers', methods=['GET'])
+def getMostActivityOfUsers():
+    if request.method == 'GET':
+        return statHandler().getMostActivityOfUsers()
     else:
         return jsonify(Error="Method not allowed."), 405
 
