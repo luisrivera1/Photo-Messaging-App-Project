@@ -11,6 +11,7 @@ google.charts.load('current', {'packages': ['corechart', 'bar', 'table', 'linech
 
 // Set a callback to run when the Google Visualization API is loaded.
 google.charts.setOnLoadCallback(drawHashtagsChart);
+google.charts.setOnLoadCallback(drawMostActiveUsersChart);
 google.charts.setOnLoadCallback(drawPostChart);
 google.charts.setOnLoadCallback(drawRepliesChart);
 google.charts.setOnLoadCallback(drawLikesChart);
@@ -55,20 +56,24 @@ function drawHashtagsChart() {
     // Create our data table out of JSON data loaded from server.
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Dates');
-    data.addColumn('number', 'Total');
+    data.addColumn('number', 'Number of Hashtags');
 
     data.addRows(reformatHashtagsData(JSON.parse(jsonData)));
 
     var options = {
-        title: 'Trending Hashtags Total per date',
+        title: 'Trending Hashtags Total per date',// 'width':1000,
         chartArea: {width: '800px'},
         hAxis: {
-            title: 'Dates',
-            minValue: 0
+            title: 'Dates'//,
+            //minValue: 0
         },
         vAxis: {
-            title: 'Total'
-        }
+            title: 'Number of Hashtags'
+        },
+        // vAxes: { 0: {
+        //     title: 'Number of Hastags' }
+        //     },
+        colors: ['#2AC560']
     };
 
     var chart = new google.charts.Bar(document.getElementById('trending_hashtags'));
@@ -77,6 +82,61 @@ function drawHashtagsChart() {
 
 }
 
+// MostActiveUsers
+function reformatMostActiveUsersData(jsonData){
+    var temp = jsonData.MostActiveUsersPerDates;
+    console.log(temp)
+    console.log("temp: " + JSON.stringify(temp));
+
+    var result = [];
+    var i;
+
+    for(i=0; i < temp.length && i < 10; i++) {
+        dataElement = [];
+        console.log(temp[i][1])
+        dataElement.push(temp[i][0]);
+        dataElement.push(temp[i][1]);
+        result.push(dataElement);
+    }
+    console.log(result);
+    return result;
+}
+
+
+function drawMostActiveUsersChart() {
+    var jsonData = $.ajax({
+        url: "http://127.0.0.1:5000/PhotoMsgApp/stats/mostactiveusers",
+        dataType: "json",
+        async: false
+    }).responseText;
+    console.log(jsonData);
+    console.log("jsonData: " + JSON.parse(jsonData));
+
+    // Create our data table out of JSON data loaded from server.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Dates');
+    data.addColumn('number', 'Total');
+
+    data.addRows(reformatMostActiveUsersData(JSON.parse(jsonData)));
+
+    var options = {
+        title: 'Most Active Users Per Date',
+        chartArea: {width: '800px'},
+        hAxis: {
+            title: 'Dates'//,
+            //minValue: 0
+        },
+        vAxis: {
+            title: 'Total'
+        },
+        colors: ['#2AC560']
+    };
+
+    var chart = new google.charts.Bar(document.getElementById('mostactiveusers'));
+
+    chart.draw(data, options);
+
+}
 
 // Post
 function reformatPostData(jsonData){
